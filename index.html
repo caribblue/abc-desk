@@ -5,7 +5,7 @@
     <title>ABC Desk</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
     <style>
-        /* --- 디자인 (기존 스타일 유지 및 보정) --- */
+        /* --- 디자인 (기존 스타일 완벽 유지) --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 40px; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .date-nav { display: flex; align-items: center; gap: 15px; }
@@ -19,7 +19,6 @@
         .header-right { display: flex; align-items: center; gap: 20px; }
         .weather-box { font-size: 15px; color: #555; }
         .backup-btn { background-color: #fff; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #555; cursor: pointer; }
-        #cloudStatus { font-size: 13px; color: #007AFF; font-weight: 500; margin-left: 10px; }
 
         .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; }
         .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
@@ -54,7 +53,6 @@
 
         textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
-        /* 모달 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 360px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
@@ -75,12 +73,11 @@
         <div class="date-nav">
             <button class="icon-btn" onclick="changeDate(-1)">◀</button>
             <div class="date-picker-wrap">
-                <h1 id="currentDateStr">클라우드 로딩 중...</h1>
+                <h1 id="currentDateStr">날짜 로딩 중...</h1>
                 <input type="date" id="datePicker" onchange="handleDateSelect(event)">
             </div>
             <button class="icon-btn" onclick="changeDate(1)">▶</button>
             <button class="today-btn" onclick="goToday()">오늘</button>
-            <span id="cloudStatus"></span>
         </div>
         <div class="header-right">
             <div class="weather-box">☀️ 쾌적함</div>
@@ -141,13 +138,19 @@
                     </div>
                 </div>
             </div>
+            
+            <div class="input-group">
+                <label>간단 메모 (현재 날짜의 우측 메모장에 추가됩니다)</label>
+                <textarea id="taskMemoInput" rows="2" style="resize: none;" placeholder="일정에 필요한 내용을 남겨보세요..."></textarea>
+            </div>
+
             <div class="input-group">
                 <label>반복</label>
                 <select id="repeatSelect" onchange="toggleWeeklyDays()">
                     <option value="none">안 함</option>
                     <option value="daily">매일</option>
                     <option value="weekly">매주</option>
-                </select>
+                    <option value="monthly">매월</option> </select>
                 <div id="weeklyDays" style="display:none; gap:5px; flex-wrap:wrap; margin-top:5px;">
                     <label style="font-size:12px;"><input type="checkbox" value="월">월</label>
                     <label style="font-size:12px;"><input type="checkbox" value="화">화</label>
@@ -166,7 +169,6 @@
     </div>
 
     <script>
-        // --- [1] 설정 및 전역 변수 (맨 위로 올림) ---
         const firebaseConfig = {
             apiKey: "AIzaSyAkGwzW3ZgYI6RnP0wryRgxS_YDNwtEI50",
             authDomain: "abc-desk.firebaseapp.com",
@@ -185,16 +187,14 @@
         let editingId = null;
 
         const memoArea = document.getElementById("memoArea");
-        const cloudStatus = document.getElementById("cloudStatus");
 
         function getDateString(d) {
             const offset = d.getTimezoneOffset() * 60000;
             return (new Date(d.getTime() - offset)).toISOString().slice(0, 10);
         }
 
-        // --- [2] 초기화 및 데이터 로드 ---
         function startApp() {
-            initSchedule(); // 시간표 틀 먼저 그리기
+            initSchedule(); 
             docRef.get().then((doc) => {
                 if (doc.exists) {
                     const d = doc.data();
@@ -202,11 +202,8 @@
                     memos = d.memos || {};
                 }
                 updateDateDisplay();
-                cloudStatus.innerText = "☁️ 동기화됨";
-                setTimeout(() => cloudStatus.innerText = "", 2000);
             }).catch(err => {
-                console.error("데이터 로드 실패:", err);
-                updateDateDisplay(); // 실패해도 화면은 보여줌
+                updateDateDisplay(); 
             });
         }
 
@@ -223,15 +220,11 @@
             }
         }
 
+        // [복구] 저장 중 알림 텍스트 제거. 조용히 저장만 수행.
         function saveData() {
-            cloudStatus.innerText = "☁️ 저장 중...";
-            docRef.set({ todos, memos }).then(() => {
-                cloudStatus.innerText = "☁️ 저장됨";
-                setTimeout(() => cloudStatus.innerText = "", 1500);
-            });
+            docRef.set({ todos, memos });
         }
 
-        // --- [3] 렌더링 (오늘 할 일 및 시간표 표시) ---
         function renderTodos() {
             const dateKey = getDateString(currentDate);
             const ul = document.getElementById("todoList");
@@ -239,7 +232,6 @@
             const grid = document.getElementById("scheduleGrid");
             
             ul.innerHTML = ""; alc.innerHTML = ""; 
-            // 기존 일정 블록들 삭제 (time-slot은 유지)
             document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
 
             todos.forEach(t => {
@@ -249,25 +241,27 @@
                 const cName = isDone ? 'completed' : '';
                 const st = t.startTime || ""; const et = t.endTime || "";
                 
-                const meta = `<div class="task-meta">${t.repeat!=='none'?'<span class="repeat-badge">🔁</span>':''} ${t.isAllDay?'<span class="repeat-badge">종일</span>':(st?`<span>${st}~${et}</span>`:'')}</div>`;
+                let repeatLabel = '';
+                if(t.repeat === 'daily') repeatLabel = '🔁 매일';
+                if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
+                if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
 
-                // 종일 일정 레이아웃
+                const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (st ? `<span>${st}~${et}</span>` : '')}</div>`;
+
                 if (t.isAllDay) {
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
                 }
 
-                // 할 일 목록 레이아웃
                 const li = document.createElement("li");
                 li.className = cName;
                 li.innerHTML = `
-                    <input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)">
+                    <input type="checkbox" ${isDone ? 'checked' : ''} onclick="toggleComplete('${t.id}', event)">
                     <div class="todo-content" onclick="openModal('${t.id}')">
                         <span class="priority color-${t.type}">(${t.type}${t.num})</span> 
                         <span class="task-text">${t.task}</span>${meta}
                     </div>`;
                 ul.appendChild(li);
 
-                // 시간표 블록 레이아웃
                 if (!t.isAllDay && st && et) {
                     let [sH, sM] = st.split(":").map(Number);
                     let [eH, eM] = et.split(":").map(Number);
@@ -285,16 +279,17 @@
             });
         }
 
+        // [복구] 매월 반복 조건 추가
         function shouldShow(t) {
             const target = new Date(currentDate).setHours(0,0,0,0);
             if (target < t.createDate) return false;
             if (t.repeat === 'none') return target === t.createDate;
             if (t.repeat === 'daily') return true;
             if (t.repeat === 'weekly') return t.repeatDays.includes(['일','월','화','수','목','금','토'][currentDate.getDay()]);
+            if (t.repeat === 'monthly') return new Date(target).getDate() === new Date(t.createDate).getDate();
             return false;
         }
 
-        // --- [4] 이벤트 처리 (체크, 저장, 수정 등) ---
         function toggleComplete(id, e) {
             e.stopPropagation();
             const dateKey = getDateString(currentDate);
@@ -322,12 +317,14 @@
                 document.getElementById("priorityType").value = t.type;
                 document.getElementById("priorityNum").value = t.num;
                 document.getElementById("repeatSelect").value = t.repeat;
+                document.getElementById("taskMemoInput").value = ""; 
                 delBtn.style.display = "block";
             } else {
                 document.getElementById("taskInput").value = "";
                 document.getElementById("startTimeInput").value = st || "";
                 document.getElementById("endTimeInput").value = et || "";
                 document.getElementById("allDayCheck").checked = false;
+                document.getElementById("taskMemoInput").value = "";
                 delBtn.style.display = "none";
             }
             toggleWeeklyDays(); toggleTimeInput();
@@ -350,6 +347,15 @@
                 repeat: document.getElementById("repeatSelect").value,
                 repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value)
             };
+
+            // [복구] 간단 메모 우측 메모장 연동 로직
+            const taskMemo = document.getElementById("taskMemoInput").value;
+            if (taskMemo.trim() !== "") {
+                const dateKey = getDateString(currentDate);
+                let currentMemo = memos[dateKey] || "";
+                memos[dateKey] = currentMemo.trim() + (currentMemo.trim() === "" ? "" : "\n\n") + `📌 [${task}] 메모:\n${taskMemo}`;
+                memoArea.value = memos[dateKey];
+            }
 
             if(editingId) {
                 const idx = todos.findIndex(x => x.id === editingId);
@@ -402,7 +408,6 @@
             r.readAsText(f); 
         }
 
-        // 앱 시작
         startApp();
     </script>
 </body>
