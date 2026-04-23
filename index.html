@@ -146,7 +146,7 @@
             </div>
             
             <div class="input-group">
-                <label>간단 메모 (현재 보고 있는 날짜의 우측 메모장에 추가됩니다)</label>
+                <label>간단 메모 (지정된 날짜의 우측 메모장에 추가됩니다)</label>
                 <textarea id="taskMemoInput" rows="2" style="resize: none;" placeholder="일정에 필요한 내용을 남겨보세요..."></textarea>
             </div>
 
@@ -193,6 +193,10 @@
         let currentDate = new Date();
         let editingId = null;
         let isDataLoaded = false; 
+
+        // [추가] 일정을 미룰 때 원래 위치를 기억하기 위한 변수
+        let originalDateStr = null;
+        let originalTaskName = null;
 
         const memoArea = document.getElementById("memoArea");
 
@@ -323,8 +327,10 @@
                 const t = todos.find(x => x.id === id);
                 document.getElementById("taskInput").value = t.task;
                 
-                // [추가] 모달을 열 때 해당 일정의 지정 날짜를 불러옵니다.
-                document.getElementById("taskDateInput").value = getDateString(new Date(t.createDate));
+                // [수정] 모달 열 때, 원래 지정된 날짜와 이름을 기억해 둡니다.
+                originalDateStr = getDateString(new Date(t.createDate));
+                originalTaskName = t.task;
+                document.getElementById("taskDateInput").value = originalDateStr;
                 
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
@@ -335,9 +341,9 @@
                 document.getElementById("taskMemoInput").value = ""; 
                 delBtn.style.display = "block";
             } else {
+                originalDateStr = null;
+                originalTaskName = null;
                 document.getElementById("taskInput").value = "";
-                
-                // [추가] 새 일정을 만들 때는 현재 보고 있는 날짜를 기본값으로 세팅합니다.
                 document.getElementById("taskDateInput").value = getDateString(currentDate);
                 
                 document.getElementById("startTimeInput").value = st || "";
@@ -356,9 +362,28 @@
             const task = document.getElementById("taskInput").value;
             if(!task) return alert("내용을 입력하세요!");
             
-            // [추가] 사용자가 지정한 날짜를 가져와서 저장용 날짜로 변환합니다.
             const targetDateStr = document.getElementById("taskDateInput").value;
             const newCreateTimestamp = new Date(targetDateStr).setHours(0,0,0,0);
+
+            // [마법의 로직] 일정을 미뤘을 때 기존 메모장 내용을 찾아서 새 날짜로 통째로 이사시킵니다.
+            if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
+                let oldMemoText = memos[originalDateStr] || "";
+                // 정규식을 통해 원래 적혀있던 '📌 [할일이름] 메모:' 블록을 아주 정확하게 찾아냅니다.
+                const escapedTaskName = originalTaskName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                const regex = new RegExp(`(📌 \\[${escapedTaskName}\\] 메모:\\n[\\s\\S]*?)(?=\\n\\n📌|$)`);
+                const match = oldMemoText.match(regex);
+
+                if (match) {
+                    const fullMatch = match[0];
+                    // 옛날 날짜 메모장에서는 지우고
+                    oldMemoText = oldMemoText.replace(fullMatch, "");
+                    memos[originalDateStr] = oldMemoText.replace(/\n{3,}/g, '\n\n').trim();
+
+                    // 새로운 목표 날짜 메모장에 찰싹 붙여넣습니다.
+                    let newMemoText = memos[targetDateStr] || "";
+                    memos[targetDateStr] = newMemoText.trim() + (newMemoText.trim() === "" ? "" : "\n\n") + fullMatch;
+                }
+            }
             
             const data = {
                 task, 
@@ -371,12 +396,11 @@
                 repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value)
             };
 
+            // 새로 입력한 '간단 메모'는 지정된 목표 날짜(targetDateStr)에 추가합니다.
             const taskMemo = document.getElementById("taskMemoInput").value;
             if (taskMemo.trim() !== "") {
-                const dateKey = getDateString(currentDate);
-                let currentMemo = memos[dateKey] || "";
-                memos[dateKey] = currentMemo.trim() + (currentMemo.trim() === "" ? "" : "\n\n") + `📌 [${task}] 메모:\n${taskMemo}`;
-                memoArea.value = memos[dateKey];
+                let currentMemo = memos[targetDateStr] || "";
+                memos[targetDateStr] = currentMemo.trim() + (currentMemo.trim() === "" ? "" : "\n\n") + `📌 [${task}] 메모:\n${taskMemo}`;
             }
 
             if(editingId) {
@@ -385,6 +409,10 @@
             } else {
                 todos.push({ id: Date.now().toString(), createDate: newCreateTimestamp, ...data, completedDates: [] });
             }
+
+            // 현재 보고 있는 화면의 우측 메모장을 즉시 새로고침해서 이동된 내용을 바로 반영합니다.
+            memoArea.value = memos[getDateString(currentDate)] || "";
+
             saveData(); closeModal(); renderTodos();
         }
 
