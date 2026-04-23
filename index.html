@@ -5,7 +5,7 @@
     <title>ABC Desk</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
     <style>
-        /* --- 디자인 (기존 스타일 완벽 유지) --- */
+        /* 디자인 원본 완벽 유지 */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 40px; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .date-nav { display: flex; align-items: center; gap: 15px; }
@@ -120,6 +120,12 @@
                 <label>할 일 내용</label>
                 <input type="text" id="taskInput" placeholder="예: 수학 교재 오타 수정">
             </div>
+            
+            <div class="input-group">
+                <label>지정 날짜 (날짜를 변경하면 해당 일자로 일정이 이동합니다)</label>
+                <input type="date" id="taskDateInput" style="cursor: pointer;">
+            </div>
+
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1">
                     <label>우선순위</label>
@@ -140,7 +146,7 @@
             </div>
             
             <div class="input-group">
-                <label>간단 메모 (현재 날짜의 우측 메모장에 추가됩니다)</label>
+                <label>간단 메모 (현재 보고 있는 날짜의 우측 메모장에 추가됩니다)</label>
                 <textarea id="taskMemoInput" rows="2" style="resize: none;" placeholder="일정에 필요한 내용을 남겨보세요..."></textarea>
             </div>
 
@@ -150,7 +156,8 @@
                     <option value="none">안 함</option>
                     <option value="daily">매일</option>
                     <option value="weekly">매주</option>
-                    <option value="monthly">매월</option> </select>
+                    <option value="monthly">매월</option>
+                </select>
                 <div id="weeklyDays" style="display:none; gap:5px; flex-wrap:wrap; margin-top:5px;">
                     <label style="font-size:12px;"><input type="checkbox" value="월">월</label>
                     <label style="font-size:12px;"><input type="checkbox" value="화">화</label>
@@ -185,6 +192,7 @@
         let memos = {};
         let currentDate = new Date();
         let editingId = null;
+        let isDataLoaded = false; 
 
         const memoArea = document.getElementById("memoArea");
 
@@ -201,8 +209,10 @@
                     todos = d.todos || [];
                     memos = d.memos || {};
                 }
+                isDataLoaded = true; 
                 updateDateDisplay();
             }).catch(err => {
+                isDataLoaded = true; 
                 updateDateDisplay(); 
             });
         }
@@ -220,9 +230,11 @@
             }
         }
 
-        // [복구] 저장 중 알림 텍스트 제거. 조용히 저장만 수행.
         function saveData() {
-            docRef.set({ todos, memos });
+            if (!isDataLoaded) return; 
+            docRef.set({ todos, memos }).catch(err => {
+                alert("⚠️ 저장 오류! 파이어베이스 [규칙]을 'true'로 변경했는지 확인해주세요.");
+            });
         }
 
         function renderTodos() {
@@ -279,7 +291,6 @@
             });
         }
 
-        // [복구] 매월 반복 조건 추가
         function shouldShow(t) {
             const target = new Date(currentDate).setHours(0,0,0,0);
             if (target < t.createDate) return false;
@@ -311,6 +322,10 @@
             if(id) {
                 const t = todos.find(x => x.id === id);
                 document.getElementById("taskInput").value = t.task;
+                
+                // [추가] 모달을 열 때 해당 일정의 지정 날짜를 불러옵니다.
+                document.getElementById("taskDateInput").value = getDateString(new Date(t.createDate));
+                
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
                 document.getElementById("allDayCheck").checked = t.isAllDay;
@@ -321,6 +336,10 @@
                 delBtn.style.display = "block";
             } else {
                 document.getElementById("taskInput").value = "";
+                
+                // [추가] 새 일정을 만들 때는 현재 보고 있는 날짜를 기본값으로 세팅합니다.
+                document.getElementById("taskDateInput").value = getDateString(currentDate);
+                
                 document.getElementById("startTimeInput").value = st || "";
                 document.getElementById("endTimeInput").value = et || "";
                 document.getElementById("allDayCheck").checked = false;
@@ -337,6 +356,10 @@
             const task = document.getElementById("taskInput").value;
             if(!task) return alert("내용을 입력하세요!");
             
+            // [추가] 사용자가 지정한 날짜를 가져와서 저장용 날짜로 변환합니다.
+            const targetDateStr = document.getElementById("taskDateInput").value;
+            const newCreateTimestamp = new Date(targetDateStr).setHours(0,0,0,0);
+            
             const data = {
                 task, 
                 type: document.getElementById("priorityType").value, 
@@ -348,7 +371,6 @@
                 repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value)
             };
 
-            // [복구] 간단 메모 우측 메모장 연동 로직
             const taskMemo = document.getElementById("taskMemoInput").value;
             if (taskMemo.trim() !== "") {
                 const dateKey = getDateString(currentDate);
@@ -359,9 +381,9 @@
 
             if(editingId) {
                 const idx = todos.findIndex(x => x.id === editingId);
-                todos[idx] = { ...todos[idx], ...data };
+                todos[idx] = { ...todos[idx], ...data, createDate: newCreateTimestamp };
             } else {
-                todos.push({ id: Date.now().toString(), createDate: new Date(currentDate).setHours(0,0,0,0), ...data, completedDates: [] });
+                todos.push({ id: Date.now().toString(), createDate: newCreateTimestamp, ...data, completedDates: [] });
             }
             saveData(); closeModal(); renderTodos();
         }
