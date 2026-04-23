@@ -29,6 +29,13 @@
         h2 { font-size: 16px; font-weight: 600; margin: 0; }
         .add-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #222; line-height: 1; }
         .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; }
+        .scrollable-area::-webkit-scrollbar { width: 6px; }
+        .scrollable-area::-webkit-scrollbar-thumb { background-color: #eee; border-radius: 3px; }
+
+        /* 종일 뷰 래퍼 복구 */
+        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; }
+        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .all-day-item:hover { border-color: #222; }
 
         /* 주간/월간 뷰 디자인 */
         .weekly-view, .monthly-view { display: none; width: 100%; height: 100%; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; overflow: auto; box-sizing: border-box; }
@@ -41,6 +48,9 @@
 
         ul { list-style: none; padding: 0; margin: 0; }
         li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
+        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; }
+        .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
         .priority { font-weight: 600; min-width: 40px; }
         .color-A { color: #FF3B30; } .color-B { color: #007AFF; } .color-C { color: #8E8E93; }
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
@@ -90,21 +100,24 @@
         </div>
     </header>
 
-    <div id="dayContainer" class="main-container">
-        <div class="left-half">
-            <div class="todo-section">
-                <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                <div class="scrollable-area"><ul id="todoList"></ul></div>
+    <div id="dayContainer" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+        <div id="allDayContainer" class="all-day-wrapper"></div>
+        <div class="main-container">
+            <div class="left-half">
+                <div class="todo-section">
+                    <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
+                    <div class="scrollable-area"><ul id="todoList"></ul></div>
+                </div>
+                <div class="schedule-section">
+                    <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
+                    <div class="scrollable-area" id="scheduleScrollArea"><div id="scheduleGrid"></div></div>
+                </div>
             </div>
-            <div class="schedule-section">
-                <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                <div class="scrollable-area" id="scheduleScrollArea"><div id="scheduleGrid"></div></div>
-            </div>
-        </div>
-        <div class="right-half">
-            <div class="memo-section">
-                <div class="section-header"><h2>[Memo]</h2></div>
-                <textarea id="memoArea" placeholder="기록을 남기세요..."></textarea>
+            <div class="right-half">
+                <div class="memo-section">
+                    <div class="section-header"><h2>[Memo]</h2></div>
+                    <textarea id="memoArea" placeholder="기록을 남기세요..."></textarea>
+                </div>
             </div>
         </div>
     </div>
@@ -120,7 +133,7 @@
     <div id="todoModal" class="modal-overlay">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0">일정 편집</h3>
+                <h3 style="margin:0">일정 추가/편집</h3>
                 <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none">삭제</button>
             </div>
             <div class="input-group">
@@ -133,7 +146,7 @@
             <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
             <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
             <div style="display:flex; gap:10px;">
-                <div class="input-group" style="flex:1"><label>중요도</label><select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+                <div class="input-group" style="flex:1"><label>우선순위</label><select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
                 <div class="input-group" style="flex:1">
                     <label>시간</label>
                     <div style="display:flex; align-items:center; gap:5px; font-size:12px;"><input type="checkbox" id="allDayCheck" onchange="toggleTimeInput()"> 종일</div>
@@ -194,27 +207,47 @@
             const dateKey = getDateString(currentDate);
             const ul = document.getElementById("todoList");
             const grid = document.getElementById("scheduleGrid");
-            ul.innerHTML = ""; document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
+            const alc = document.getElementById("allDayContainer"); // 버그수정 1: 종일구역 복구
+            
+            ul.innerHTML = ""; alc.innerHTML = "";
+            document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
 
             todos.forEach(t => {
                 if (!shouldShow(t, currentDate)) return;
                 const isDone = t.completedDates && t.completedDates.includes(dateKey);
                 const cName = isDone ? 'completed' : '';
                 
-                if (t.isTask) {
+                // 버그수정 2: 과거 데이터(레거시) 처리. 꼬리표가 없으면, 시간이 없을 때만 할일로 취급
+                let isTask = t.isTask;
+                if (typeof isTask === 'undefined') isTask = !(t.startTime && t.endTime);
+
+                // 반복 여부와 종일/시간 뱃지
+                let repeatLabel = '';
+                if(t.repeat === 'daily') repeatLabel = '🔁 매일';
+                if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
+                if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
+                const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
+
+                // 종일 일정 렌더링
+                if (t.isAllDay) {
+                    alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
+                }
+
+                // 일반 할일 및 시간 일정 렌더링
+                if (isTask && !t.isAllDay) {
                     const li = document.createElement("li");
                     li.className = cName;
-                    li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span></div>`;
+                    li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
                     ul.appendChild(li);
-                } else if (!t.isAllDay && t.startTime && t.endTime) {
+                } else if (!t.isTask && !t.isAllDay && t.startTime && t.endTime) {
                     const [sH, sM] = t.startTime.split(":").map(Number);
                     const [eH, eM] = t.endTime.split(":").map(Number);
                     const b = document.createElement("div");
                     b.className = `schedule-event-block bg-${t.type} ${cName}`;
                     b.style.top = (sH * 60 + sM) / 60 * 50 + "px";
-                    b.style.height = ((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50 + "px";
+                    b.style.height = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20) + "px"; // 최소 높이 20px 보장
                     b.onclick = () => openModal(t.id);
-                    b.innerHTML = `<div style="font-size:10px;">${t.startTime}</div><div>${t.task}</div>`;
+                    b.innerHTML = `<div style="font-size:10px; font-weight:bold;">${t.startTime}</div><div style="font-size:12px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.task}</div>`;
                     grid.appendChild(b);
                 }
             });
@@ -230,8 +263,8 @@
                 const col = document.createElement("div"); col.className = "day-column";
                 col.innerHTML = `<div class="grid-header">${['일','월','화','수','목','금','토'][i]} (${day.getDate()})</div>`;
                 
-                // [수정 규칙] 할 일이든 일정이든 '시간'이 있으면 주간 뷰에 노출
                 todos.forEach(t => {
+                    // 할 일이든 일정이든 '시간'이 있으면 무조건 주간 뷰에 노출
                     if (t.startTime && shouldShow(t, day)) {
                         const div = document.createElement("div");
                         div.className = `mini-event bg-${t.type}`;
@@ -251,9 +284,14 @@
                 const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
                 const cell = document.createElement("div"); cell.className = "day-cell";
                 cell.innerHTML = `<div class="day-number">${i}</div>`;
-                // [기존 규칙] 순수 일정만 노출
+                
                 todos.forEach(t => {
-                    if (!t.isTask && shouldShow(t, day)) {
+                    // 과거 데이터 판단 로직 추가
+                    let isTask = t.isTask;
+                    if (typeof isTask === 'undefined') isTask = !(t.startTime && t.endTime);
+
+                    // 순수 일정만 월간 달력에 노출 (과거의 꼬리표 없는 '할 일'도 자동으로 걸러짐)
+                    if (!isTask && shouldShow(t, day)) {
                         const div = document.createElement("div");
                         div.className = `mini-event bg-${t.type}`;
                         div.innerText = t.task;
@@ -317,7 +355,12 @@
             editingId = id; const m = document.getElementById("todoModal");
             if(id) {
                 const t = todos.find(x => x.id === id);
-                setCategory(t.isTask);
+                
+                // 모달 열 때도 과거 데이터 꼬리표 확인
+                let isT = t.isTask;
+                if (typeof isT === 'undefined') isT = !(t.startTime && t.endTime);
+                setCategory(isT);
+
                 originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task;
                 document.getElementById("taskDateInput").value = originalDateStr;
@@ -354,7 +397,7 @@
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
         function toggleComplete(id, e) { e.stopPropagation(); const dateKey = getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); renderTodos(); } }
-        function deleteTodo() { if(confirm("삭제?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
+        function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
         function saveData() { docRef.set({ todos, memos }); }
         function exportData() { const b = { todos, memos }; const s = JSON.stringify(b, null, 2); const blob = new Blob([s], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `abc-desk-backup.json`; a.click(); }
         
