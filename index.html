@@ -5,25 +5,23 @@
     <title>ABC Desk</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
     <style>
-        /* 디자인 원본 완벽 유지 */
+        /* --- 디자인 원본 완벽 유지 --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 40px; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .date-nav { display: flex; align-items: center; gap: 15px; }
+        
+        /* [애플 디자인] 세그먼트 컨트롤 */
+        .view-selector { display: flex; background-color: #eee; padding: 2px; border-radius: 9px; margin: 0 20px; }
+        .view-btn { border: none; background: none; padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-radius: 7px; color: #666; transition: all 0.2s; }
+        .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
         .date-picker-wrap { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background-color 0.2s; cursor: pointer; }
         .date-picker-wrap:hover { background-color: #eaeaea; }
         .date-nav h1 { font-size: 24px; font-weight: 600; margin: 0; width: 230px; text-align: center; padding: 5px; pointer-events: none; }
         #datePicker { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; border: none; }
         .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #555; padding: 5px 10px; }
-        .icon-btn:hover { color: #000; }
         .today-btn { background-color: #222; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
-        .header-right { display: flex; align-items: center; gap: 20px; }
-        .weather-box { font-size: 15px; color: #555; }
-        .backup-btn { background-color: #fff; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 13px; color: #555; cursor: pointer; }
-
-        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; }
-        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
-        .all-day-item:hover { border-color: #222; }
-
+        
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; }
         .todo-section, .schedule-section, .memo-section { flex: 1; background-color: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
@@ -32,38 +30,38 @@
         .add-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #222; line-height: 1; }
         .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; }
 
+        /* 주간/월간 뷰 디자인 */
+        .weekly-view, .monthly-view { display: none; width: 100%; height: 100%; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; overflow: auto; box-sizing: border-box; }
+        .grid-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 100%; min-width: 800px; }
+        .grid-header { font-weight: 600; font-size: 13px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
+        .day-column { border-right: 1px solid #f0f0f0; padding: 5px; min-height: 400px; }
+        .day-cell { border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; min-height: 120px; }
+        .day-number { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px; }
+        .mini-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
+
         ul { list-style: none; padding: 0; margin: 0; }
         li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
         .priority { font-weight: 600; min-width: 40px; }
         .color-A { color: #FF3B30; } .color-B { color: #007AFF; } .color-C { color: #8E8E93; }
-        .task-text { flex: 1; }
-        .task-meta { display: flex; gap: 8px; font-size: 12px; color: #888; }
-        .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
-        .completed { opacity: 0.5; }
-        .completed .task-text { text-decoration: line-through; color: #aaa; }
+        .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
+        .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
+        .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
 
         #scheduleGrid { position: relative; width: 100%; }
         .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; cursor: cell; box-sizing: border-box; }
         .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; }
         .schedule-event-block { position: absolute; left: 55px; right: 10px; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; }
-        .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
-        .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
-        .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
-
         textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 360px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 13px; color: #666; font-weight: 500; }
-        .input-group input, .input-group select, .input-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
-        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-        .btn-save { background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-        .btn-cancel { background: #eee; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-        .btn-delete { color: #ff3b30; background: none; border: none; cursor: pointer; font-size: 13px; }
+        .category-select { display: flex; gap: 5px; background: #f0f0f0; padding: 3px; border-radius: 8px; }
+        .cat-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
+        .cat-btn.active { background: #fff; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .completed { opacity: 0.5; text-decoration: line-through; }
     </style>
-    
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
 </head>
@@ -73,25 +71,26 @@
         <div class="date-nav">
             <button class="icon-btn" onclick="changeDate(-1)">◀</button>
             <div class="date-picker-wrap">
-                <h1 id="currentDateStr">날짜 로딩 중...</h1>
+                <h1 id="currentDateStr">로딩 중...</h1>
                 <input type="date" id="datePicker" onchange="handleDateSelect(event)">
             </div>
             <button class="icon-btn" onclick="changeDate(1)">▶</button>
             <button class="today-btn" onclick="goToday()">오늘</button>
         </div>
+
+        <div class="view-selector">
+            <button class="view-btn active" id="btnDay" onclick="switchView('day')">일간</button>
+            <button class="view-btn" id="btnWeek" onclick="switchView('week')">주간</button>
+            <button class="view-btn" id="btnMonth" onclick="switchView('month')">월간</button>
+        </div>
+
         <div class="header-right">
             <div class="weather-box">☀️ 쾌적함</div>
-            <div class="backup-actions">
-                <button class="backup-btn" onclick="exportData()">💾 백업</button>
-                <button class="backup-btn" onclick="triggerImport()">📂 복원</button>
-                <input type="file" id="importInput" accept=".json" style="display:none" onchange="importData(event)">
-            </div>
+            <button class="backup-btn" style="background-color: #fff; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;" onclick="exportData()">💾 백업</button>
         </div>
     </header>
 
-    <div id="allDayContainer" class="all-day-wrapper"></div>
-
-    <div class="main-container">
+    <div id="dayContainer" class="main-container">
         <div class="left-half">
             <div class="todo-section">
                 <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
@@ -105,69 +104,43 @@
         <div class="right-half">
             <div class="memo-section">
                 <div class="section-header"><h2>[Memo]</h2></div>
-                <textarea id="memoArea" placeholder="오늘의 생각이나 학원 업무를 자유롭게 기록하세요..."></textarea>
+                <textarea id="memoArea" placeholder="기록을 남기세요..."></textarea>
             </div>
         </div>
+    </div>
+
+    <div id="weekContainer" class="weekly-view">
+        <div class="grid-7" id="weekGrid"></div>
+    </div>
+
+    <div id="monthContainer" class="monthly-view">
+        <div class="grid-7" id="monthGrid"></div>
     </div>
 
     <div id="todoModal" class="modal-overlay">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3 style="margin:0">일정 추가/편집</h3>
+                <h3 style="margin:0">일정 편집</h3>
                 <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none">삭제</button>
             </div>
             <div class="input-group">
-                <label>할 일 내용</label>
-                <input type="text" id="taskInput" placeholder="예: 수학 교재 오타 수정">
-            </div>
-            
-            <div class="input-group">
-                <label>지정 날짜 (날짜를 변경하면 해당 일자로 일정이 이동합니다)</label>
-                <input type="date" id="taskDateInput" style="cursor: pointer;">
-            </div>
-
-            <div style="display:flex; gap:10px;">
-                <div class="input-group" style="flex:1">
-                    <label>우선순위</label>
-                    <div style="display:flex; gap:5px;">
-                        <select id="priorityType" style="flex:1"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
-                        <select id="priorityNum" style="flex:1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
-                    </div>
+                <label>항목 구분</label>
+                <div class="category-select">
+                    <button class="cat-btn active" id="catTodo" onclick="setCategory(true)">할 일 (To-Do)</button>
+                    <button class="cat-btn" id="catSched" onclick="setCategory(false)">순수 일정 (Event)</button>
                 </div>
+            </div>
+            <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
+            <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
+            <div style="display:flex; gap:10px;">
+                <div class="input-group" style="flex:1"><label>중요도</label><select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
                 <div class="input-group" style="flex:1">
                     <label>시간</label>
-                    <div style="display:flex; align-items:center; gap:5px; font-size:12px;">
-                        <input type="checkbox" id="allDayCheck" onchange="toggleTimeInput()"> 종일
-                    </div>
-                    <div id="timeInputRow" style="display:flex; gap:3px;">
-                        <input type="time" id="startTimeInput" style="width:70px; padding:5px;"> ~ <input type="time" id="endTimeInput" style="width:70px; padding:5px;">
-                    </div>
+                    <div style="display:flex; align-items:center; gap:5px; font-size:12px;"><input type="checkbox" id="allDayCheck" onchange="toggleTimeInput()"> 종일</div>
+                    <div id="timeInputRow" style="display:flex; gap:3px;"><input type="time" id="startTimeInput" style="width:70px;"> ~ <input type="time" id="endTimeInput" style="width:70px;"></div>
                 </div>
             </div>
-            
-            <div class="input-group">
-                <label>간단 메모 (지정된 날짜의 우측 메모장에 추가됩니다)</label>
-                <textarea id="taskMemoInput" rows="2" style="resize: none;" placeholder="일정에 필요한 내용을 남겨보세요..."></textarea>
-            </div>
-
-            <div class="input-group">
-                <label>반복</label>
-                <select id="repeatSelect" onchange="toggleWeeklyDays()">
-                    <option value="none">안 함</option>
-                    <option value="daily">매일</option>
-                    <option value="weekly">매주</option>
-                    <option value="monthly">매월</option>
-                </select>
-                <div id="weeklyDays" style="display:none; gap:5px; flex-wrap:wrap; margin-top:5px;">
-                    <label style="font-size:12px;"><input type="checkbox" value="월">월</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="화">화</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="수">수</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="목">목</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="금">금</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="토">토</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="일">일</label>
-                </div>
-            </div>
+            <div class="input-group"><label>간단 메모</label><textarea id="taskMemoInput" rows="2" style="resize:none;"></textarea></div>
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="closeModal()">취소</button>
                 <button class="btn-save" onclick="saveTodo()">저장</button>
@@ -188,276 +161,203 @@
         const db = firebase.firestore();
         const docRef = db.collection("abc_desk_data").doc("namho_workspace");
 
-        let todos = [];
-        let memos = {};
-        let currentDate = new Date();
-        let editingId = null;
-        let isDataLoaded = false; 
+        let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'day'; let isTaskFlag = true;
+        let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
-        // [추가] 일정을 미룰 때 원래 위치를 기억하기 위한 변수
-        let originalDateStr = null;
-        let originalTaskName = null;
-
-        const memoArea = document.getElementById("memoArea");
-
-        function getDateString(d) {
-            const offset = d.getTimezoneOffset() * 60000;
-            return (new Date(d.getTime() - offset)).toISOString().slice(0, 10);
-        }
+        function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
         function startApp() {
-            initSchedule(); 
+            initSchedule();
             docRef.get().then((doc) => {
-                if (doc.exists) {
-                    const d = doc.data();
-                    todos = d.todos || [];
-                    memos = d.memos || {};
-                }
-                isDataLoaded = true; 
+                if (doc.exists) { const d = doc.data(); todos = d.todos || []; memos = d.memos || {}; }
                 updateDateDisplay();
-            }).catch(err => {
-                isDataLoaded = true; 
-                updateDateDisplay(); 
             });
         }
 
-        function initSchedule() {
-            const grid = document.getElementById("scheduleGrid");
-            if (!grid) return;
-            grid.innerHTML = "";
-            for (let i = 0; i < 24; i++) {
-                const row = document.createElement("div");
-                row.className = "time-slot";
-                row.onclick = () => openModal(null, `${i.toString().padStart(2, '0')}:00`, `${((i+1)%24).toString().padStart(2, '0')}:00`);
-                row.innerHTML = `<div class="time-label">${i}:00</div>`;
-                grid.appendChild(row);
-            }
-        }
-
-        function saveData() {
-            if (!isDataLoaded) return; 
-            docRef.set({ todos, memos }).catch(err => {
-                alert("⚠️ 저장 오류! 파이어베이스 [규칙]을 'true'로 변경했는지 확인해주세요.");
-            });
+        function switchView(view) {
+            currentView = view;
+            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(view === 'day' ? 'btnDay' : view === 'week' ? 'btnWeek' : 'btnMonth').classList.add('active');
+            document.getElementById('dayContainer').style.display = view === 'day' ? 'flex' : 'none';
+            document.getElementById('weekContainer').style.display = view === 'week' ? 'block' : 'none';
+            document.getElementById('monthContainer').style.display = view === 'month' ? 'block' : 'none';
+            updateDateDisplay();
         }
 
         function renderTodos() {
+            if (currentView === 'day') renderDayView();
+            else if (currentView === 'week') renderWeekView();
+            else if (currentView === 'month') renderMonthView();
+        }
+
+        function renderDayView() {
             const dateKey = getDateString(currentDate);
             const ul = document.getElementById("todoList");
-            const alc = document.getElementById("allDayContainer");
             const grid = document.getElementById("scheduleGrid");
-            
-            ul.innerHTML = ""; alc.innerHTML = ""; 
-            document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
+            ul.innerHTML = ""; document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
 
             todos.forEach(t => {
-                if (!shouldShow(t)) return;
-                
+                if (!shouldShow(t, currentDate)) return;
                 const isDone = t.completedDates && t.completedDates.includes(dateKey);
                 const cName = isDone ? 'completed' : '';
-                const st = t.startTime || ""; const et = t.endTime || "";
                 
-                let repeatLabel = '';
-                if(t.repeat === 'daily') repeatLabel = '🔁 매일';
-                if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
-                if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
-
-                const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (st ? `<span>${st}~${et}</span>` : '')}</div>`;
-
-                if (t.isAllDay) {
-                    alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
-                }
-
-                const li = document.createElement("li");
-                li.className = cName;
-                li.innerHTML = `
-                    <input type="checkbox" ${isDone ? 'checked' : ''} onclick="toggleComplete('${t.id}', event)">
-                    <div class="todo-content" onclick="openModal('${t.id}')">
-                        <span class="priority color-${t.type}">(${t.type}${t.num})</span> 
-                        <span class="task-text">${t.task}</span>${meta}
-                    </div>`;
-                ul.appendChild(li);
-
-                if (!t.isAllDay && st && et) {
-                    let [sH, sM] = st.split(":").map(Number);
-                    let [eH, eM] = et.split(":").map(Number);
-                    const top = (sH * 60 + sM) / 60 * 50; 
-                    const height = ((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50;
-                    
-                    const block = document.createElement("div");
-                    block.className = `schedule-event-block bg-${t.type} ${cName}`;
-                    block.style.top = top + "px";
-                    block.style.height = (height < 20 ? 20 : height) + "px";
-                    block.onclick = (e) => { e.stopPropagation(); openModal(t.id); };
-                    block.innerHTML = `<div style="font-size:10px; font-weight:bold;">${st}</div><div style="font-size:12px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">(${t.type}${t.num}) ${t.task}</div>`;
-                    grid.appendChild(block);
+                if (t.isTask) {
+                    const li = document.createElement("li");
+                    li.className = cName;
+                    li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span></div>`;
+                    ul.appendChild(li);
+                } else if (!t.isAllDay && t.startTime && t.endTime) {
+                    const [sH, sM] = t.startTime.split(":").map(Number);
+                    const [eH, eM] = t.endTime.split(":").map(Number);
+                    const b = document.createElement("div");
+                    b.className = `schedule-event-block bg-${t.type} ${cName}`;
+                    b.style.top = (sH * 60 + sM) / 60 * 50 + "px";
+                    b.style.height = ((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50 + "px";
+                    b.onclick = () => openModal(t.id);
+                    b.innerHTML = `<div style="font-size:10px;">${t.startTime}</div><div>${t.task}</div>`;
+                    grid.appendChild(b);
                 }
             });
         }
 
-        function shouldShow(t) {
-            const target = new Date(currentDate).setHours(0,0,0,0);
-            if (target < t.createDate) return false;
-            if (t.repeat === 'none') return target === t.createDate;
-            if (t.repeat === 'daily') return true;
-            if (t.repeat === 'weekly') return t.repeatDays.includes(['일','월','화','수','목','금','토'][currentDate.getDay()]);
-            if (t.repeat === 'monthly') return new Date(target).getDate() === new Date(t.createDate).getDate();
-            return false;
-        }
+        function renderWeekView() {
+            const grid = document.getElementById("weekGrid"); grid.innerHTML = "";
+            const startOfWeek = new Date(currentDate);
+            startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
 
-        function toggleComplete(id, e) {
-            e.stopPropagation();
-            const dateKey = getDateString(currentDate);
-            const t = todos.find(x => x.id === id);
-            if(t) {
-                if(!t.completedDates) t.completedDates = [];
-                const idx = t.completedDates.indexOf(dateKey);
-                if(idx > -1) t.completedDates.splice(idx, 1);
-                else t.completedDates.push(dateKey);
-                saveData(); renderTodos();
+            for (let i = 0; i < 7; i++) {
+                const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i);
+                const col = document.createElement("div"); col.className = "day-column";
+                col.innerHTML = `<div class="grid-header">${['일','월','화','수','목','금','토'][i]} (${day.getDate()})</div>`;
+                
+                // [수정 규칙] 할 일이든 일정이든 '시간'이 있으면 주간 뷰에 노출
+                todos.forEach(t => {
+                    if (t.startTime && shouldShow(t, day)) {
+                        const div = document.createElement("div");
+                        div.className = `mini-event bg-${t.type}`;
+                        div.innerText = `[${t.startTime}] ${t.task}`;
+                        div.onclick = () => openModal(t.id);
+                        col.appendChild(div);
+                    }
+                });
+                grid.appendChild(col);
             }
         }
 
+        function renderMonthView() {
+            const grid = document.getElementById("monthGrid"); grid.innerHTML = "";
+            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+            for (let i = 1; i <= lastDay; i++) {
+                const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
+                const cell = document.createElement("div"); cell.className = "day-cell";
+                cell.innerHTML = `<div class="day-number">${i}</div>`;
+                // [기존 규칙] 순수 일정만 노출
+                todos.forEach(t => {
+                    if (!t.isTask && shouldShow(t, day)) {
+                        const div = document.createElement("div");
+                        div.className = `mini-event bg-${t.type}`;
+                        div.innerText = t.task;
+                        div.onclick = () => openModal(t.id);
+                        cell.appendChild(div);
+                    }
+                });
+                grid.appendChild(cell);
+            }
+        }
+
+        function shouldShow(t, target) {
+            const tgt = new Date(target).setHours(0,0,0,0);
+            if (tgt < t.createDate) return false;
+            if (t.repeat === 'none') return tgt === t.createDate;
+            if (t.repeat === 'daily') return true;
+            if (t.repeat === 'weekly') return t.repeatDays.includes(['일','월','화','수','목','금','토'][new Date(target).getDay()]);
+            if (t.repeat === 'monthly') return new Date(tgt).getDate() === new Date(t.createDate).getDate();
+            return false;
+        }
+
+        function saveTodo() {
+            const task = document.getElementById("taskInput").value;
+            const targetDateStr = document.getElementById("taskDateInput").value;
+            const newTs = new Date(targetDateStr).setHours(0,0,0,0);
+
+            // 메모 이사 로직 (기존 유지)
+            if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
+                let oldMemo = memos[originalDateStr] || "";
+                const regex = new RegExp(`(📌 \\[${originalTaskName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\] 메모:\\n[\\s\\S]*?)(?=\\n\\n📌|$)`);
+                const match = oldMemo.match(regex);
+                if (match) {
+                    memos[originalDateStr] = oldMemo.replace(match[0], "").trim();
+                    memos[targetDateStr] = (memos[targetDateStr] || "").trim() + (memos[targetDateStr] ? "\n\n" : "") + match[0];
+                }
+            }
+
+            const taskMemo = document.getElementById("taskMemoInput").value;
+            if (taskMemo.trim() !== "") {
+                memos[targetDateStr] = (memos[targetDateStr] || "").trim() + (memos[targetDateStr] ? "\n\n" : "") + `📌 [${task}] 메모:\n${taskMemo}`;
+            }
+
+            const data = {
+                task, isTask: isTaskFlag, createDate: newTs,
+                type: document.getElementById("priorityType").value, num: document.getElementById("priorityNum").value,
+                startTime: document.getElementById("startTimeInput").value, endTime: document.getElementById("endTimeInput").value,
+                isAllDay: document.getElementById("allDayCheck").checked, repeat: document.getElementById("repeatSelect").value,
+                repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value)
+            };
+
+            if(editingId) {
+                const idx = todos.findIndex(x => x.id === editingId);
+                todos[idx] = { ...todos[idx], ...data };
+            } else {
+                todos.push({ id: Date.now().toString(), ...data, completedDates: [] });
+            }
+            saveData(); closeModal(); updateDateDisplay();
+        }
+
         function openModal(id, st, et) {
-            editingId = id; 
-            const m = document.getElementById("todoModal");
-            const delBtn = document.getElementById("deleteBtn");
-            
+            editingId = id; const m = document.getElementById("todoModal");
             if(id) {
                 const t = todos.find(x => x.id === id);
+                setCategory(t.isTask);
+                originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task;
-                
-                // [수정] 모달 열 때, 원래 지정된 날짜와 이름을 기억해 둡니다.
-                originalDateStr = getDateString(new Date(t.createDate));
-                originalTaskName = t.task;
                 document.getElementById("taskDateInput").value = originalDateStr;
-                
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
                 document.getElementById("allDayCheck").checked = t.isAllDay;
                 document.getElementById("priorityType").value = t.type;
                 document.getElementById("priorityNum").value = t.num;
                 document.getElementById("repeatSelect").value = t.repeat;
-                document.getElementById("taskMemoInput").value = ""; 
-                delBtn.style.display = "block";
+                document.getElementById("deleteBtn").style.display = "block";
             } else {
-                originalDateStr = null;
-                originalTaskName = null;
+                setCategory(true);
                 document.getElementById("taskInput").value = "";
                 document.getElementById("taskDateInput").value = getDateString(currentDate);
-                
                 document.getElementById("startTimeInput").value = st || "";
                 document.getElementById("endTimeInput").value = et || "";
-                document.getElementById("allDayCheck").checked = false;
-                document.getElementById("taskMemoInput").value = "";
-                delBtn.style.display = "none";
+                document.getElementById("deleteBtn").style.display = "none";
             }
-            toggleWeeklyDays(); toggleTimeInput();
             m.style.display = "flex";
         }
 
-        function closeModal() { document.getElementById("todoModal").style.display = "none"; editingId = null; }
-
-        function saveTodo() {
-            const task = document.getElementById("taskInput").value;
-            if(!task) return alert("내용을 입력하세요!");
-            
-            const targetDateStr = document.getElementById("taskDateInput").value;
-            const newCreateTimestamp = new Date(targetDateStr).setHours(0,0,0,0);
-
-            // [마법의 로직] 일정을 미뤘을 때 기존 메모장 내용을 찾아서 새 날짜로 통째로 이사시킵니다.
-            if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
-                let oldMemoText = memos[originalDateStr] || "";
-                // 정규식을 통해 원래 적혀있던 '📌 [할일이름] 메모:' 블록을 아주 정확하게 찾아냅니다.
-                const escapedTaskName = originalTaskName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                const regex = new RegExp(`(📌 \\[${escapedTaskName}\\] 메모:\\n[\\s\\S]*?)(?=\\n\\n📌|$)`);
-                const match = oldMemoText.match(regex);
-
-                if (match) {
-                    const fullMatch = match[0];
-                    // 옛날 날짜 메모장에서는 지우고
-                    oldMemoText = oldMemoText.replace(fullMatch, "");
-                    memos[originalDateStr] = oldMemoText.replace(/\n{3,}/g, '\n\n').trim();
-
-                    // 새로운 목표 날짜 메모장에 찰싹 붙여넣습니다.
-                    let newMemoText = memos[targetDateStr] || "";
-                    memos[targetDateStr] = newMemoText.trim() + (newMemoText.trim() === "" ? "" : "\n\n") + fullMatch;
-                }
-            }
-            
-            const data = {
-                task, 
-                type: document.getElementById("priorityType").value, 
-                num: document.getElementById("priorityNum").value,
-                startTime: document.getElementById("startTimeInput").value, 
-                endTime: document.getElementById("endTimeInput").value,
-                isAllDay: document.getElementById("allDayCheck").checked, 
-                repeat: document.getElementById("repeatSelect").value,
-                repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value)
-            };
-
-            // 새로 입력한 '간단 메모'는 지정된 목표 날짜(targetDateStr)에 추가합니다.
-            const taskMemo = document.getElementById("taskMemoInput").value;
-            if (taskMemo.trim() !== "") {
-                let currentMemo = memos[targetDateStr] || "";
-                memos[targetDateStr] = currentMemo.trim() + (currentMemo.trim() === "" ? "" : "\n\n") + `📌 [${task}] 메모:\n${taskMemo}`;
-            }
-
-            if(editingId) {
-                const idx = todos.findIndex(x => x.id === editingId);
-                todos[idx] = { ...todos[idx], ...data, createDate: newCreateTimestamp };
-            } else {
-                todos.push({ id: Date.now().toString(), createDate: newCreateTimestamp, ...data, completedDates: [] });
-            }
-
-            // 현재 보고 있는 화면의 우측 메모장을 즉시 새로고침해서 이동된 내용을 바로 반영합니다.
-            memoArea.value = memos[getDateString(currentDate)] || "";
-
-            saveData(); closeModal(); renderTodos();
-        }
-
-        function deleteTodo() { if(confirm("이 일정을 삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); renderTodos(); } }
-        
+        function setCategory(isTask) { isTaskFlag = isTask; document.getElementById('catTodo').classList.toggle('active', isTask); document.getElementById('catSched').classList.toggle('active', !isTask); }
+        function initSchedule() { const g = document.getElementById("scheduleGrid"); g.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="time-slot"; r.onclick=()=>openModal(null,`${i.toString().padStart(2,'0')}:00`,`${((i+1)%24).toString().padStart(2,'0')}:00`); r.innerHTML=`<div class="time-label">${i}:00</div>`; g.appendChild(r); } }
+        function closeModal() { document.getElementById("todoModal").style.display = "none"; }
         function changeDate(o) { currentDate.setDate(currentDate.getDate()+o); updateDateDisplay(); }
         function goToday() { currentDate = new Date(); updateDateDisplay(); }
-        function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
-        
         function updateDateDisplay() { 
-            const dStr = ['일','월','화','수','목','금','토']; 
-            document.getElementById("currentDateStr").innerText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (" + dStr[currentDate.getDay()] + ")";
+            const d = ['일','월','화','수','목','금','토'];
+            document.getElementById("currentDateStr").innerText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (" + d[currentDate.getDay()] + ")";
             document.getElementById("datePicker").value = getDateString(currentDate);
             memoArea.value = memos[getDateString(currentDate)] || "";
             renderTodos(); 
         }
-
-        function toggleWeeklyDays() { document.getElementById("weeklyDays").style.display = document.getElementById("repeatSelect").value === "weekly" ? "flex" : "none"; }
-        function toggleTimeInput() { 
-            const isAllDay = document.getElementById("allDayCheck").checked;
-            document.getElementById("timeInputRow").style.opacity = isAllDay ? "0.3" : "1";
-            document.getElementById("startTimeInput").disabled = isAllDay;
-            document.getElementById("endTimeInput").disabled = isAllDay;
-        }
-
-        let mt; 
-        memoArea.addEventListener("input", () => {
-            memos[getDateString(currentDate)] = memoArea.value;
-            clearTimeout(mt); mt = setTimeout(saveData, 1000);
-        });
-
-        function exportData() { 
-            const s = JSON.stringify({ todos, memos }, null, 2); 
-            const blob = new Blob([s], { type: "application/json" }); 
-            const a = document.createElement('a'); 
-            a.href = URL.createObjectURL(blob); a.download = `backup.json`; a.click(); 
-        }
-        function triggerImport() { document.getElementById("importInput").click(); }
-        function importData(e) { 
-            const f = e.target.files[0]; if(!f) return; 
-            const r = new FileReader(); 
-            r.onload = (ev) => { const d = JSON.parse(ev.target.result); todos = d.todos; memos = d.memos; saveData(); updateDateDisplay(); }; 
-            r.readAsText(f); 
-        }
-
+        function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
+        function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
+        function toggleComplete(id, e) { e.stopPropagation(); const dateKey = getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); renderTodos(); } }
+        function deleteTodo() { if(confirm("삭제?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
+        function saveData() { docRef.set({ todos, memos }); }
+        function exportData() { const b = { todos, memos }; const s = JSON.stringify(b, null, 2); const blob = new Blob([s], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `abc-desk-backup.json`; a.click(); }
+        
         startApp();
     </script>
 </body>
