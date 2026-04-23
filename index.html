@@ -5,16 +5,15 @@
     <title>ABC Desk</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
     <style>
-        /* --- 디자인 원본 완벽 유지 --- */
+        /* --- 공통 디자인 --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 40px; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .date-nav { display: flex; align-items: center; gap: 15px; }
-        
-        /* [애플 디자인] 세그먼트 컨트롤 */
-        .view-selector { display: flex; background-color: #eee; padding: 2px; border-radius: 9px; margin: 0 20px; }
+        .date-nav { display: flex; align-items: center; gap: 15px; flex: 1; }
+        .view-selector { display: flex; background-color: #eee; padding: 2px; border-radius: 9px; margin: 0 20px; justify-content: center; }
         .view-btn { border: none; background: none; padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-radius: 7px; color: #666; transition: all 0.2s; }
         .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-
+        .header-right { display: flex; justify-content: flex-end; flex: 1; font-size: 15px; color: #555; }
+        
         .date-picker-wrap { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background-color 0.2s; cursor: pointer; }
         .date-picker-wrap:hover { background-color: #eaeaea; }
         .date-nav h1 { font-size: 24px; font-weight: 600; margin: 0; width: 230px; text-align: center; padding: 5px; pointer-events: none; }
@@ -22,55 +21,79 @@
         .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #555; padding: 5px 10px; }
         .today-btn { background-color: #222; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
         
+        /* --- 뷰 컨테이너 --- */
+        .view-container { flex: 1; overflow: hidden; display: none; flex-direction: column; }
+        .view-container.active { display: flex; }
+
+        /* [1] 일간 뷰 스타일 */
+        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; }
+        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; }
         .todo-section, .schedule-section, .memo-section { flex: 1; background-color: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; }
         .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 15px; }
         h2 { font-size: 16px; font-weight: 600; margin: 0; }
         .add-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #222; line-height: 1; }
-        .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; }
-        .scrollable-area::-webkit-scrollbar { width: 6px; }
-        .scrollable-area::-webkit-scrollbar-thumb { background-color: #eee; border-radius: 3px; }
-
-        /* 종일 뷰 래퍼 복구 */
-        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; }
-        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
-        .all-day-item:hover { border-color: #222; }
-
-        /* 주간/월간 뷰 디자인 */
-        .weekly-view, .monthly-view { display: none; width: 100%; height: 100%; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; overflow: auto; box-sizing: border-box; }
-        .grid-7 { display: grid; grid-template-columns: repeat(7, 1fr); gap: 10px; height: 100%; min-width: 800px; }
-        .grid-header { font-weight: 600; font-size: 13px; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px; }
-        .day-column { border-right: 1px solid #f0f0f0; padding: 5px; min-height: 400px; }
-        .day-cell { border: 1px solid #f0f0f0; border-radius: 8px; padding: 10px; min-height: 120px; }
-        .day-number { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 8px; }
-        .mini-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
-
+        .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; position: relative; }
         ul { list-style: none; padding: 0; margin: 0; }
         li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
+        
+        /* 공통 이벤트 스타일 */
+        .priority { font-weight: 600; min-width: 40px; }
         .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; }
         .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
-        .priority { font-weight: 600; min-width: 40px; }
         .color-A { color: #FF3B30; } .color-B { color: #007AFF; } .color-C { color: #8E8E93; }
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
         .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
         .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
+        .completed { opacity: 0.5; text-decoration: line-through; }
 
-        #scheduleGrid { position: relative; width: 100%; }
-        .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; cursor: cell; box-sizing: border-box; }
-        .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; }
-        .schedule-event-block { position: absolute; left: 55px; right: 10px; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; }
+        /* 타임 그리드 공통 (일간, 주간) */
+        .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; box-sizing: border-box; }
+        .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; flex-shrink: 0; }
+        .schedule-event-block { position: absolute; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; }
+        .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+        .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* [2] 주간 뷰 스타일 (타임 그리드) */
+        .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
+        .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; }
+        .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; }
+        .week-header-cell:last-child { border-right: none; }
+        .week-body { display: flex; flex: 1; overflow-y: auto; position: relative; }
+        .week-time-col { width: 55px; flex-shrink: 0; border-right: 1px solid #f0f0f0; background: #fff; }
+        .week-time-slot { height: 50px; text-align: center; padding-top: 5px; font-size: 12px; color: #888; border-bottom: 1px solid #transparent; box-sizing: border-box; }
+        .week-grid-cols { display: flex; flex: 1; position: relative; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 50px; }
+        .week-day-col { flex: 1; border-right: 1px solid #f0f0f0; position: relative; }
+        .week-day-col:last-child { border-right: none; }
+
+        /* [3] 월간 뷰 스타일 (리얼 달력) */
+        .month-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; }
+        .month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
+        .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, 1fr); gap: 8px; flex: 1; overflow-y: auto; padding-right: 5px; }
+        .month-cell { border: 1px solid #f0f0f0; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; }
+        .month-cell.empty { border: none; background: transparent; }
+        .month-cell.today { background-color: #fdfaf0; border-color: #f0e6cc; }
+        .month-date-num { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 4px; }
+        .month-cell.today .month-date-num { color: #d97a00; }
+        .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
+
         textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
+        /* 모달 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 360px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 13px; color: #666; font-weight: 500; }
+        .input-group input, .input-group select, .input-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
         .category-select { display: flex; gap: 5px; background: #f0f0f0; padding: 3px; border-radius: 8px; }
         .cat-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .cat-btn.active { background: #fff; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .completed { opacity: 0.5; text-decoration: line-through; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
+        .btn-save { background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        .btn-cancel { background: #eee; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        .btn-delete { color: #ff3b30; background: none; border: none; cursor: pointer; font-size: 13px; }
     </style>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
@@ -89,18 +112,17 @@
         </div>
 
         <div class="view-selector">
-            <button class="view-btn active" id="btnDay" onclick="switchView('day')">일간</button>
-            <button class="view-btn" id="btnWeek" onclick="switchView('week')">주간</button>
-            <button class="view-btn" id="btnMonth" onclick="switchView('month')">월간</button>
+            <button class="view-btn active" id="btnDay" onclick="switchView('dayContainer')">일간</button>
+            <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
+            <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
         </div>
 
         <div class="header-right">
             <div class="weather-box">☀️ 쾌적함</div>
-            <button class="backup-btn" style="background-color: #fff; border: 1px solid #ddd; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer;" onclick="exportData()">💾 백업</button>
-        </div>
+            </div>
     </header>
 
-    <div id="dayContainer" style="display:flex; flex-direction:column; flex:1; overflow:hidden;">
+    <div id="dayContainer" class="view-container active">
         <div id="allDayContainer" class="all-day-wrapper"></div>
         <div class="main-container">
             <div class="left-half">
@@ -110,7 +132,8 @@
                 </div>
                 <div class="schedule-section">
                     <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                    <div class="scrollable-area" id="scheduleScrollArea"><div id="scheduleGrid"></div></div>
+                    <div class="scrollable-area" id="dayScheduleGrid">
+                        </div>
                 </div>
             </div>
             <div class="right-half">
@@ -122,12 +145,23 @@
         </div>
     </div>
 
-    <div id="weekContainer" class="weekly-view">
-        <div class="grid-7" id="weekGrid"></div>
+    <div id="weekContainer" class="view-container">
+        <div class="week-wrapper">
+            <div class="week-header-row" id="weekHeader"></div>
+            <div class="week-body" id="weekBodyScroll">
+                <div class="week-time-col" id="weekTimeLabels"></div>
+                <div class="week-grid-cols" id="weekColumns"></div>
+            </div>
+        </div>
     </div>
 
-    <div id="monthContainer" class="monthly-view">
-        <div class="grid-7" id="monthGrid"></div>
+    <div id="monthContainer" class="view-container">
+        <div class="month-wrapper">
+            <div class="month-header-row">
+                <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+            </div>
+            <div class="month-grid" id="monthGrid"></div>
+        </div>
     </div>
 
     <div id="todoModal" class="modal-overlay">
@@ -174,126 +208,164 @@
         const db = firebase.firestore();
         const docRef = db.collection("abc_desk_data").doc("namho_workspace");
 
-        let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'day'; let isTaskFlag = true;
+        let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
         function startApp() {
-            initSchedule();
+            initDaySchedule();
+            initWeekGrid();
             docRef.get().then((doc) => {
                 if (doc.exists) { const d = doc.data(); todos = d.todos || []; memos = d.memos || {}; }
                 updateDateDisplay();
             });
         }
 
-        function switchView(view) {
-            currentView = view;
+        function switchView(viewId) {
+            currentView = viewId;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(view === 'day' ? 'btnDay' : view === 'week' ? 'btnWeek' : 'btnMonth').classList.add('active');
-            document.getElementById('dayContainer').style.display = view === 'day' ? 'flex' : 'none';
-            document.getElementById('weekContainer').style.display = view === 'week' ? 'block' : 'none';
-            document.getElementById('monthContainer').style.display = view === 'month' ? 'block' : 'none';
+            document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : 'btnMonth').classList.add('active');
+            
+            document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
             updateDateDisplay();
         }
 
-        function renderTodos() {
-            if (currentView === 'day') renderDayView();
-            else if (currentView === 'week') renderWeekView();
-            else if (currentView === 'month') renderMonthView();
+        function updateDateDisplay() { 
+            const dStr = ['일','월','화','수','목','금','토'];
+            document.getElementById("currentDateStr").innerText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (" + dStr[currentDate.getDay()] + ")";
+            document.getElementById("datePicker").value = getDateString(currentDate);
+            memoArea.value = memos[getDateString(currentDate)] || "";
+            
+            if (currentView === 'dayContainer') renderDayView();
+            else if (currentView === 'weekContainer') renderWeekView();
+            else if (currentView === 'monthContainer') renderMonthView();
         }
 
+        // --- 1. 일간 뷰 렌더링 ---
         function renderDayView() {
             const dateKey = getDateString(currentDate);
             const ul = document.getElementById("todoList");
-            const grid = document.getElementById("scheduleGrid");
-            const alc = document.getElementById("allDayContainer"); // 버그수정 1: 종일구역 복구
+            const grid = document.getElementById("dayScheduleGrid");
+            const alc = document.getElementById("allDayContainer");
             
             ul.innerHTML = ""; alc.innerHTML = "";
-            document.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
+            grid.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
 
             todos.forEach(t => {
                 if (!shouldShow(t, currentDate)) return;
                 const isDone = t.completedDates && t.completedDates.includes(dateKey);
                 const cName = isDone ? 'completed' : '';
                 
-                // 버그수정 2: 과거 데이터(레거시) 처리. 꼬리표가 없으면, 시간이 없을 때만 할일로 취급
+                // 레거시 데이터 보정
                 let isTask = t.isTask;
-                if (typeof isTask === 'undefined') isTask = !(t.startTime && t.endTime);
+                if (typeof isTask === 'undefined') isTask = false; 
 
-                // 반복 여부와 종일/시간 뱃지
                 let repeatLabel = '';
                 if(t.repeat === 'daily') repeatLabel = '🔁 매일';
                 if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
                 if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
                 const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
 
-                // 종일 일정 렌더링
                 if (t.isAllDay) {
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
-                }
-
-                // 일반 할일 및 시간 일정 렌더링
-                if (isTask && !t.isAllDay) {
-                    const li = document.createElement("li");
-                    li.className = cName;
-                    li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
-                    ul.appendChild(li);
-                } else if (!t.isTask && !t.isAllDay && t.startTime && t.endTime) {
-                    const [sH, sM] = t.startTime.split(":").map(Number);
-                    const [eH, eM] = t.endTime.split(":").map(Number);
-                    const b = document.createElement("div");
-                    b.className = `schedule-event-block bg-${t.type} ${cName}`;
-                    b.style.top = (sH * 60 + sM) / 60 * 50 + "px";
-                    b.style.height = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20) + "px"; // 최소 높이 20px 보장
-                    b.onclick = () => openModal(t.id);
-                    b.innerHTML = `<div style="font-size:10px; font-weight:bold;">${t.startTime}</div><div style="font-size:12px; font-weight:bold; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${t.task}</div>`;
-                    grid.appendChild(b);
+                } else {
+                    // 할 일(To-Do)은 목록에 추가
+                    if (isTask) {
+                        const li = document.createElement("li");
+                        li.className = cName;
+                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
+                        ul.appendChild(li);
+                    }
+                    
+                    // 스케줄 그리드에는 '시간이 있는 모든 것(일정 + 시간있는 할일)'을 표시
+                    if (t.startTime && t.endTime) {
+                        const [sH, sM] = t.startTime.split(":").map(Number);
+                        const [eH, eM] = t.endTime.split(":").map(Number);
+                        const b = document.createElement("div");
+                        b.className = `schedule-event-block bg-${t.type} ${cName}`;
+                        b.style.top = (sH * 60 + sM) / 60 * 50 + "px";
+                        b.style.height = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20) + "px";
+                        b.style.left = "55px"; b.style.right = "10px";
+                        b.onclick = () => openModal(t.id);
+                        b.innerHTML = `<div class="event-time-text">${t.startTime}</div><div class="event-title-text">${t.task}</div>`;
+                        grid.appendChild(b);
+                    }
                 }
             });
         }
 
+        // --- 2. 주간 뷰 (타임 그리드) 렌더링 ---
         function renderWeekView() {
-            const grid = document.getElementById("weekGrid"); grid.innerHTML = "";
             const startOfWeek = new Date(currentDate);
             startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+            
+            const header = document.getElementById("weekHeader"); header.innerHTML = "";
+            const columnsContainer = document.getElementById("weekColumns"); columnsContainer.innerHTML = "";
 
             for (let i = 0; i < 7; i++) {
                 const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i);
-                const col = document.createElement("div"); col.className = "day-column";
-                col.innerHTML = `<div class="grid-header">${['일','월','화','수','목','금','토'][i]} (${day.getDate()})</div>`;
+                
+                // 요일 헤더
+                const hCell = document.createElement("div"); hCell.className = "week-header-cell";
+                hCell.innerText = `${['일','월','화','수','목','금','토'][i]} (${day.getDate()})`;
+                header.appendChild(hCell);
+
+                // 세로 열(컬럼) 생성
+                const col = document.createElement("div"); col.className = "week-day-col";
                 
                 todos.forEach(t => {
-                    // 할 일이든 일정이든 '시간'이 있으면 무조건 주간 뷰에 노출
-                    if (t.startTime && shouldShow(t, day)) {
-                        const div = document.createElement("div");
-                        div.className = `mini-event bg-${t.type}`;
-                        div.innerText = `[${t.startTime}] ${t.task}`;
-                        div.onclick = () => openModal(t.id);
-                        col.appendChild(div);
+                    // 주간 뷰는 '시간이 있는 모든 항목' (할 일 포함) 노출
+                    if (!t.isAllDay && t.startTime && t.endTime && shouldShow(t, day)) {
+                        const [sH, sM] = t.startTime.split(":").map(Number);
+                        const [eH, eM] = t.endTime.split(":").map(Number);
+                        const b = document.createElement("div");
+                        b.className = `schedule-event-block bg-${t.type}`;
+                        b.style.top = (sH * 60 + sM) / 60 * 50 + "px";
+                        b.style.height = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20) + "px";
+                        b.style.left = "2px"; b.style.right = "2px";
+                        b.onclick = () => openModal(t.id);
+                        b.innerHTML = `<div class="event-time-text">${t.startTime}</div><div class="event-title-text">${t.task}</div>`;
+                        col.appendChild(b);
                     }
                 });
-                grid.appendChild(col);
+                columnsContainer.appendChild(col);
             }
         }
 
+        // --- 3. 월간 뷰 (리얼 달력) 렌더링 ---
         function renderMonthView() {
             const grid = document.getElementById("monthGrid"); grid.innerHTML = "";
-            const lastDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
-            for (let i = 1; i <= lastDay; i++) {
-                const day = new Date(currentDate.getFullYear(), currentDate.getMonth(), i);
-                const cell = document.createElement("div"); cell.className = "day-cell";
-                cell.innerHTML = `<div class="day-number">${i}</div>`;
+            const year = currentDate.getFullYear(); const month = currentDate.getMonth();
+            
+            const firstDayIndex = new Date(year, month, 1).getDay(); // 0(일) ~ 6(토)
+            const lastDate = new Date(year, month + 1, 0).getDate();
+            
+            // 앞부분 빈 칸
+            for (let i = 0; i < firstDayIndex; i++) {
+                const emptyCell = document.createElement("div"); emptyCell.className = "month-cell empty";
+                grid.appendChild(emptyCell);
+            }
+            
+            // 날짜 채우기
+            const todayDate = new Date();
+            for (let i = 1; i <= lastDate; i++) {
+                const day = new Date(year, month, i);
+                const cell = document.createElement("div"); 
+                cell.className = "month-cell";
+                if (day.toDateString() === todayDate.toDateString()) cell.classList.add("today");
+                
+                cell.innerHTML = `<div class="month-date-num">${i}</div>`;
                 
                 todos.forEach(t => {
-                    // 과거 데이터 판단 로직 추가
                     let isTask = t.isTask;
-                    if (typeof isTask === 'undefined') isTask = !(t.startTime && t.endTime);
+                    if (typeof isTask === 'undefined') isTask = false; 
 
-                    // 순수 일정만 월간 달력에 노출 (과거의 꼬리표 없는 '할 일'도 자동으로 걸러짐)
+                    // 월간 뷰는 '순수 일정(Event)'만 노출 (할 일 제외)
                     if (!isTask && shouldShow(t, day)) {
                         const div = document.createElement("div");
-                        div.className = `mini-event bg-${t.type}`;
+                        div.className = `month-event bg-${t.type}`;
                         div.innerText = t.task;
                         div.onclick = () => openModal(t.id);
                         cell.appendChild(div);
@@ -318,7 +390,6 @@
             const targetDateStr = document.getElementById("taskDateInput").value;
             const newTs = new Date(targetDateStr).setHours(0,0,0,0);
 
-            // 메모 이사 로직 (기존 유지)
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
                 let oldMemo = memos[originalDateStr] || "";
                 const regex = new RegExp(`(📌 \\[${originalTaskName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\] 메모:\\n[\\s\\S]*?)(?=\\n\\n📌|$)`);
@@ -328,7 +399,6 @@
                     memos[targetDateStr] = (memos[targetDateStr] || "").trim() + (memos[targetDateStr] ? "\n\n" : "") + match[0];
                 }
             }
-
             const taskMemo = document.getElementById("taskMemoInput").value;
             if (taskMemo.trim() !== "") {
                 memos[targetDateStr] = (memos[targetDateStr] || "").trim() + (memos[targetDateStr] ? "\n\n" : "") + `📌 [${task}] 메모:\n${taskMemo}`;
@@ -355,12 +425,8 @@
             editingId = id; const m = document.getElementById("todoModal");
             if(id) {
                 const t = todos.find(x => x.id === id);
-                
-                // 모달 열 때도 과거 데이터 꼬리표 확인
-                let isT = t.isTask;
-                if (typeof isT === 'undefined') isT = !(t.startTime && t.endTime);
+                let isT = t.isTask; if (typeof isT === 'undefined') isT = false;
                 setCategory(isT);
-
                 originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task;
                 document.getElementById("taskDateInput").value = originalDateStr;
@@ -383,24 +449,37 @@
         }
 
         function setCategory(isTask) { isTaskFlag = isTask; document.getElementById('catTodo').classList.toggle('active', isTask); document.getElementById('catSched').classList.toggle('active', !isTask); }
-        function initSchedule() { const g = document.getElementById("scheduleGrid"); g.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="time-slot"; r.onclick=()=>openModal(null,`${i.toString().padStart(2,'0')}:00`,`${((i+1)%24).toString().padStart(2,'0')}:00`); r.innerHTML=`<div class="time-label">${i}:00</div>`; g.appendChild(r); } }
+        
+        function initDaySchedule() { 
+            const g = document.getElementById("dayScheduleGrid"); g.innerHTML = ""; 
+            for(let i=0; i<24; i++) { 
+                const r = document.createElement("div"); r.className="time-slot"; 
+                r.onclick=()=>openModal(null,`${i.toString().padStart(2,'0')}:00`,`${((i+1)%24).toString().padStart(2,'0')}:00`); 
+                r.innerHTML=`<div class="time-label">${i}:00</div>`; g.appendChild(r); 
+            } 
+        }
+        function initWeekGrid() {
+            const labels = document.getElementById("weekTimeLabels"); labels.innerHTML = "";
+            for(let i=0; i<24; i++) {
+                const r = document.createElement("div"); r.className="week-time-slot"; r.innerText=`${i}:00`; labels.appendChild(r);
+            }
+        }
+
         function closeModal() { document.getElementById("todoModal").style.display = "none"; }
         function changeDate(o) { currentDate.setDate(currentDate.getDate()+o); updateDateDisplay(); }
         function goToday() { currentDate = new Date(); updateDateDisplay(); }
-        function updateDateDisplay() { 
-            const d = ['일','월','화','수','목','금','토'];
-            document.getElementById("currentDateStr").innerText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (" + d[currentDate.getDay()] + ")";
-            document.getElementById("datePicker").value = getDateString(currentDate);
-            memoArea.value = memos[getDateString(currentDate)] || "";
-            renderTodos(); 
-        }
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
-        function toggleComplete(id, e) { e.stopPropagation(); const dateKey = getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); renderTodos(); } }
+        function toggleComplete(id, e) { e.stopPropagation(); const dateKey = getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
         function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
         function saveData() { docRef.set({ todos, memos }); }
-        function exportData() { const b = { todos, memos }; const s = JSON.stringify(b, null, 2); const blob = new Blob([s], { type: "application/json" }); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `abc-desk-backup.json`; a.click(); }
         
+        let mt; 
+        memoArea.addEventListener("input", () => {
+            memos[getDateString(currentDate)] = memoArea.value;
+            clearTimeout(mt); mt = setTimeout(saveData, 1000);
+        });
+
         startApp();
     </script>
 </body>
