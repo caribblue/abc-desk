@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ABC Desk</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
+    
+    <title>도담 플래너</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="도담 플래너">
+    <link rel="apple-touch-icon" href="dodam_512.jpg">
+    <link rel="icon" href="dodam_512.jpg">
+
     <style>
         /* --- 공통 디자인 --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
@@ -200,7 +207,7 @@
 
     <div id="loginContainer">
         <div class="login-box">
-            <h2>ABC Desk</h2>
+            <h2>도담 플래너</h2>
             <p style="font-size: 13px; color: #666; margin-top: -5px; margin-bottom: 10px;">프라이빗 워크스페이스에 로그인하세요</p>
             <input type="email" id="emailInput" placeholder="이메일 (예: namo.cho@gmail.com)">
             <input type="password" id="passwordInput" placeholder="비밀번호 (6자리 이상)">
@@ -423,7 +430,7 @@
         let editor; let mt;
 
         const pastelPalette = ["#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792", "#FF7575", "#FF9955", "#D2B53B", "#68B96D", "#5DA2E6", "#9375CA", "#F074AA", "#4DA6A6", "#C28956", "#93857F"];
-        const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스" };
+        const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스", "2027-01-01": "신정", "2027-02-06": "설날 연휴", "2027-02-07": "설날", "2027-02-08": "설날 연휴", "2027-03-01": "삼일절", "2027-05-05": "어린이날", "2027-05-13": "부처님오신날", "2027-06-06": "현충일", "2027-08-15": "광복절", "2027-08-16": "대체공휴일", "2027-09-14": "추석 연휴", "2027-09-15": "추석", "2027-09-16": "추석 연휴", "2027-10-03": "개천절", "2027-10-09": "한글날", "2027-12-25": "크리스마스" };
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
@@ -443,7 +450,6 @@
             }
         });
 
-        // 🌟 [긴급 복구 적용] 데이터 강제 이사 로직 보완
         function loadUserData(user) {
             initDaySchedule(); initWeekGrid();
             const userRef = db.collection("users").doc(user.uid);
@@ -453,7 +459,6 @@
                     const d = doc.data();
                     todos = d.todos || []; memos = d.memos || {}; ledgers = d.ledgers || [];
                     
-                    // 만약 계정은 생성되었으나 데이터가 텅 비어있고, namo.cho 계정이라면 강제로 다시 가져오기
                     if (todos.length === 0 && (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com')) {
                         forceMigration(userRef);
                     } else {
@@ -461,7 +466,6 @@
                         updateDateDisplay();
                     }
                 } else {
-                    // 데이터가 아예 없는 새 계정일 때
                     if (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com') {
                         forceMigration(userRef);
                     } else {
@@ -471,7 +475,6 @@
             });
         }
 
-        // 🌟 [긴급 복구 함수] 기존 공용 폴더에서 억지로 데이터 긁어오기
         function forceMigration(userRef) {
             db.collection("abc_desk_data").doc("namho_workspace").get().then(oldDoc => {
                 if(oldDoc.exists) {
@@ -480,7 +483,6 @@
                     userRef.set({ todos, memos, ledgers });
                     initEditor();
                     updateDateDisplay();
-                    alert("환영합니다! 잃어버렸던 기존 데이터를 성공적으로 복구해 개인 계정으로 가져왔습니다. 🎉");
                 } else {
                     initEmptyData();
                 }

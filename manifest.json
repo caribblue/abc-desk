@@ -1,0 +1,15 @@
+{
+  "name": "도담 플래너",
+  "short_name": "도담 플래너",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f9fb",
+  "theme_color": "#222222",
+  "icons": [
+    {
+      "src": "dodam_512.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
