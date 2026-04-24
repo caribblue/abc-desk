@@ -9,7 +9,7 @@
         /* --- 공통 디자인 --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* 🌟 [NEW] 로그인 화면 스타일 */
+        /* 로그인 화면 스타일 */
         #loginContainer { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; background-color: #f9f9fb; position: absolute; top: 0; left: 0; z-index: 9999; }
         .login-box { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 320px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
         .login-box h2 { margin: 0 0 10px 0; font-size: 22px; font-weight: 700; color: #111; }
@@ -95,6 +95,8 @@
         .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, 1fr); gap: 8px; flex: 1; overflow-y: auto; padding-right: 5px; min-width: 500px; -webkit-overflow-scrolling: touch; }
         .month-cell { border: 1px solid #f0f0f0; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; cursor: pointer; }
         .month-cell:hover { background-color: #fafafa; }
+        .month-cell.empty { border: none; background: transparent; cursor: default; }
+        .month-cell.empty:hover { background-color: transparent; }
         .month-cell.today { background-color: #fdfaf0; border-color: #f0e6cc; }
         .month-date-num { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 2px; pointer-events: none; }
         .month-cell.today .month-date-num { color: #d97a00; }
@@ -114,8 +116,6 @@
         .habit-empty:hover { background-color: #e5e5ea; }
         .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
-
-        textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
         /* 모달 공통 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
@@ -141,7 +141,7 @@
 
         .mobile-tab-bar { display: none; }
 
-        /* 스마트 에디터(Editor.js) 전용 커스텀 스타일 */
+        /* 스마트 에디터 전용 커스텀 스타일 */
         #editorjs { flex: 1; overflow-y: auto; background: #fff; font-size: 15px; line-height: 1.6; -webkit-overflow-scrolling: touch; padding-right: 10px; }
         .codex-editor__redactor { padding-bottom: 50px !important; }
         .ce-block__content, .ce-toolbar__content { max-width: 100% !important; margin: 0; }
@@ -202,7 +202,7 @@
         <div class="login-box">
             <h2>ABC Desk</h2>
             <p style="font-size: 13px; color: #666; margin-top: -5px; margin-bottom: 10px;">프라이빗 워크스페이스에 로그인하세요</p>
-            <input type="email" id="emailInput" placeholder="이메일 (예: namho.cho@gmail.com)">
+            <input type="email" id="emailInput" placeholder="이메일 (예: namo.cho@gmail.com)">
             <input type="password" id="passwordInput" placeholder="비밀번호 (6자리 이상)">
             <button class="btn-primary" onclick="handleLogin()">로그인</button>
             <button class="btn-secondary" onclick="handleSignup()">새 계정 만들기</button>
@@ -295,7 +295,7 @@
                 <h3 style="margin:0">일정 추가/편집</h3>
                 <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none">삭제</button>
             </div>
-            <div class="input-group">
+            <div class="input-group" style="margin-bottom: 10px;">
                 <label>항목 구분</label>
                 <div class="category-select">
                     <button class="cat-btn active" id="catTodo" onclick="setCategory(true)">할 일 (To-Do)</button>
@@ -411,7 +411,7 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const auth = firebase.auth(); // 🌟 Auth 추가
+        const auth = firebase.auth(); 
 
         let currentUser = null;
         let inactivityTimer;
@@ -427,7 +427,6 @@
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
-        // 🌟 [NEW] 로그인 인증 상태 감지
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
@@ -444,7 +443,7 @@
             }
         });
 
-        // 🌟 [NEW] 계정별 데이터 로드 및 기존 공용 데이터 이사(Migration)
+        // 🌟 [긴급 복구 적용] 데이터 강제 이사 로직 보완
         function loadUserData(user) {
             initDaySchedule(); initWeekGrid();
             const userRef = db.collection("users").doc(user.uid);
@@ -453,28 +452,37 @@
                 if (doc.exists) {
                     const d = doc.data();
                     todos = d.todos || []; memos = d.memos || {}; ledgers = d.ledgers || [];
-                    initEditor();
-                    updateDateDisplay();
-                } else {
-                    // 데이터가 없는 새 계정일 때
-                    if (user.email === 'namho.cho@gmail.com') {
-                        // 개인용 계정이면 기존 공용 데이터 복사해오기
-                        db.collection("abc_desk_data").doc("namho_workspace").get().then(oldDoc => {
-                            if(oldDoc.exists) {
-                                const od = oldDoc.data();
-                                todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
-                                userRef.set({ todos, memos, ledgers });
-                                initEditor();
-                                updateDateDisplay();
-                                alert("환영합니다! 기존 데이터를 성공적으로 개인 계정으로 가져왔습니다. 🎉");
-                            } else {
-                                initEmptyData();
-                            }
-                        });
+                    
+                    // 만약 계정은 생성되었으나 데이터가 텅 비어있고, namo.cho 계정이라면 강제로 다시 가져오기
+                    if (todos.length === 0 && (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com')) {
+                        forceMigration(userRef);
                     } else {
-                        // 학원용 등 다른 계정이면 텅 빈 상태로 시작
+                        initEditor();
+                        updateDateDisplay();
+                    }
+                } else {
+                    // 데이터가 아예 없는 새 계정일 때
+                    if (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com') {
+                        forceMigration(userRef);
+                    } else {
                         initEmptyData();
                     }
+                }
+            });
+        }
+
+        // 🌟 [긴급 복구 함수] 기존 공용 폴더에서 억지로 데이터 긁어오기
+        function forceMigration(userRef) {
+            db.collection("abc_desk_data").doc("namho_workspace").get().then(oldDoc => {
+                if(oldDoc.exists) {
+                    const od = oldDoc.data();
+                    todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
+                    userRef.set({ todos, memos, ledgers });
+                    initEditor();
+                    updateDateDisplay();
+                    alert("환영합니다! 잃어버렸던 기존 데이터를 성공적으로 복구해 개인 계정으로 가져왔습니다. 🎉");
+                } else {
+                    initEmptyData();
                 }
             });
         }
@@ -486,7 +494,6 @@
             updateDateDisplay();
         }
 
-        // 🌟 [NEW] 로그인 / 회원가입 / 로그아웃 제어
         function handleLogin() {
             const email = document.getElementById('emailInput').value;
             const pw = document.getElementById('passwordInput').value;
@@ -517,7 +524,6 @@
             }
         }
 
-        // 🌟 [NEW] 1시간 자동 로그아웃 타이머
         function startInactivityTimer() {
             resetTimer();
             window.addEventListener('mousemove', resetTimer);
@@ -540,7 +546,7 @@
                 inactivityTimer = setTimeout(() => {
                     auth.signOut();
                     alert("1시간 동안 활동이 없어 안전하게 자동 로그아웃 되었습니다.");
-                }, 3600000); // 1시간 (3600000ms)
+                }, 3600000); 
             }
         }
 
@@ -552,7 +558,7 @@
         }
 
         function initEditor() {
-            if(editor) { editor.destroy(); editor = null; } // 기존 에디터 리셋
+            if(editor) { editor.destroy(); editor = null; } 
             
             const editorTools = {
                 header: Header, list: List, checklist: Checklist, Marker: Marker, table: Table,
@@ -814,7 +820,6 @@
         function saveTodo() {
             const task = document.getElementById("taskInput").value; const targetDateStr = document.getElementById("taskDateInput").value; const newTs = new Date(targetDateStr).setHours(0,0,0,0);
             
-            // 스마트 에디터 기반 메모 연동
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
                 let oldData = getMemoDataForDate(originalDateStr); let blockToMove = null;
                 if (oldData && oldData.blocks) {
@@ -862,7 +867,6 @@
         function toggleComplete(id, e, forceDateStr) { e.stopPropagation(); const dateKey = forceDateStr || getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
         function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
         
-        // 🌟 [NEW] 로그인한 계정에만 데이터 저장
         function saveData() { 
             if(!currentUser) return;
             db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers }); 
@@ -874,7 +878,6 @@
         function deleteLedger(id) { if(confirm("삭제하시겠습니까?")) { ledgers = ledgers.filter(l => l.id !== id); saveData(); renderLedger(); } }
         function renderLedger() { const todayStr = getDateString(currentDate); const todayLedgers = ledgers.filter(l => l.date === todayStr); const tbody = document.getElementById('ledgerTodayBody'); tbody.innerHTML = ''; todayLedgers.forEach(l => { tbody.innerHTML += `<tr><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #333;">${l.item}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; font-weight: 600; color: #222;">${l.amount.toLocaleString()}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.debit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.credit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9;"><button onclick="deleteLedger('${l.id}')" style="background:none; border:none; color:#ff3b30; cursor:pointer; font-size:14px;">✕</button></td></tr>`; }); const balances = {}; ledgers.forEach(l => { if (!balances[l.debit]) balances[l.debit] = 0; if (!balances[l.credit]) balances[l.credit] = 0; balances[l.debit] += l.amount; balances[l.credit] -= l.amount; }); const dBal = document.getElementById('ledgerDebitBalances'); const cBal = document.getElementById('ledgerCreditBalances'); dBal.innerHTML = ''; cBal.innerHTML = ''; let hasDebit = false; let hasCredit = false; for(const [acc, bal] of Object.entries(balances)) { if(bal > 0) { dBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${bal.toLocaleString()}원</span></div>`; hasDebit = true; } else if(bal < 0) { cBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${Math.abs(bal).toLocaleString()}원</span></div>`; hasCredit = true; } } if(!hasDebit) dBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; if(!hasCredit) cBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; }
 
-        startApp();
     </script>
 </body>
 </html>
