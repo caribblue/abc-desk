@@ -21,6 +21,10 @@
         .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #555; padding: 5px 10px; }
         .today-btn { background-color: #222; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
         
+        /* [애플 감성] 주말 텍스트 컬러 지정 */
+        .sun-text { color: #FF3B30 !important; }
+        .sat-text { color: #007AFF !important; }
+
         /* --- 뷰 컨테이너 --- */
         .view-container { flex: 1; overflow: hidden; display: none; flex-direction: column; }
         .view-container.active { display: flex; }
@@ -39,11 +43,14 @@
         li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
         
-        /* 공통 이벤트 스타일 */
-        .priority { font-weight: 600; min-width: 40px; }
-        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; }
+        /* [애플 감성] 미니멀 Dot 우선순위 스타일 */
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-right: 2px; }
+        .dot-A { background-color: #FF3B30; } /* Apple Red */
+        .dot-B { background-color: #007AFF; } /* Apple Blue */
+        .dot-C { background-color: #8E8E93; } /* Apple Gray */
+
+        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; margin-left: auto; }
         .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
-        .color-A { color: #FF3B30; } .color-B { color: #007AFF; } .color-C { color: #8E8E93; }
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
         .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
         .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
@@ -53,7 +60,7 @@
         .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; box-sizing: border-box; }
         .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; flex-shrink: 0; }
         .schedule-event-block { position: absolute; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; }
-        .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; }
+        .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* [2] 주간 뷰 스타일 */
@@ -63,7 +70,6 @@
         .week-header-cell:last-child { border-right: none; }
         .week-body { display: flex; flex: 1; overflow-y: auto; position: relative; }
         .week-time-col { width: 55px; flex-shrink: 0; border-right: 1px solid #f0f0f0; background: #fff; }
-        /* 오타 수정됨: #transparent -> transparent */
         .week-time-slot { height: 50px; text-align: center; padding-top: 5px; font-size: 12px; color: #888; border-bottom: 1px solid transparent; box-sizing: border-box; }
         .week-grid-cols { display: flex; flex: 1; position: relative; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 50px; }
         .week-day-col { flex: 1; border-right: 1px solid #f0f0f0; position: relative; cursor: pointer; transition: background-color 0.1s; }
@@ -85,7 +91,7 @@
 
         textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
-        /* 모달 스타일 */
+        /* 모달 스타일 (숫자 제거하여 더 깔끔하게) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 380px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
@@ -162,7 +168,7 @@
     <div id="monthContainer" class="view-container">
         <div class="month-wrapper">
             <div class="month-header-row">
-                <div>일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div>토</div>
+                <div class="sun-text">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat-text">토</div>
             </div>
             <div class="month-grid" id="monthGrid"></div>
         </div>
@@ -185,11 +191,8 @@
             <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1">
-                    <label>우선순위</label>
-                    <div style="display:flex; gap:5px;">
-                        <select id="priorityType" style="flex:1"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
-                        <select id="priorityNum" style="flex:1"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option></select>
-                    </div>
+                    <label>우선순위 (A:중요/B:보통/C:대기)</label>
+                    <select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
                 </div>
                 <div class="input-group" style="flex:1">
                     <label>시간</label>
@@ -207,13 +210,13 @@
                     <option value="monthly">매월</option>
                 </select>
                 <div id="weeklyDays" class="weekly-days">
+                    <label style="font-size:12px; color:#FF3B30;"><input type="checkbox" value="일">일</label>
                     <label style="font-size:12px;"><input type="checkbox" value="월">월</label>
                     <label style="font-size:12px;"><input type="checkbox" value="화">화</label>
                     <label style="font-size:12px;"><input type="checkbox" value="수">수</label>
                     <label style="font-size:12px;"><input type="checkbox" value="목">목</label>
                     <label style="font-size:12px;"><input type="checkbox" value="금">금</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="토">토</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="일">일</label>
+                    <label style="font-size:12px; color:#007AFF;"><input type="checkbox" value="토">토</label>
                 </div>
             </div>
             <div class="modal-actions">
@@ -267,10 +270,14 @@
             if (currentView === 'monthContainer') {
                 titleText = currentDate.getFullYear() + "년 " + (currentDate.getMonth()+1) + "월";
             } else {
-                titleText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (" + dStr[currentDate.getDay()] + ")";
+                const dayIdx = currentDate.getDay();
+                // [애플 감성] 일/토요일 컬러 적용
+                const colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
+                titleText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (<span class='" + colorClass + "'>" + dStr[dayIdx] + "</span>)";
             }
             
-            document.getElementById("currentDateStr").innerText = titleText;
+            // html 삽입을 위해 innerHTML 사용
+            document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             memoArea.value = memos[getDateString(currentDate)] || "";
             
@@ -314,13 +321,13 @@
                 const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
 
                 if (t.isAllDay) {
-                    alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
+                    alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
                 } else {
                     if (isTask) {
                         const li = document.createElement("li");
                         li.className = cName;
                         li.title = t.task;
-                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><span class="priority color-${t.type}">(${t.type}${t.num})</span><span class="task-text">${t.task}</span>${meta}</div>`;
+                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
                         ul.appendChild(li);
                     }
                     if (t.startTime && t.endTime) {
@@ -350,7 +357,8 @@
             for (let i = 0; i < 7; i++) {
                 const day = new Date(startOfWeek); day.setDate(startOfWeek.getDate() + i);
                 const hCell = document.createElement("div"); hCell.className = "week-header-cell";
-                hCell.innerText = `${['일','월','화','수','목','금','토'][i]} (${day.getDate()})`;
+                const colorClass = i === 0 ? "sun-text" : (i === 6 ? "sat-text" : "");
+                hCell.innerHTML = `<span class="${colorClass}">${['일','월','화','수','목','금','토'][i]} (${day.getDate()})</span>`;
                 header.appendChild(hCell);
 
                 const col = document.createElement("div"); col.className = "week-day-col";
@@ -404,7 +412,9 @@
                     }
                 };
                 
-                cell.innerHTML = `<div class="month-date-num">${i}</div>`;
+                const dayIdx = day.getDay();
+                const colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
+                cell.innerHTML = `<div class="month-date-num ${colorClass}">${i}</div>`;
                 
                 todos.forEach(t => {
                     let isTask = t.isTask;
@@ -455,7 +465,7 @@
             const data = {
                 task, isTask: isTaskFlag, createDate: newTs,
                 type: document.getElementById("priorityType").value, 
-                num: document.getElementById("priorityNum").value, 
+                // num 속성은 삭제되었으므로 제외
                 startTime: document.getElementById("startTimeInput").value, 
                 endTime: document.getElementById("endTimeInput").value,
                 isAllDay: document.getElementById("allDayCheck").checked, 
@@ -483,7 +493,6 @@
                 document.getElementById("taskInput").value = t.task;
                 document.getElementById("taskDateInput").value = originalDateStr;
                 document.getElementById("priorityType").value = t.type || "A";
-                document.getElementById("priorityNum").value = t.num || "1";
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
                 document.getElementById("allDayCheck").checked = t.isAllDay;
@@ -501,7 +510,6 @@
                 document.getElementById("taskInput").value = "";
                 document.getElementById("taskDateInput").value = passedDateStr || getDateString(currentDate);
                 document.getElementById("priorityType").value = "A";
-                document.getElementById("priorityNum").value = "1";
                 document.getElementById("startTimeInput").value = st || "";
                 document.getElementById("endTimeInput").value = et || "";
                 document.getElementById("allDayCheck").checked = false;
@@ -542,13 +550,11 @@
         
         let mt; 
         
-        // 아이폰 메모 연동 보강 (1초 대기 저장)
+        // 아이폰 메모 연동 보강
         memoArea.addEventListener("input", () => {
             memos[getDateString(currentDate)] = memoArea.value;
             clearTimeout(mt); mt = setTimeout(saveData, 1000);
         });
-
-        // 아이폰 메모 연동 보강 (화면 터치, 키보드 내릴 시 즉시 강제 저장)
         memoArea.addEventListener("blur", () => {
             memos[getDateString(currentDate)] = memoArea.value;
             saveData();
