@@ -234,6 +234,7 @@
                     <option value="daily">매일</option>
                     <option value="weekly">매주</option>
                     <option value="monthly">매월</option>
+                    <option value="yearly">매년</option>
                 </select>
                 <div id="weeklyDays" class="weekly-days">
                     <label style="font-size:12px; color:#FF3B30;"><input type="checkbox" value="일">일</label>
@@ -268,7 +269,6 @@
         let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
-        // [애플 감성 파스텔톤 20색 팔레트] 명도와 채도를 조정하여 흰색 체크표시가 잘 보이게 세팅
         const pastelPalette = [
             "#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", 
             "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792",
@@ -352,6 +352,7 @@
                 if(t.repeat === 'daily') repeatLabel = '🔁 매일';
                 if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
                 if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
+                if(t.repeat === 'yearly') repeatLabel = '🔁 매년'; // 추가됨
                 
                 const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
                 const meta = `<div class="task-meta">${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
@@ -501,7 +502,6 @@
                 const streakClass = streak >= 3 ? "streak-fire" : "";
                 const streakBadge = `<span class="streak-badge ${streakClass}">${streak}일</span>`;
                 
-                // 습관 순서에 따라 고유한 파스텔 색상 부여
                 const hColor = pastelPalette[index % pastelPalette.length];
 
                 tr.innerHTML = `<td class="sticky-col"><div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
@@ -572,6 +572,14 @@
             if (t.repeat === 'daily') return true;
             if (t.repeat === 'weekly') return t.repeatDays.includes(['일','월','화','수','목','금','토'][new Date(target).getDay()]);
             if (t.repeat === 'monthly') return new Date(tgt).getDate() === new Date(t.createDate).getDate();
+            
+            // [기능 추가] 매년 반복 로직 추가
+            if (t.repeat === 'yearly') {
+                const tDate = new Date(t.createDate);
+                const tgtDate = new Date(tgt);
+                return tDate.getMonth() === tgtDate.getMonth() && tDate.getDate() === tgtDate.getDate();
+            }
+            
             return false;
         }
 
