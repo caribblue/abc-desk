@@ -83,7 +83,7 @@
         .month-cell.today .month-date-num { color: #d97a00; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
-        /* [4] 습관 뷰 스타일 (NEW) */
+        /* [4] 습관 뷰 스타일 */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; }
         .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
@@ -188,8 +188,7 @@
             <div class="section-header" style="margin-bottom: 20px;">
                 <h2>[Habit Tracker]</h2>
             </div>
-            <div class="habit-table-container" id="habitGrid">
-                </div>
+            <div class="habit-table-container" id="habitGrid"></div>
         </div>
     </div>
 
@@ -269,8 +268,13 @@
         let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
-        // 색상 맵 (우선순위 -> 애플 컬러)
-        const colorMap = { 'A': '#FF3B30', 'B': '#007AFF', 'C': '#8E8E93' };
+        // [애플 감성 파스텔톤 20색 팔레트] 명도와 채도를 조정하여 흰색 체크표시가 잘 보이게 세팅
+        const pastelPalette = [
+            "#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", 
+            "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792",
+            "#FF7575", "#FF9955", "#D2B53B", "#68B96D", "#5DA2E6",
+            "#9375CA", "#F074AA", "#4DA6A6", "#C28956", "#93857F"
+        ];
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
@@ -349,7 +353,6 @@
                 if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
                 if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
                 
-                // 습관 뱃지 추가
                 const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
                 const meta = `<div class="task-meta">${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
 
@@ -457,7 +460,6 @@
             }
         }
 
-        // --- 습관 뷰 렌더링 로직 ---
         function renderHabitView() {
             const container = document.getElementById("habitGrid");
             container.innerHTML = "";
@@ -472,7 +474,6 @@
             const table = document.createElement("table");
             table.className = "habit-table";
 
-            // 헤더 생성 (과거 15일 ~ 미래 15일)
             const thead = document.createElement("thead");
             const trHead = document.createElement("tr");
             trHead.innerHTML = `<th class="sticky-col">습관명 (연속 기록)</th>`;
@@ -493,17 +494,19 @@
             thead.appendChild(trHead);
             table.appendChild(thead);
 
-            // 바디 생성
             const tbody = document.createElement("tbody");
-            habits.forEach(t => {
+            habits.forEach((t, index) => {
                 const tr = document.createElement("tr");
                 const streak = calculateStreak(t.completedDates);
                 const streakClass = streak >= 3 ? "streak-fire" : "";
                 const streakBadge = `<span class="streak-badge ${streakClass}">${streak}일</span>`;
+                
+                // 습관 순서에 따라 고유한 파스텔 색상 부여
+                const hColor = pastelPalette[index % pastelPalette.length];
 
                 tr.innerHTML = `<td class="sticky-col"><div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
                     <div style="display:flex; align-items:center; overflow:hidden;">
-                        <div class="priority-dot dot-${t.type}"></div>
+                        <div class="priority-dot" style="background-color: ${hColor};"></div>
                         <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;" title="${t.task}">${t.task}</span>
                     </div>
                     ${streakBadge}
@@ -515,8 +518,7 @@
                     const td = document.createElement("td");
                     
                     if(isDone) {
-                        const bgColor = colorMap[t.type] || '#007AFF';
-                        td.innerHTML = `<div class="habit-done" style="background-color:${bgColor};" onclick="toggleComplete('${t.id}', event, '${dateKey}')">✔</div>`;
+                        td.innerHTML = `<div class="habit-done" style="background-color:${hColor};" onclick="toggleComplete('${t.id}', event, '${dateKey}')">✔</div>`;
                     } else {
                         td.innerHTML = `<div class="habit-empty" onclick="toggleComplete('${t.id}', event, '${dateKey}')"></div>`;
                     }
@@ -527,7 +529,6 @@
             table.appendChild(tbody);
             container.appendChild(table);
 
-            // 중앙(오늘 날짜)으로 스크롤 자동 이동
             setTimeout(() => {
                 if(container.scrollWidth > container.clientWidth) {
                     container.scrollLeft = (container.scrollWidth / 2) - (container.clientWidth / 2);
@@ -535,7 +536,6 @@
             }, 10);
         }
 
-        // 연속일 계산 알고리즘
         function calculateStreak(completedDates) {
             if(!completedDates || completedDates.length === 0) return 0;
             let sorted = [...new Set(completedDates)].sort().reverse();
@@ -547,12 +547,10 @@
             let currentCheckDate = new Date();
 
             if(sorted.includes(todayStr)) {
-                // 오늘 완료했으면 오늘부터 시작
             } else if(sorted.includes(yesterdayStr)) {
-                // 오늘 안 했어도 어제 했으면 어제부터 시작
                 currentCheckDate = yesterday;
             } else {
-                return 0; // 이틀 연속 안 했으면 0일
+                return 0; 
             }
 
             while(true) {
@@ -598,7 +596,7 @@
 
             const data = {
                 task, isTask: isTaskFlag, createDate: newTs,
-                isHabit: document.getElementById("isHabitCheck").checked, // 습관 데이터 추가
+                isHabit: document.getElementById("isHabitCheck").checked, 
                 type: document.getElementById("priorityType").value, 
                 startTime: document.getElementById("startTimeInput").value, 
                 endTime: document.getElementById("endTimeInput").value,
@@ -630,7 +628,7 @@
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
                 document.getElementById("allDayCheck").checked = t.isAllDay;
-                document.getElementById("isHabitCheck").checked = t.isHabit || false; // 습관 상태 불러오기
+                document.getElementById("isHabitCheck").checked = t.isHabit || false;
                 
                 document.getElementById("repeatSelect").value = t.repeat || "none";
                 if (t.repeatDays) {
@@ -662,7 +660,6 @@
             isTaskFlag = isTask; 
             document.getElementById('catTodo').classList.toggle('active', isTask); 
             document.getElementById('catSched').classList.toggle('active', !isTask); 
-            // 순수 일정 선택 시 습관 체크박스 숨기기
             document.getElementById('habitCheckWrap').style.display = isTask ? "block" : "none";
         }
         
@@ -687,7 +684,6 @@
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
         
-        // 날짜를 인자로 받아 습관 뷰에서도 과거/미래 체크 가능하게 수정
         function toggleComplete(id, e, forceDateStr) { 
             e.stopPropagation(); 
             const dateKey = forceDateStr || getDateString(currentDate); 
