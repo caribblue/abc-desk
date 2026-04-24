@@ -21,11 +21,9 @@
         .icon-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #555; padding: 5px 10px; }
         .today-btn { background-color: #222; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; }
         
-        /* [애플 감성] 주말 텍스트 컬러 지정 */
         .sun-text { color: #FF3B30 !important; }
         .sat-text { color: #007AFF !important; }
 
-        /* --- 뷰 컨테이너 --- */
         .view-container { flex: 1; overflow: hidden; display: none; flex-direction: column; }
         .view-container.active { display: flex; }
 
@@ -43,20 +41,16 @@
         li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
         
-        /* [애플 감성] 미니멀 Dot 우선순위 스타일 */
         .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-right: 2px; }
-        .dot-A { background-color: #FF3B30; } /* Apple Red */
-        .dot-B { background-color: #007AFF; } /* Apple Blue */
-        .dot-C { background-color: #8E8E93; } /* Apple Gray */
-
-        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; margin-left: auto; }
+        .dot-A { background-color: #FF3B30; } .dot-B { background-color: #007AFF; } .dot-C { background-color: #8E8E93; }
+        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; margin-left: auto; align-items: center; }
         .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
+        .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
         .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
         .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
         .completed { opacity: 0.5; text-decoration: line-through; }
 
-        /* 타임 그리드 공통 (일간, 주간) */
         .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; box-sizing: border-box; }
         .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; flex-shrink: 0; }
         .schedule-event-block { position: absolute; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; }
@@ -89,14 +83,28 @@
         .month-cell.today .month-date-num { color: #d97a00; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
+        /* [4] 습관 뷰 스타일 (NEW) */
+        .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; }
+        .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; }
+        .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
+        .habit-table th, .habit-table td { border: 1px solid #f0f0f0; padding: 10px 5px; min-width: 45px; }
+        .habit-table th { background: #fafafa; font-weight: 600; color: #555; position: sticky; top: 0; z-index: 10; }
+        .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 180px; min-width: 180px; text-align: left; padding: 0 15px; border-right: 2px solid #e5e5e5; }
+        .habit-table th.sticky-col { z-index: 12; background: #fafafa; }
+        .habit-done { width: 28px; height: 28px; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .habit-empty { width: 28px; height: 28px; background-color: #f5f5f7; border-radius: 6px; margin: 0 auto; cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
+        .habit-empty:hover { background-color: #e5e5ea; }
+        .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .streak-fire { background-color: #FF3B30; color: #fff; }
+
         textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
 
-        /* 모달 스타일 (숫자 제거하여 더 깔끔하게) */
+        /* 모달 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; width: 380px; display: flex; flex-direction: column; gap: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
         .input-group { display: flex; flex-direction: column; gap: 5px; }
         .input-group label { font-size: 13px; color: #666; font-weight: 500; }
-        .input-group input, .input-group select, .input-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
+        .input-group input[type="text"], .input-group input[type="date"], .input-group input[type="time"], .input-group select, .input-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
         .category-select { display: flex; gap: 5px; background: #f0f0f0; padding: 3px; border-radius: 8px; }
         .cat-btn { flex: 1; border: none; background: none; padding: 6px; font-size: 12px; cursor: pointer; border-radius: 6px; transition: 0.2s; }
         .cat-btn.active { background: #fff; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -126,6 +134,7 @@
             <button class="view-btn active" id="btnDay" onclick="switchView('dayContainer')">일간</button>
             <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
             <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
+            <button class="view-btn" id="btnHabit" onclick="switchView('habitContainer')">습관</button>
         </div>
 
         <div class="header-right">
@@ -174,6 +183,16 @@
         </div>
     </div>
 
+    <div id="habitContainer" class="view-container">
+        <div class="habit-wrapper">
+            <div class="section-header" style="margin-bottom: 20px;">
+                <h2>[Habit Tracker]</h2>
+            </div>
+            <div class="habit-table-container" id="habitGrid">
+                </div>
+        </div>
+    </div>
+
     <div id="todoModal" class="modal-overlay">
         <div class="modal-content">
             <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -187,11 +206,19 @@
                     <button class="cat-btn" id="catSched" onclick="setCategory(false)">순수 일정 (Event)</button>
                 </div>
             </div>
+            
+            <div class="input-group" id="habitCheckWrap" style="margin-top: -5px; margin-bottom: 5px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:#444;">
+                    <input type="checkbox" id="isHabitCheck" style="width:14px; height:14px; margin:0;"> 
+                    🌱 이 할 일을 '습관'으로 등록하여 매일 추적하기
+                </label>
+            </div>
+
             <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
             <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
             <div style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1">
-                    <label>우선순위 (A:중요/B:보통/C:대기)</label>
+                    <label>우선순위 (A:중요/B:진행/C:대기)</label>
                     <select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
                 </div>
                 <div class="input-group" style="flex:1">
@@ -242,6 +269,9 @@
         let todos = []; let memos = {}; let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
+        // 색상 맵 (우선순위 -> 애플 컬러)
+        const colorMap = { 'A': '#FF3B30', 'B': '#007AFF', 'C': '#8E8E93' };
+
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
         function startApp() {
@@ -256,7 +286,7 @@
         function switchView(viewId) {
             currentView = viewId;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : 'btnMonth').classList.add('active');
+            document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : 'btnHabit').classList.add('active');
             
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -269,14 +299,14 @@
             
             if (currentView === 'monthContainer') {
                 titleText = currentDate.getFullYear() + "년 " + (currentDate.getMonth()+1) + "월";
+            } else if (currentView === 'habitContainer') {
+                titleText = "Habit Tracker";
             } else {
                 const dayIdx = currentDate.getDay();
-                // [애플 감성] 일/토요일 컬러 적용
                 const colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
                 titleText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (<span class='" + colorClass + "'>" + dStr[dayIdx] + "</span>)";
             }
             
-            // html 삽입을 위해 innerHTML 사용
             document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             memoArea.value = memos[getDateString(currentDate)] || "";
@@ -284,10 +314,11 @@
             if (currentView === 'dayContainer') renderDayView();
             else if (currentView === 'weekContainer') renderWeekView();
             else if (currentView === 'monthContainer') renderMonthView();
+            else if (currentView === 'habitContainer') renderHabitView();
         }
 
         function changeDate(o) { 
-            if (currentView === 'dayContainer') {
+            if (currentView === 'dayContainer' || currentView === 'habitContainer') {
                 currentDate.setDate(currentDate.getDate() + o); 
             } else if (currentView === 'weekContainer') {
                 currentDate.setDate(currentDate.getDate() + (o * 7)); 
@@ -311,14 +342,16 @@
                 const isDone = t.completedDates && t.completedDates.includes(dateKey);
                 const cName = isDone ? 'completed' : '';
                 
-                let isTask = t.isTask;
-                if (typeof isTask === 'undefined') isTask = false; 
+                let isTask = t.isTask; if (typeof isTask === 'undefined') isTask = false; 
 
                 let repeatLabel = '';
                 if(t.repeat === 'daily') repeatLabel = '🔁 매일';
                 if(t.repeat === 'weekly') repeatLabel = '🔁 매주';
                 if(t.repeat === 'monthly') repeatLabel = '🔁 매월';
-                const meta = `<div class="task-meta">${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
+                
+                // 습관 뱃지 추가
+                const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
+                const meta = `<div class="task-meta">${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${t.isAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
 
                 if (t.isAllDay) {
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
@@ -327,7 +360,7 @@
                         const li = document.createElement("li");
                         li.className = cName;
                         li.title = t.task;
-                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event)"><div class="todo-content" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
+                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')"><div class="todo-content" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
                         ul.appendChild(li);
                     }
                     if (t.startTime && t.endTime) {
@@ -362,11 +395,7 @@
                 header.appendChild(hCell);
 
                 const col = document.createElement("div"); col.className = "week-day-col";
-                col.onclick = (e) => {
-                    if (e.target === col) {
-                        openModal(null, null, null, getDateString(day));
-                    }
-                };
+                col.onclick = (e) => { if (e.target === col) openModal(null, null, null, getDateString(day)); };
                 
                 todos.forEach(t => {
                     if (!t.isAllDay && t.startTime && t.endTime && shouldShow(t, day)) {
@@ -406,19 +435,14 @@
                 cell.className = "month-cell";
                 if (day.toDateString() === todayDate.toDateString()) cell.classList.add("today");
                 
-                cell.onclick = (e) => {
-                    if (e.target === cell) {
-                        openModal(null, null, null, getDateString(day));
-                    }
-                };
+                cell.onclick = (e) => { if (e.target === cell) openModal(null, null, null, getDateString(day)); };
                 
                 const dayIdx = day.getDay();
                 const colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
                 cell.innerHTML = `<div class="month-date-num ${colorClass}">${i}</div>`;
                 
                 todos.forEach(t => {
-                    let isTask = t.isTask;
-                    if (typeof isTask === 'undefined') isTask = false; 
+                    let isTask = t.isTask; if (typeof isTask === 'undefined') isTask = false; 
 
                     if (!isTask && shouldShow(t, day)) {
                         const div = document.createElement("div");
@@ -431,6 +455,116 @@
                 });
                 grid.appendChild(cell);
             }
+        }
+
+        // --- 습관 뷰 렌더링 로직 ---
+        function renderHabitView() {
+            const container = document.getElementById("habitGrid");
+            container.innerHTML = "";
+
+            const habits = todos.filter(t => t.isHabit);
+
+            if(habits.length === 0) {
+                container.innerHTML = "<div style='padding:40px; color:#888; text-align:center; font-size:14px;'>등록된 습관이 없습니다.<br>할 일을 추가할 때 [🌱 습관으로 등록]을 체크해보세요!</div>";
+                return;
+            }
+
+            const table = document.createElement("table");
+            table.className = "habit-table";
+
+            // 헤더 생성 (과거 15일 ~ 미래 15일)
+            const thead = document.createElement("thead");
+            const trHead = document.createElement("tr");
+            trHead.innerHTML = `<th class="sticky-col">습관명 (연속 기록)</th>`;
+            
+            const dates = [];
+            for(let i = -15; i <= 15; i++) {
+                let d = new Date(currentDate);
+                d.setDate(d.getDate() + i);
+                dates.push(d);
+                let dStr = `${d.getMonth()+1}/${d.getDate()}`;
+                let dayIdx = d.getDay();
+                let colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
+                let isToday = getDateString(d) === getDateString(new Date());
+                let style = isToday ? "background:#fdfaf0; border-bottom: 2px solid #d97a00;" : "";
+                
+                trHead.innerHTML += `<th style="${style}"><span class="${colorClass}">${dStr}</span></th>`;
+            }
+            thead.appendChild(trHead);
+            table.appendChild(thead);
+
+            // 바디 생성
+            const tbody = document.createElement("tbody");
+            habits.forEach(t => {
+                const tr = document.createElement("tr");
+                const streak = calculateStreak(t.completedDates);
+                const streakClass = streak >= 3 ? "streak-fire" : "";
+                const streakBadge = `<span class="streak-badge ${streakClass}">${streak}일</span>`;
+
+                tr.innerHTML = `<td class="sticky-col"><div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
+                    <div style="display:flex; align-items:center; overflow:hidden;">
+                        <div class="priority-dot dot-${t.type}"></div>
+                        <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;" title="${t.task}">${t.task}</span>
+                    </div>
+                    ${streakBadge}
+                </div></td>`;
+
+                dates.forEach(d => {
+                    const dateKey = getDateString(d);
+                    const isDone = t.completedDates && t.completedDates.includes(dateKey);
+                    const td = document.createElement("td");
+                    
+                    if(isDone) {
+                        const bgColor = colorMap[t.type] || '#007AFF';
+                        td.innerHTML = `<div class="habit-done" style="background-color:${bgColor};" onclick="toggleComplete('${t.id}', event, '${dateKey}')">✔</div>`;
+                    } else {
+                        td.innerHTML = `<div class="habit-empty" onclick="toggleComplete('${t.id}', event, '${dateKey}')"></div>`;
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+            table.appendChild(tbody);
+            container.appendChild(table);
+
+            // 중앙(오늘 날짜)으로 스크롤 자동 이동
+            setTimeout(() => {
+                if(container.scrollWidth > container.clientWidth) {
+                    container.scrollLeft = (container.scrollWidth / 2) - (container.clientWidth / 2);
+                }
+            }, 10);
+        }
+
+        // 연속일 계산 알고리즘
+        function calculateStreak(completedDates) {
+            if(!completedDates || completedDates.length === 0) return 0;
+            let sorted = [...new Set(completedDates)].sort().reverse();
+            let todayStr = getDateString(new Date());
+            let yesterday = new Date(); yesterday.setDate(yesterday.getDate()-1);
+            let yesterdayStr = getDateString(yesterday);
+
+            let streak = 0;
+            let currentCheckDate = new Date();
+
+            if(sorted.includes(todayStr)) {
+                // 오늘 완료했으면 오늘부터 시작
+            } else if(sorted.includes(yesterdayStr)) {
+                // 오늘 안 했어도 어제 했으면 어제부터 시작
+                currentCheckDate = yesterday;
+            } else {
+                return 0; // 이틀 연속 안 했으면 0일
+            }
+
+            while(true) {
+                let dStr = getDateString(currentCheckDate);
+                if(sorted.includes(dStr)) {
+                    streak++;
+                    currentCheckDate.setDate(currentCheckDate.getDate() - 1);
+                } else {
+                    break;
+                }
+            }
+            return streak;
         }
 
         function shouldShow(t, target) {
@@ -464,8 +598,8 @@
 
             const data = {
                 task, isTask: isTaskFlag, createDate: newTs,
+                isHabit: document.getElementById("isHabitCheck").checked, // 습관 데이터 추가
                 type: document.getElementById("priorityType").value, 
-                // num 속성은 삭제되었으므로 제외
                 startTime: document.getElementById("startTimeInput").value, 
                 endTime: document.getElementById("endTimeInput").value,
                 isAllDay: document.getElementById("allDayCheck").checked, 
@@ -496,6 +630,7 @@
                 document.getElementById("startTimeInput").value = t.startTime || "";
                 document.getElementById("endTimeInput").value = t.endTime || "";
                 document.getElementById("allDayCheck").checked = t.isAllDay;
+                document.getElementById("isHabitCheck").checked = t.isHabit || false; // 습관 상태 불러오기
                 
                 document.getElementById("repeatSelect").value = t.repeat || "none";
                 if (t.repeatDays) {
@@ -513,6 +648,7 @@
                 document.getElementById("startTimeInput").value = st || "";
                 document.getElementById("endTimeInput").value = et || "";
                 document.getElementById("allDayCheck").checked = false;
+                document.getElementById("isHabitCheck").checked = false;
                 document.getElementById("repeatSelect").value = "none";
                 document.querySelectorAll('#weeklyDays input').forEach(cb => cb.checked = false);
                 document.getElementById("deleteBtn").style.display = "none";
@@ -522,7 +658,13 @@
             m.style.display = "flex";
         }
 
-        function setCategory(isTask) { isTaskFlag = isTask; document.getElementById('catTodo').classList.toggle('active', isTask); document.getElementById('catSched').classList.toggle('active', !isTask); }
+        function setCategory(isTask) { 
+            isTaskFlag = isTask; 
+            document.getElementById('catTodo').classList.toggle('active', isTask); 
+            document.getElementById('catSched').classList.toggle('active', !isTask); 
+            // 순수 일정 선택 시 습관 체크박스 숨기기
+            document.getElementById('habitCheckWrap').style.display = isTask ? "block" : "none";
+        }
         
         function initDaySchedule() { 
             const g = document.getElementById("dayScheduleGrid"); g.innerHTML = ""; 
@@ -544,13 +686,25 @@
         function goToday() { currentDate = new Date(); updateDateDisplay(); }
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
-        function toggleComplete(id, e) { e.stopPropagation(); const dateKey = getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
+        
+        // 날짜를 인자로 받아 습관 뷰에서도 과거/미래 체크 가능하게 수정
+        function toggleComplete(id, e, forceDateStr) { 
+            e.stopPropagation(); 
+            const dateKey = forceDateStr || getDateString(currentDate); 
+            const t = todos.find(x => x.id === id); 
+            if(t) { 
+                if(!t.completedDates) t.completedDates = []; 
+                const idx = t.completedDates.indexOf(dateKey); 
+                if(idx > -1) t.completedDates.splice(idx, 1); 
+                else t.completedDates.push(dateKey); 
+                saveData(); updateDateDisplay(); 
+            } 
+        }
+
         function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
         function saveData() { docRef.set({ todos, memos }); }
         
         let mt; 
-        
-        // 아이폰 메모 연동 보강
         memoArea.addEventListener("input", () => {
             memos[getDateString(currentDate)] = memoArea.value;
             clearTimeout(mt); mt = setTimeout(saveData, 1000);
