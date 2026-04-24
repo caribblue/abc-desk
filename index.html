@@ -7,13 +7,29 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHZpZXdCb3g9JzAgMCAxMDAgMTAwJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgcng9JzIyJyBmaWxsPScjMjIyMjIyJy8+PHBhdGggZD0nTTI4IDUzIEw0MyA2OCBMNzIgMzUnIHN0cm9rZT0nI2ZmZmZmZicgc3Ryb2tlLXdpZHRoPScxMCcgZmlsbD0nbm9uZScgc3Ryb2tlLWxpbmVjYXA9J3JvdW5kJyBzdHJva2UtbGluZWpvaW49J3JvdW5kJy8+PC9zdmc+">
     <style>
         /* --- 공통 디자인 --- */
-        body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 40px; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
+        
+        /* 🌟 [NEW] 로그인 화면 스타일 */
+        #loginContainer { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; background-color: #f9f9fb; position: absolute; top: 0; left: 0; z-index: 9999; }
+        .login-box { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 320px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
+        .login-box h2 { margin: 0 0 10px 0; font-size: 22px; font-weight: 700; color: #111; }
+        .login-box input { padding: 12px; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s; }
+        .login-box input:focus { border-color: #222; }
+        .btn-primary { background: #222; color: #fff; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-primary:hover { background: #000; }
+        .btn-secondary { background: #f0f0f0; color: #333; border: none; padding: 12px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn-secondary:hover { background: #e5e5e5; }
+        .reset-pw { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; margin-top: 5px; }
+
+        /* 메인 앱 컨테이너 */
+        #appContainer { display: none; flex-direction: column; height: 100vh; padding: 40px; box-sizing: border-box; }
+
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
         .date-nav { display: flex; align-items: center; gap: 15px; flex: 1; }
         .view-selector { display: flex; background-color: #eee; padding: 2px; border-radius: 9px; margin: 0 20px; justify-content: center; }
         .view-btn { border: none; background: none; padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-radius: 7px; color: #666; transition: all 0.2s; white-space: nowrap; }
         .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .header-right { display: flex; justify-content: flex-end; align-items: center; flex: 1; gap: 15px; }
+        .header-right { display: flex; justify-content: flex-end; align-items: center; flex: 1; gap: 10px; }
         
         .date-picker-wrap { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background-color 0.2s; cursor: pointer; }
         .date-picker-wrap:hover { background-color: #eaeaea; }
@@ -29,13 +45,13 @@
         .view-container.active { display: flex; }
 
         /* [1] 일간 뷰 스타일 */
-        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
         .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
         .all-day-item:hover { border-color: #222; }
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; min-height: 0; }
         .todo-section, .schedule-section, .memo-section { flex: 1; background-color: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; min-height: 0; }
-        .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 15px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 15px; flex-shrink: 0;}
         h2 { font-size: 16px; font-weight: 600; margin: 0; }
         .add-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #222; line-height: 1; }
         .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; position: relative; -webkit-overflow-scrolling: touch; }
@@ -64,9 +80,8 @@
 
         /* [2] 주간 뷰 스타일 */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
-        .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; }
+        .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
-        .week-header-cell:last-child { border-right: none; }
         .week-body { display: flex; flex: 1; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; }
         .week-time-col { width: 55px; flex-shrink: 0; border-right: 1px solid #f0f0f0; background: #fff; }
         .week-time-slot { height: 50px; text-align: center; padding-top: 5px; font-size: 12px; color: #888; border-bottom: 1px solid transparent; box-sizing: border-box; }
@@ -76,12 +91,10 @@
 
         /* [3] 월간 뷰 스타일 */
         .month-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
-        .month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; min-width: 500px; }
+        .month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; min-width: 500px; flex-shrink: 0;}
         .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, 1fr); gap: 8px; flex: 1; overflow-y: auto; padding-right: 5px; min-width: 500px; -webkit-overflow-scrolling: touch; }
         .month-cell { border: 1px solid #f0f0f0; border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 4px; transition: background-color 0.2s; cursor: pointer; }
         .month-cell:hover { background-color: #fafafa; }
-        .month-cell.empty { border: none; background: transparent; cursor: default; }
-        .month-cell.empty:hover { background-color: transparent; }
         .month-cell.today { background-color: #fdfaf0; border-color: #f0e6cc; }
         .month-date-num { font-size: 12px; font-weight: 600; color: #888; margin-bottom: 2px; pointer-events: none; }
         .month-cell.today .month-date-num { color: #d97a00; }
@@ -96,16 +109,18 @@
         .habit-table th { background: #fafafa; font-weight: 600; color: #555; position: sticky; top: 0; z-index: 10; }
         .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 180px; min-width: 180px; text-align: left; padding: 0 15px; border-right: 2px solid #e5e5e5; }
         .habit-table th.sticky-col { z-index: 12; background: #fafafa; }
-        .habit-done { width: 28px; height: 28px; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; cursor: pointer; }
-        .habit-empty { width: 28px; height: 28px; background-color: #f5f5f7; border-radius: 6px; margin: 0 auto; cursor: pointer; transition: 0.2s; }
+        .habit-done { width: 28px; height: 28px; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
+        .habit-empty { width: 28px; height: 28px; background-color: #f5f5f7; border-radius: 6px; margin: 0 auto; cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
         .habit-empty:hover { background-color: #e5e5ea; }
         .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
 
-        /* [모달 공통 스타일] */
+        textarea { width: 100%; height: 100%; border: none; resize: none; outline: none; font-family: inherit; font-size: 15px; line-height: 1.6; }
+
+        /* 모달 공통 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
         .modal-content { background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
-        .input-group { display: flex; flex-direction: column; gap: 5px; }
+        .input-group { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px;}
         .input-group label { font-size: 13px; color: #666; font-weight: 500; }
         .input-group input[type="text"], .input-group input[type="number"], .input-group input[type="date"], .input-group input[type="time"], .input-group select, .input-group textarea { padding: 10px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; }
         .category-select { display: flex; gap: 5px; background: #f0f0f0; padding: 3px; border-radius: 8px; }
@@ -113,15 +128,20 @@
         .cat-btn.active { background: #fff; font-weight: 600; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .weekly-days { display: none; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
         .modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 10px; }
-        .btn-save { background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
-        .btn-cancel { background: #eee; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; }
+        .btn-save, .btn-primary { background: #222; color: #fff; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; font-weight: 600;}
+        .btn-cancel, .btn-secondary { background: #eee; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; color: #333; font-weight: 600;}
         .btn-delete { color: #ff3b30; background: none; border: none; cursor: pointer; font-size: 13px; }
 
+        /* 가계부 전용 스타일 */
         .ledger-btn { background-color: #fff; border: 1px solid #e5e5e5; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap; }
         .ledger-btn:hover { border-color: #222; }
+        
+        .logout-btn { background-color: #f9f9fb; border: 1px solid #ddd; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; color: #555; cursor: pointer; transition: 0.2s; white-space: nowrap; }
+        .logout-btn:hover { background-color: #eee; }
+
         .mobile-tab-bar { display: none; }
 
-        /* 🌟 [NEW] 스마트 에디터(Editor.js) 전용 커스텀 스타일 */
+        /* 스마트 에디터(Editor.js) 전용 커스텀 스타일 */
         #editorjs { flex: 1; overflow-y: auto; background: #fff; font-size: 15px; line-height: 1.6; -webkit-overflow-scrolling: touch; padding-right: 10px; }
         .codex-editor__redactor { padding-bottom: 50px !important; }
         .ce-block__content, .ce-toolbar__content { max-width: 100% !important; margin: 0; }
@@ -130,7 +150,7 @@
 
         /* 📱 모바일 최적화 */
         @media (max-width: 768px) {
-            body { padding: 15px; padding-bottom: 90px; height: auto !important; display: block !important; overflow-y: auto !important; }
+            #appContainer { padding: 15px; padding-bottom: 90px; height: auto !important; display: block !important; overflow-y: auto !important; }
             header { flex-direction: column; align-items: stretch; gap: 15px; margin-bottom: 10px; display: flex; }
             .date-nav { justify-content: space-between; width: 100%; }
             .date-nav h1 { font-size: 18px; width: 180px; }
@@ -145,10 +165,7 @@
             body.show-memo .right-half { display: flex !important; flex-direction: column; flex: 1; }
             .todo-section, .schedule-section, .memo-section { display: block; height: auto; overflow: visible; padding: 15px; margin-bottom: 15px; }
             .scrollable-area, .all-day-wrapper { overflow: visible !important; height: auto !important; max-height: none !important; }
-            
-            /* 스마트 에디터 모바일 대응 */
             #editorjs { overflow: hidden !important; min-height: 60vh; }
-            
             .week-wrapper { display: block; height: auto; overflow: visible; }
             .week-body { display: flex; overflow-y: visible !important; overflow-x: auto !important; height: auto; }
             .month-wrapper { display: block; height: auto; overflow: visible; }
@@ -167,6 +184,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@2.28.2"></script>
     <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@2.8.1"></script>
@@ -180,74 +198,89 @@
 </head>
 <body>
 
-    <header>
-        <div class="date-nav">
-            <button class="icon-btn" onclick="changeDate(-1)">◀</button>
-            <div class="date-picker-wrap">
-                <h1 id="currentDateStr">로딩 중...</h1>
-                <input type="date" id="datePicker" onchange="handleDateSelect(event)">
-            </div>
-            <button class="icon-btn" onclick="changeDate(1)">▶</button>
-            <button class="today-btn" onclick="goToday()">오늘</button>
-        </div>
-
-        <div class="view-selector">
-            <button class="view-btn active" id="btnDay" onclick="switchView('dayContainer')">일간</button>
-            <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
-            <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
-            <button class="view-btn" id="btnHabit" onclick="switchView('habitContainer')">습관</button>
-        </div>
-
-        <div class="header-right">
-            <button class="ledger-btn" onclick="openLedger()">📒 가계부</button>
-        </div>
-    </header>
-
-    <div id="dayContainer" class="view-container active">
-        <div id="allDayContainer" class="all-day-wrapper"></div>
-        <div class="main-container">
-            <div class="left-half">
-                <div class="todo-section">
-                    <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                    <div class="scrollable-area"><ul id="todoList"></ul></div>
-                </div>
-                <div class="schedule-section">
-                    <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                    <div class="scrollable-area" id="dayScheduleGrid"></div>
-                </div>
-            </div>
-            <div class="right-half">
-                <div class="memo-section">
-                    <div class="section-header"><h2>[Memo]</h2></div>
-                    <div id="editorjs"></div>
-                </div>
-            </div>
+    <div id="loginContainer">
+        <div class="login-box">
+            <h2>ABC Desk</h2>
+            <p style="font-size: 13px; color: #666; margin-top: -5px; margin-bottom: 10px;">프라이빗 워크스페이스에 로그인하세요</p>
+            <input type="email" id="emailInput" placeholder="이메일 (예: namho.cho@gmail.com)">
+            <input type="password" id="passwordInput" placeholder="비밀번호 (6자리 이상)">
+            <button class="btn-primary" onclick="handleLogin()">로그인</button>
+            <button class="btn-secondary" onclick="handleSignup()">새 계정 만들기</button>
+            <div class="reset-pw" onclick="handleResetPassword()">비밀번호를 잊으셨나요?</div>
         </div>
     </div>
 
-    <div id="weekContainer" class="view-container">
-        <div class="week-wrapper">
-            <div class="week-header-row" id="weekHeader"></div>
-            <div class="week-body" id="weekBodyScroll">
-                <div class="week-time-col" id="weekTimeLabels"></div>
-                <div class="week-grid-cols" id="weekColumns"></div>
+    <div id="appContainer">
+        <header>
+            <div class="date-nav">
+                <button class="icon-btn" onclick="changeDate(-1)">◀</button>
+                <div class="date-picker-wrap">
+                    <h1 id="currentDateStr">로딩 중...</h1>
+                    <input type="date" id="datePicker" onchange="handleDateSelect(event)">
+                </div>
+                <button class="icon-btn" onclick="changeDate(1)">▶</button>
+                <button class="today-btn" onclick="goToday()">오늘</button>
+            </div>
+
+            <div class="view-selector">
+                <button class="view-btn active" id="btnDay" onclick="switchView('dayContainer')">일간</button>
+                <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
+                <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
+                <button class="view-btn" id="btnHabit" onclick="switchView('habitContainer')">습관</button>
+            </div>
+
+            <div class="header-right">
+                <button class="ledger-btn" onclick="openLedger()">📒 가계부</button>
+                <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+            </div>
+        </header>
+
+        <div id="dayContainer" class="view-container active">
+            <div id="allDayContainer" class="all-day-wrapper"></div>
+            <div class="main-container">
+                <div class="left-half">
+                    <div class="todo-section">
+                        <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
+                        <div class="scrollable-area"><ul id="todoList"></ul></div>
+                    </div>
+                    <div class="schedule-section">
+                        <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
+                        <div class="scrollable-area" id="dayScheduleGrid"></div>
+                    </div>
+                </div>
+                <div class="right-half">
+                    <div class="memo-section">
+                        <div class="section-header"><h2>[Memo]</h2></div>
+                        <div id="editorjs"></div>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div id="monthContainer" class="view-container">
-        <div class="month-wrapper">
-            <div class="month-header-row">
-                <div class="sun-text">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat-text">토</div>
+        <div id="weekContainer" class="view-container">
+            <div class="week-wrapper">
+                <div class="week-header-row" id="weekHeader"></div>
+                <div class="week-body" id="weekBodyScroll">
+                    <div class="week-time-col" id="weekTimeLabels"></div>
+                    <div class="week-grid-cols" id="weekColumns"></div>
+                </div>
             </div>
-            <div class="month-grid" id="monthGrid"></div>
         </div>
-    </div>
 
-    <div id="habitContainer" class="view-container">
-        <div class="habit-wrapper">
-            <div class="section-header" style="margin-bottom: 20px;"><h2>[Habit Tracker]</h2></div>
-            <div class="habit-table-container" id="habitGrid"></div>
+        <div id="monthContainer" class="view-container">
+            <div class="month-wrapper">
+                <div class="month-header-row">
+                    <div class="sun-text">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat-text">토</div>
+                </div>
+                <div class="month-grid" id="monthGrid"></div>
+            </div>
+        </div>
+
+        <div id="habitContainer" class="view-container">
+            <div class="habit-wrapper">
+                <div class="section-header" style="margin-bottom: 20px;"><h2>[Habit Tracker]</h2></div>
+                <div class="habit-table-container" id="habitGrid"></div>
+            </div>
         </div>
     </div>
 
@@ -262,22 +295,22 @@
                 <h3 style="margin:0">일정 추가/편집</h3>
                 <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none">삭제</button>
             </div>
-            <div class="input-group" style="margin-bottom: 10px;">
+            <div class="input-group">
                 <label>항목 구분</label>
                 <div class="category-select">
                     <button class="cat-btn active" id="catTodo" onclick="setCategory(true)">할 일 (To-Do)</button>
                     <button class="cat-btn" id="catSched" onclick="setCategory(false)">순수 일정 (Event)</button>
                 </div>
             </div>
-            <div class="input-group" id="habitCheckWrap" style="margin-bottom: 10px;">
+            <div class="input-group" id="habitCheckWrap" style="margin-top: -5px;">
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:#444;">
                     <input type="checkbox" id="isHabitCheck" style="width:14px; height:14px; margin:0;"> 🌱 이 할 일을 '습관'으로 등록하여 매일 추적하기
                 </label>
             </div>
-            <div class="input-group" style="margin-bottom: 10px;"><label>내용</label><input type="text" id="taskInput"></div>
-            <div class="input-group" style="margin-bottom: 10px;"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
+            <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
+            <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
             
-            <div class="flex-row-mobile-col" style="display:flex; gap:10px; margin-bottom: 10px;">
+            <div class="flex-row-mobile-col" style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1">
                     <label>우선순위 (A:중요/B:진행/C:대기)</label>
                     <select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
@@ -289,9 +322,8 @@
                 </div>
             </div>
             
-            <div class="input-group" style="margin-bottom: 10px;"><label>간단 메모</label><textarea id="taskMemoInput" rows="2" style="resize:none;"></textarea></div>
-            
-            <div class="input-group" style="margin-bottom: 10px;">
+            <div class="input-group"><label>간단 메모 (에디터 연동)</label><textarea id="taskMemoInput" rows="2" style="resize:none;"></textarea></div>
+            <div class="input-group">
                 <label>반복 설정</label>
                 <select id="repeatSelect" onchange="toggleWeeklyDays()">
                     <option value="none">반복 안 함</option>
@@ -379,43 +411,149 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const docRef = db.collection("abc_desk_data").doc("namho_workspace");
+        const auth = firebase.auth(); // 🌟 Auth 추가
+
+        let currentUser = null;
+        let inactivityTimer;
 
         let todos = []; let memos = {}; let ledgers = [];
         let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
-        // 스마트 에디터 전역 변수
         let editor; let mt;
 
         const pastelPalette = ["#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792", "#FF7575", "#FF9955", "#D2B53B", "#68B96D", "#5DA2E6", "#9375CA", "#F074AA", "#4DA6A6", "#C28956", "#93857F"];
-
-        const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스", "2027-01-01": "신정", "2027-02-06": "설날 연휴", "2027-02-07": "설날", "2027-02-08": "설날 연휴", "2027-03-01": "삼일절", "2027-05-05": "어린이날", "2027-05-13": "부처님오신날", "2027-06-06": "현충일", "2027-08-15": "광복절", "2027-08-16": "대체공휴일", "2027-09-14": "추석 연휴", "2027-09-15": "추석", "2027-09-16": "추석 연휴", "2027-10-03": "개천절", "2027-10-09": "한글날", "2027-12-25": "크리스마스" };
+        const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스" };
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
-        function startApp() {
+        // 🌟 [NEW] 로그인 인증 상태 감지
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('loginContainer').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                if (window.innerWidth <= 768) { document.getElementById('appContainer').style.display = 'block'; }
+                loadUserData(user);
+                startInactivityTimer();
+            } else {
+                currentUser = null;
+                document.getElementById('loginContainer').style.display = 'flex';
+                document.getElementById('appContainer').style.display = 'none';
+                stopInactivityTimer();
+            }
+        });
+
+        // 🌟 [NEW] 계정별 데이터 로드 및 기존 공용 데이터 이사(Migration)
+        function loadUserData(user) {
             initDaySchedule(); initWeekGrid();
-            docRef.get().then((doc) => {
-                if (doc.exists) { const d = doc.data(); todos = d.todos || []; memos = d.memos || {}; ledgers = d.ledgers || []; }
-                initEditor(); // 데이터 로드 후 에디터 시작
-                updateDateDisplay();
+            const userRef = db.collection("users").doc(user.uid);
+            
+            userRef.get().then((doc) => {
+                if (doc.exists) {
+                    const d = doc.data();
+                    todos = d.todos || []; memos = d.memos || {}; ledgers = d.ledgers || [];
+                    initEditor();
+                    updateDateDisplay();
+                } else {
+                    // 데이터가 없는 새 계정일 때
+                    if (user.email === 'namho.cho@gmail.com') {
+                        // 개인용 계정이면 기존 공용 데이터 복사해오기
+                        db.collection("abc_desk_data").doc("namho_workspace").get().then(oldDoc => {
+                            if(oldDoc.exists) {
+                                const od = oldDoc.data();
+                                todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
+                                userRef.set({ todos, memos, ledgers });
+                                initEditor();
+                                updateDateDisplay();
+                                alert("환영합니다! 기존 데이터를 성공적으로 개인 계정으로 가져왔습니다. 🎉");
+                            } else {
+                                initEmptyData();
+                            }
+                        });
+                    } else {
+                        // 학원용 등 다른 계정이면 텅 빈 상태로 시작
+                        initEmptyData();
+                    }
+                }
             });
-            window.addEventListener("resize", adjustMemoHeight);
         }
 
-        // 🌟 [NEW] 기존 문자열 메모를 에디터 블록으로 안전하게 변환
+        function initEmptyData() {
+            todos = []; memos = {}; ledgers = [];
+            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers });
+            initEditor();
+            updateDateDisplay();
+        }
+
+        // 🌟 [NEW] 로그인 / 회원가입 / 로그아웃 제어
+        function handleLogin() {
+            const email = document.getElementById('emailInput').value;
+            const pw = document.getElementById('passwordInput').value;
+            if(!email || !pw) return alert("이메일과 비밀번호를 입력해주세요.");
+            auth.signInWithEmailAndPassword(email, pw).catch(err => alert("로그인 실패: " + err.message));
+        }
+
+        function handleSignup() {
+            const email = document.getElementById('emailInput').value;
+            const pw = document.getElementById('passwordInput').value;
+            if(!email || !pw) return alert("가입할 이메일과 비밀번호를 입력해주세요.");
+            auth.createUserWithEmailAndPassword(email, pw)
+                .then(() => alert("가입이 완료되었습니다! 자동으로 로그인됩니다."))
+                .catch(err => alert("가입 실패: " + err.message));
+        }
+
+        function handleResetPassword() {
+            const email = document.getElementById('emailInput').value;
+            if(!email) return alert("먼저 위칸에 이메일 주소를 입력한 후 다시 눌러주세요.");
+            auth.sendPasswordResetEmail(email)
+                .then(() => alert("비밀번호 재설정 메일을 보냈습니다. 이메일함을 확인해주세요!"))
+                .catch(err => alert("메일 전송 실패: " + err.message));
+        }
+
+        function handleLogout() {
+            if(confirm("로그아웃 하시겠습니까?")) {
+                auth.signOut();
+            }
+        }
+
+        // 🌟 [NEW] 1시간 자동 로그아웃 타이머
+        function startInactivityTimer() {
+            resetTimer();
+            window.addEventListener('mousemove', resetTimer);
+            window.addEventListener('keydown', resetTimer);
+            window.addEventListener('touchstart', resetTimer);
+            window.addEventListener('click', resetTimer);
+        }
+
+        function stopInactivityTimer() {
+            clearTimeout(inactivityTimer);
+            window.removeEventListener('mousemove', resetTimer);
+            window.removeEventListener('keydown', resetTimer);
+            window.removeEventListener('touchstart', resetTimer);
+            window.removeEventListener('click', resetTimer);
+        }
+
+        function resetTimer() {
+            clearTimeout(inactivityTimer);
+            if(currentUser) {
+                inactivityTimer = setTimeout(() => {
+                    auth.signOut();
+                    alert("1시간 동안 활동이 없어 안전하게 자동 로그아웃 되었습니다.");
+                }, 3600000); // 1시간 (3600000ms)
+            }
+        }
+
         function getMemoDataForDate(dateStr) {
             let data = memos[dateStr];
             if (!data) return { blocks: [] };
-            if (typeof data === 'string') {
-                return { blocks: [{ type: "paragraph", data: { text: data.replace(/\n/g, '<br>') } }] };
-            }
-            return data; // 이미 에디터 객체 포맷인 경우 그대로 반환
+            if (typeof data === 'string') return { blocks: [{ type: "paragraph", data: { text: data.replace(/\n/g, '<br>') } }] };
+            return data;
         }
 
-        // 🌟 [NEW] 스마트 에디터(Editor.js) 초기화 및 Firebase 연동
         function initEditor() {
+            if(editor) { editor.destroy(); editor = null; } // 기존 에디터 리셋
+            
             const editorTools = {
                 header: Header, list: List, checklist: Checklist, Marker: Marker, table: Table,
                 image: {
@@ -425,7 +563,7 @@
                             uploadByFile(file) {
                                 return new Promise((resolve, reject) => {
                                     const storageRef = firebase.storage().ref();
-                                    const fileRef = storageRef.child('memo_uploads/' + Date.now() + '_' + file.name);
+                                    const fileRef = storageRef.child(`memo_uploads/${currentUser.uid}/${Date.now()}_${file.name}`);
                                     fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL())
                                     .then(url => resolve({ success: 1, file: { url } }))
                                     .catch(err => { alert("이미지 첨부 실패!"); reject(err); });
@@ -441,7 +579,7 @@
                             uploadByFile(file) {
                                 return new Promise((resolve, reject) => {
                                     const storageRef = firebase.storage().ref();
-                                    const fileRef = storageRef.child('memo_uploads/' + Date.now() + '_' + file.name);
+                                    const fileRef = storageRef.child(`memo_uploads/${currentUser.uid}/${Date.now()}_${file.name}`);
                                     fileRef.put(file).then(snapshot => snapshot.ref.getDownloadURL())
                                     .then(url => resolve({ success: 1, file: { url, name: file.name, size: file.size, extension: file.name.split('.').pop() } }))
                                     .catch(err => { alert("파일 첨부 실패!"); reject(err); });
@@ -451,7 +589,7 @@
                     }
                 }
             };
-            if (typeof ToggleBlock !== 'undefined') editorTools.toggle = { class: ToggleBlock }; // 토글 플러그인 로드 확인 후 추가
+            if (typeof ToggleBlock !== 'undefined') editorTools.toggle = { class: ToggleBlock };
 
             editor = new EditorJS({
                 holder: 'editorjs',
@@ -467,7 +605,6 @@
                 }
             });
 
-            // 모바일에서 메모장 포커스가 빠질 때 즉각 저장
             document.getElementById('editorjs').addEventListener('focusout', () => {
                 if (editor) {
                     editor.save().then((outputData) => {
@@ -476,6 +613,7 @@
                     });
                 }
             });
+            window.addEventListener("resize", adjustMemoHeight);
         }
 
         function adjustMemoHeight() {
@@ -489,13 +627,11 @@
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
             if(tab === 'memo') {
                 if (currentView !== 'dayContainer') switchView('dayContainer'); 
-                document.body.classList.add('show-memo');
-                document.getElementById('tabMemo').classList.add('active');
+                document.body.classList.add('show-memo'); document.getElementById('tabMemo').classList.add('active');
                 setTimeout(adjustMemoHeight, 100); 
             } else {
                 if (currentView !== 'dayContainer') switchView('dayContainer');
-                document.body.classList.remove('show-memo');
-                document.getElementById('tabPlanner').classList.add('active');
+                document.body.classList.remove('show-memo'); document.getElementById('tabPlanner').classList.add('active');
             }
         }
 
@@ -503,7 +639,6 @@
             currentView = viewId;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
             document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : 'btnHabit').classList.add('active');
-            
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             
@@ -530,11 +665,8 @@
             document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             
-            // 🌟 [NEW] 에디터 화면 내용 교체
             if (editor && typeof editor.isReady !== 'undefined') {
-                editor.isReady.then(() => {
-                    editor.render(getMemoDataForDate(getDateString(currentDate)));
-                });
+                editor.isReady.then(() => { editor.render(getMemoDataForDate(getDateString(currentDate))); });
             }
             setTimeout(adjustMemoHeight, 100);
             
@@ -542,7 +674,6 @@
             else if (currentView === 'weekContainer') renderWeekView();
             else if (currentView === 'monthContainer') renderMonthView();
             else if (currentView === 'habitContainer') renderHabitView();
-
             if (document.getElementById('ledgerModal').style.display === 'flex') renderLedger();
         }
 
@@ -683,31 +814,20 @@
         function saveTodo() {
             const task = document.getElementById("taskInput").value; const targetDateStr = document.getElementById("taskDateInput").value; const newTs = new Date(targetDateStr).setHours(0,0,0,0);
             
-            // 🌟 [NEW] 스마트 에디터 기반 메모 연동 로직
+            // 스마트 에디터 기반 메모 연동
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
-                let oldData = getMemoDataForDate(originalDateStr);
-                let blockToMove = null;
+                let oldData = getMemoDataForDate(originalDateStr); let blockToMove = null;
                 if (oldData && oldData.blocks) {
                     const idx = oldData.blocks.findIndex(b => b.type === 'paragraph' && typeof b.data.text === 'string' && b.data.text.includes(`📌 [${originalTaskName}`));
-                    if (idx > -1) {
-                        blockToMove = oldData.blocks.splice(idx, 1)[0];
-                        memos[originalDateStr] = oldData;
-                    }
+                    if (idx > -1) { blockToMove = oldData.blocks.splice(idx, 1)[0]; memos[originalDateStr] = oldData; }
                 }
-                if (blockToMove) {
-                    let targetData = getMemoDataForDate(targetDateStr);
-                    targetData.blocks.push(blockToMove);
-                    memos[targetDateStr] = targetData;
-                }
+                if (blockToMove) { let targetData = getMemoDataForDate(targetDateStr); targetData.blocks.push(blockToMove); memos[targetDateStr] = targetData; }
             }
             
             const taskMemo = document.getElementById("taskMemoInput").value;
             if (taskMemo.trim() !== "") {
                 let targetData = getMemoDataForDate(targetDateStr);
-                targetData.blocks.push({
-                    type: 'paragraph',
-                    data: { text: `📌 [${task}] 메모:<br>${taskMemo.replace(/\n/g, '<br>')}` }
-                });
+                targetData.blocks.push({ type: 'paragraph', data: { text: `📌 [${task}] 메모:<br>${taskMemo.replace(/\n/g, '<br>')}` } });
                 memos[targetDateStr] = targetData;
             }
 
@@ -741,7 +861,12 @@
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
         function toggleComplete(id, e, forceDateStr) { e.stopPropagation(); const dateKey = forceDateStr || getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
         function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
-        function saveData() { docRef.set({ todos, memos, ledgers }); }
+        
+        // 🌟 [NEW] 로그인한 계정에만 데이터 저장
+        function saveData() { 
+            if(!currentUser) return;
+            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers }); 
+        }
         
         function openLedger() { document.getElementById('ledgerDateStr').innerText = (currentDate.getMonth()+1) + "/" + currentDate.getDate(); renderLedger(); document.getElementById('ledgerModal').style.display = 'flex'; }
         function closeLedger() { document.getElementById('ledgerModal').style.display = 'none'; }
