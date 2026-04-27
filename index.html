@@ -16,7 +16,6 @@
         /* --- 공통 디자인 --- */
         body { font-family: '-apple-system', 'BlinkMacSystemFont', 'Apple SD Gothic Neo', sans-serif; background-color: #f9f9fb; color: #222; margin: 0; padding: 0; height: 100vh; box-sizing: border-box; display: flex; flex-direction: column; overflow: hidden; }
         
-        /* 로그인 화면 스타일 */
         #loginContainer { display: flex; flex-direction: column; justify-content: center; align-items: center; height: 100vh; width: 100vw; background-color: #f9f9fb; position: absolute; top: 0; left: 0; z-index: 9999; }
         .login-box { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); width: 320px; display: flex; flex-direction: column; gap: 15px; text-align: center; }
         .login-box h2 { margin: 0 0 10px 0; font-size: 22px; font-weight: 700; color: #111; }
@@ -28,7 +27,6 @@
         .btn-secondary:hover { background: #e5e5e5; }
         .reset-pw { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; margin-top: 5px; }
 
-        /* 메인 앱 컨테이너 */
         #appContainer { display: none; flex-direction: column; height: 100vh; padding: 40px; box-sizing: border-box; }
 
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
@@ -37,6 +35,11 @@
         .view-btn { border: none; background: none; padding: 6px 16px; font-size: 13px; font-weight: 500; cursor: pointer; border-radius: 7px; color: #666; transition: all 0.2s; white-space: nowrap; }
         .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .header-right { display: flex; justify-content: flex-end; align-items: center; flex: 1; gap: 10px; }
+        
+        /* 🌟 [NEW] 검색바 스타일 */
+        .search-bar-wrap { position: relative; }
+        .search-bar-wrap input { padding: 8px 10px 8px 32px; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 13px; width: 140px; transition: 0.2s; background: #fff; outline: none;}
+        .search-bar-wrap input:focus { width: 200px; border-color: #222; box-shadow: 0 0 0 2px rgba(0,0,0,0.05); }
         
         .date-picker-wrap { position: relative; display: flex; align-items: center; justify-content: center; border-radius: 8px; transition: background-color 0.2s; cursor: pointer; }
         .date-picker-wrap:hover { background-color: #eaeaea; }
@@ -74,6 +77,11 @@
         .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; margin-left: auto; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
         .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
         .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        
+        /* 🌟 [NEW] 태그 UI 디자인 */
+        .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; }
+        .app-tag:hover { background-color: #d2e3fc; }
+
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
         .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
         .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
@@ -85,7 +93,7 @@
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* [2] 주간 뷰 스타일 */
+        /* [2] 주간, [3] 월간, [4] 습관 뷰 (생략 없이 유지) */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
         .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
@@ -96,7 +104,6 @@
         .week-day-col { flex: 1; border-right: 1px solid #f0f0f0; position: relative; cursor: pointer; transition: background-color 0.1s; }
         .week-day-col:hover { background-color: rgba(0,0,0,0.01); }
 
-        /* [3] 월간 뷰 스타일 */
         .month-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; min-width: 500px; flex-shrink: 0;}
         .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, 1fr); gap: 8px; flex: 1; overflow-y: auto; padding-right: 5px; min-width: 500px; -webkit-overflow-scrolling: touch; }
@@ -110,7 +117,6 @@
         .holiday-label { background-color: #f5f5f7; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: inline-block; align-self: flex-start; margin-bottom: 2px; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
-        /* [4] 습관 뷰 스타일 */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
@@ -123,6 +129,15 @@
         .habit-empty:hover { background-color: #e5e5ea; }
         .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
+
+        /* 🌟 [NEW] 검색 결과 뷰 스타일 */
+        .search-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
+        .search-result-group { margin-bottom: 25px; }
+        .search-result-title { font-size: 16px; font-weight: 600; border-bottom: 2px solid #222; padding-bottom: 8px; margin-bottom: 15px; color: #111; }
+        .search-item-row { background: #fafafa; border: 1px solid #eee; padding: 12px 15px; border-radius: 8px; margin-bottom: 8px; display: flex; align-items: center; gap: 15px; cursor: pointer; transition: 0.2s; }
+        .search-item-row:hover { background: #f0f0f0; border-color: #ddd; }
+        .search-date-badge { background: #fff; border: 1px solid #e5e5e5; font-size: 12px; font-weight: 600; color: #555; padding: 4px 8px; border-radius: 6px; flex-shrink: 0; }
+        .search-text-content { flex: 1; font-size: 14px; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* 모달 공통 스타일 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 1000; justify-content: center; align-items: center; }
@@ -139,7 +154,6 @@
         .btn-cancel, .btn-secondary { background: #eee; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; color: #333; font-weight: 600;}
         .btn-delete { color: #ff3b30; background: none; border: none; cursor: pointer; font-size: 13px; }
 
-        /* 가계부 전용 스타일 */
         .ledger-btn { background-color: #fff; border: 1px solid #e5e5e5; padding: 8px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; color: #222; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.02); white-space: nowrap; }
         .ledger-btn:hover { border-color: #222; }
         
@@ -148,7 +162,6 @@
 
         .mobile-tab-bar { display: none; }
 
-        /* 스마트 에디터 전용 커스텀 스타일 */
         #editorjs { flex: 1; overflow-y: auto; background: #fff; font-size: 15px; line-height: 1.6; -webkit-overflow-scrolling: touch; padding-right: 10px; }
         .codex-editor__redactor { padding-bottom: 50px !important; }
         .ce-block__content, .ce-toolbar__content { max-width: 100% !important; margin: 0; }
@@ -163,7 +176,13 @@
             .date-nav h1 { font-size: 18px; width: 180px; }
             .view-selector { margin: 0; overflow-x: auto; justify-content: flex-start; padding-bottom: 5px; }
             .view-selector::-webkit-scrollbar { display: none; }
-            .header-right { justify-content: flex-end; }
+            
+            /* 모바일 검색바 최적화 */
+            .header-right { justify-content: flex-start; flex-wrap: wrap; width: 100%; }
+            .search-bar-wrap { width: 100%; flex-basis: 100%; margin-bottom: 5px;}
+            .search-bar-wrap input { width: 100%; box-sizing: border-box; }
+            .search-bar-wrap input:focus { width: 100%; }
+
             .view-container.active { display: block !important; height: auto !important; overflow: visible !important; }
             .main-container { flex-direction: column; display: block; height: auto; overflow: visible; }
             .left-half { display: block; width: 100%; height: auto; overflow: visible; margin-bottom: 15px; }
@@ -237,10 +256,21 @@
             </div>
 
             <div class="header-right">
+                <div class="search-bar-wrap">
+                    <span style="position:absolute; left:10px; top:9px; color:#888; font-size:14px; pointer-events: none;">🔍</span>
+                    <input type="text" id="searchInput" placeholder="태그 및 내용 검색..." oninput="handleSearch()">
+                </div>
                 <button class="ledger-btn" onclick="openLedger()">📒 가계부</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
         </header>
+
+        <div id="searchContainer" class="view-container">
+            <div class="search-wrapper">
+                <h2 style="margin-bottom: 20px; font-size: 20px;">검색 결과: <span id="searchKeywordDisp" style="color:#007AFF;"></span></h2>
+                <div class="scrollable-area" id="searchResultsArea" style="padding-right: 15px;"></div>
+            </div>
+        </div>
 
         <div id="dayContainer" class="view-container active">
             <div id="allDayContainer" class="all-day-wrapper"></div>
@@ -315,11 +345,17 @@
                 </label>
             </div>
             <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
+            
+            <div class="input-group">
+                <label>해시태그 (선택)</label>
+                <input type="text" id="taskTagsInput" placeholder="쉼표(,)로 구분 (예: 상담, 특강, 회의)">
+            </div>
+
             <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
             
             <div class="flex-row-mobile-col" style="display:flex; gap:10px;">
                 <div class="input-group" style="flex:1">
-                    <label>우선순위 (A:중요/B:진행/C:대기)</label>
+                    <label>우선순위 (A/B/C)</label>
                     <select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
                 </div>
                 <div class="input-group" style="flex:1">
@@ -646,16 +682,20 @@
         function switchView(viewId) {
             currentView = viewId;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : 'btnHabit').classList.add('active');
+            const targetBtn = document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : viewId === 'habitContainer' ? 'btnHabit' : null);
+            if(targetBtn) targetBtn.classList.add('active');
+
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
             
-            if (window.innerWidth <= 768 && viewId !== 'dayContainer') {
+            if (window.innerWidth <= 768 && viewId !== 'dayContainer' && viewId !== 'searchContainer') {
                 document.body.classList.remove('show-memo');
                 document.querySelectorAll('.mobile-tab-btn').forEach(b => b.classList.remove('active'));
                 document.getElementById('tabPlanner').classList.add('active');
             }
-            updateDateDisplay();
+            if (viewId !== 'searchContainer') {
+                updateDateDisplay();
+            }
         }
 
         function updateDateDisplay() { 
@@ -692,6 +732,115 @@
             updateDateDisplay(); 
         }
 
+        /* 🌟 [NEW] 통합 검색 로직 */
+        function handleSearch() {
+            const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
+            
+            if(!keyword) {
+                if(currentView === 'searchContainer') switchView('dayContainer'); 
+                return;
+            }
+            
+            if(currentView !== 'searchContainer') {
+                switchView('searchContainer');
+            }
+            
+            document.getElementById("searchKeywordDisp").innerText = `'${keyword}'`;
+            const resultsArea = document.getElementById("searchResultsArea");
+            resultsArea.innerHTML = "";
+
+            const isTagSearch = keyword.startsWith('#');
+            const searchStr = isTagSearch ? keyword.substring(1) : keyword;
+
+            // 1. 일정/할일 검색 (태그, 제목 일치)
+            const matchedTodos = todos.filter(t => {
+                if (isTagSearch) {
+                    return t.tags && t.tags.some(tag => tag.toLowerCase() === searchStr);
+                } else {
+                    const inTitle = t.task.toLowerCase().includes(searchStr);
+                    const inTags = t.tags && t.tags.some(tag => tag.toLowerCase().includes(searchStr));
+                    return inTitle || inTags;
+                }
+            });
+
+            // 2. 메모 검색 (모든 날짜의 풀텍스트 뒤지기)
+            const matchedMemos = [];
+            if (!isTagSearch) {
+                for(const [dateKey, memoData] of Object.entries(memos)) {
+                    let textContent = "";
+                    if(memoData && memoData.blocks) {
+                        memoData.blocks.forEach(b => {
+                            if(b.data && b.data.text) textContent += b.data.text + " ";
+                            // 체크리스트 내용 등 추가 탐색 가능
+                            if(b.data && b.data.items) b.data.items.forEach(i => textContent += i.text + " "); 
+                        });
+                    } else if (typeof memoData === 'string') {
+                        textContent = memoData;
+                    }
+                    
+                    if(textContent.toLowerCase().includes(searchStr)) {
+                        matchedMemos.push({ date: dateKey, text: textContent });
+                    }
+                }
+            }
+
+            // 결과 렌더링
+            if(matchedTodos.length > 0) {
+                resultsArea.innerHTML += `<div class="search-result-group"><div class="search-result-title">📌 일정 및 할 일 (${matchedTodos.length}건)</div></div>`;
+                const groupDiv = resultsArea.lastChild;
+                
+                matchedTodos.sort((a,b) => b.createDate - a.createDate).forEach(t => {
+                    const dStr = getDateString(new Date(t.createDate));
+                    const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag">#${tag}</span>`).join(' ') : '';
+                    groupDiv.innerHTML += `
+                    <div class="search-item-row" onclick="goToDateAndOpenModal('${dStr}', '${t.id}')">
+                        <div class="search-date-badge">${dStr}</div>
+                        <div class="priority-dot dot-${t.type}"></div>
+                        <div class="search-text-content">${t.task}</div>
+                        <div style="margin-left:auto; display:flex; gap:5px;">${tagsHtml}</div>
+                    </div>`;
+                });
+            }
+
+            if(matchedMemos.length > 0) {
+                resultsArea.innerHTML += `<div class="search-result-group"><div class="search-result-title">📝 메모 (${matchedMemos.length}건)</div></div>`;
+                const groupDiv = resultsArea.lastChild;
+                
+                matchedMemos.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
+                    const cleanText = m.text.replace(/<\/?[^>]+(>|$)/g, ""); // HTML 태그 제거
+                    const preview = cleanText.length > 60 ? cleanText.substring(0, 60) + "..." : cleanText;
+                    groupDiv.innerHTML += `
+                    <div class="search-item-row" onclick="goToDate('${m.date}')">
+                        <div class="search-date-badge">${m.date}</div>
+                        <div class="search-text-content">${preview}</div>
+                    </div>`;
+                });
+            }
+
+            if(matchedTodos.length === 0 && matchedMemos.length === 0) {
+                resultsArea.innerHTML = "<div style='padding:50px; text-align:center; color:#888;'>검색 결과가 없습니다.</div>";
+            }
+        }
+
+        /* 🌟 [NEW] 태그 클릭 시 검색창으로 연동 */
+        function handleTagClick(tag, e) {
+            e.stopPropagation();
+            const searchInput = document.getElementById("searchInput");
+            searchInput.value = `#${tag}`;
+            handleSearch();
+        }
+
+        /* 🌟 [NEW] 검색 결과 클릭 시 해당 날짜로 즉시 점프 */
+        function goToDate(dateStr) {
+            currentDate = new Date(dateStr);
+            document.getElementById("searchInput").value = "";
+            switchView('dayContainer');
+        }
+        function goToDateAndOpenModal(dateStr, taskId) {
+            goToDate(dateStr);
+            setTimeout(() => { openModal(taskId); }, 300);
+        }
+
         function renderDayView() {
             const dateKey = getDateString(currentDate); const ul = document.getElementById("todoList"); const grid = document.getElementById("dayScheduleGrid"); const alc = document.getElementById("allDayContainer");
             ul.innerHTML = ""; alc.innerHTML = ""; grid.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
@@ -703,7 +852,11 @@
                 let isEffectiveAllDay = t.isAllDay || (!isTask && !t.startTime);
                 let repeatLabel = ''; if(t.repeat === 'daily') repeatLabel = '🔁 매일'; if(t.repeat === 'weekly') repeatLabel = '🔁 매주'; if(t.repeat === 'monthly') repeatLabel = '🔁 매월'; if(t.repeat === 'yearly') repeatLabel = '🔁 매년';
                 const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
-                const meta = `<div class="task-meta">${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
+                
+                // 🌟 [NEW] 할 일 목록에 예쁜 태그 렌더링
+                const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag" onclick="handleTagClick('${tag}', event)">#${tag}</span>`).join(' ') : '';
+                
+                const meta = `<div class="task-meta">${tagsHtml} ${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
 
                 if (isEffectiveAllDay) {
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
@@ -822,6 +975,10 @@
         function saveTodo() {
             const task = document.getElementById("taskInput").value; const targetDateStr = document.getElementById("taskDateInput").value; const newTs = new Date(targetDateStr).setHours(0,0,0,0);
             
+            // 🌟 [NEW] 태그 입력값 배열로 쪼개서 저장
+            const rawTags = document.getElementById("taskTagsInput").value;
+            const tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
+
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
                 let oldData = getMemoDataForDate(originalDateStr); let blockToMove = null;
                 if (oldData && oldData.blocks) {
@@ -838,10 +995,26 @@
                 memos[targetDateStr] = targetData;
             }
 
-            const data = { task, isTask: isTaskFlag, createDate: newTs, isHabit: document.getElementById("isHabitCheck").checked, type: document.getElementById("priorityType").value, startTime: document.getElementById("startTimeInput").value, endTime: document.getElementById("endTimeInput").value, isAllDay: document.getElementById("allDayCheck").checked, repeat: document.getElementById("repeatSelect").value, repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value) };
+            const data = { 
+                task, 
+                isTask: isTaskFlag, 
+                createDate: newTs, 
+                isHabit: document.getElementById("isHabitCheck").checked, 
+                type: document.getElementById("priorityType").value, 
+                startTime: document.getElementById("startTimeInput").value, 
+                endTime: document.getElementById("endTimeInput").value, 
+                isAllDay: document.getElementById("allDayCheck").checked, 
+                repeat: document.getElementById("repeatSelect").value, 
+                repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value),
+                tags: tagsArray // 🌟 [NEW] 태그 배열 추가
+            };
+            
             if(editingId) todos[todos.findIndex(x => x.id === editingId)] = { ...todos.find(x => x.id === editingId), ...data };
             else todos.push({ id: Date.now().toString(), ...data, completedDates: [] });
             saveData(); closeModal(); updateDateDisplay();
+            
+            // 만약 검색 중이었다면 검색 결과도 즉시 갱신
+            if(currentView === 'searchContainer') handleSearch();
         }
 
         function openModal(id, st, et, passedDateStr) {
@@ -850,10 +1023,15 @@
                 const t = todos.find(x => x.id === id); let isT = t.isTask; if (typeof isT === 'undefined') isT = false; setCategory(isT);
                 originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task; document.getElementById("taskDateInput").value = originalDateStr; document.getElementById("priorityType").value = t.type || "A"; document.getElementById("startTimeInput").value = t.startTime || ""; document.getElementById("endTimeInput").value = t.endTime || ""; document.getElementById("allDayCheck").checked = t.isAllDay; document.getElementById("isHabitCheck").checked = t.isHabit || false; document.getElementById("repeatSelect").value = t.repeat || "none";
+                
+                // 🌟 [NEW] 저장된 태그 불러오기
+                document.getElementById("taskTagsInput").value = t.tags && t.tags.length > 0 ? t.tags.join(", ") : "";
+                
                 if (t.repeatDays) document.querySelectorAll('#weeklyDays input').forEach(cb => { cb.checked = t.repeatDays.includes(cb.value); });
                 document.getElementById("deleteBtn").style.display = "block";
             } else {
                 setCategory(true); document.getElementById("taskInput").value = ""; document.getElementById("taskDateInput").value = passedDateStr || getDateString(currentDate); document.getElementById("priorityType").value = "A"; document.getElementById("startTimeInput").value = st || ""; document.getElementById("endTimeInput").value = et || ""; document.getElementById("allDayCheck").checked = false; document.getElementById("isHabitCheck").checked = false; document.getElementById("repeatSelect").value = "none"; document.querySelectorAll('#weeklyDays input').forEach(cb => cb.checked = false); document.getElementById("deleteBtn").style.display = "none";
+                document.getElementById("taskTagsInput").value = ""; // 태그 초기화
             }
             toggleWeeklyDays(); toggleTimeInput(); m.style.display = "flex";
         }
@@ -863,11 +1041,11 @@
         function initWeekGrid() { const labels = document.getElementById("weekTimeLabels"); labels.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="week-time-slot"; r.innerText=`${i}:00`; labels.appendChild(r); } }
         function toggleWeeklyDays() { document.getElementById("weeklyDays").style.display = document.getElementById("repeatSelect").value === "weekly" ? "flex" : "none"; }
         function closeModal() { document.getElementById("todoModal").style.display = "none"; }
-        function goToday() { currentDate = new Date(); updateDateDisplay(); }
+        function goToday() { currentDate = new Date(); document.getElementById("searchInput").value = ""; updateDateDisplay(); }
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
         function toggleComplete(id, e, forceDateStr) { e.stopPropagation(); const dateKey = forceDateStr || getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
-        function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); } }
+        function deleteTodo() { if(confirm("삭제하시겠습니까?")) { todos = todos.filter(x => x.id !== editingId); saveData(); closeModal(); updateDateDisplay(); if(currentView === 'searchContainer') handleSearch(); } }
         
         function saveData() { 
             if(!currentUser) return;
