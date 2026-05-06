@@ -36,7 +36,6 @@
         .view-btn.active { background-color: #fff; color: #000; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .header-right { display: flex; justify-content: flex-end; align-items: center; flex: 1; gap: 10px; }
         
-        /* 🌟 [NEW] 검색바 스타일 */
         .search-bar-wrap { position: relative; }
         .search-bar-wrap input { padding: 8px 10px 8px 32px; border: 1px solid #e5e5e5; border-radius: 8px; font-size: 13px; width: 140px; transition: 0.2s; background: #fff; outline: none;}
         .search-bar-wrap input:focus { width: 200px; border-color: #222; box-shadow: 0 0 0 2px rgba(0,0,0,0.05); }
@@ -53,6 +52,22 @@
 
         .view-container { flex: 1; overflow: hidden; display: none; flex-direction: column; min-height: 0; }
         .view-container.active { display: flex; }
+
+        /* 🌟 [NEW] 목표 (Goal) 뷰 및 배너 스타일 */
+        .goal-wrapper { display: flex; flex-direction: column; gap: 15px; padding: 25px; background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; flex: 1; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.02); -webkit-overflow-scrolling: touch; }
+        .goal-card { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 18px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
+        .goal-card:hover { border-color: #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); background: #fff; }
+        .goal-card-header { font-size: 14px; font-weight: 700; color: #555; display: flex; align-items: center; gap: 6px; }
+        .goal-card textarea { width: 100%; border: none; background: transparent; resize: none; font-size: 15px; outline: none; color: #111; font-family: inherit; line-height: 1.6; min-height: 45px; }
+        .goal-card textarea::placeholder { color: #aaa; font-style: italic; font-size: 14px; }
+        
+        .context-goal-banner { background: #fff; border: 1px solid #e5e5e5; padding: 12px 18px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.015); flex-shrink: 0; }
+        .context-goal-banner:hover { border-color: #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transform: translateY(-1px); }
+        .banner-icon { font-size: 22px; }
+        .banner-content { display: flex; flex-direction: column; }
+        .banner-label { font-size: 11px; font-weight: 700; color: #888; margin-bottom: 3px; }
+        .banner-text { font-size: 15px; font-weight: 600; color: #222; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 800px;}
+        .banner-empty { color: #aaa; font-weight: 500; font-style: italic; }
 
         /* [1] 일간 뷰 스타일 */
         .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
@@ -78,7 +93,6 @@
         .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
         .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
         
-        /* 🌟 [NEW] 태그 UI 디자인 */
         .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; }
         .app-tag:hover { background-color: #d2e3fc; }
 
@@ -93,7 +107,7 @@
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* [2] 주간, [3] 월간, [4] 습관 뷰 (생략 없이 유지) */
+        /* [2] 주간 뷰 스타일 */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
         .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
@@ -104,6 +118,7 @@
         .week-day-col { flex: 1; border-right: 1px solid #f0f0f0; position: relative; cursor: pointer; transition: background-color 0.1s; }
         .week-day-col:hover { background-color: rgba(0,0,0,0.01); }
 
+        /* [3] 월간 뷰 스타일 */
         .month-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .month-header-row { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 13px; font-weight: 600; color: #555; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px solid #eee; min-width: 500px; flex-shrink: 0;}
         .month-grid { display: grid; grid-template-columns: repeat(7, 1fr); grid-auto-rows: minmax(100px, 1fr); gap: 8px; flex: 1; overflow-y: auto; padding-right: 5px; min-width: 500px; -webkit-overflow-scrolling: touch; }
@@ -117,6 +132,7 @@
         .holiday-label { background-color: #f5f5f7; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: inline-block; align-self: flex-start; margin-bottom: 2px; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
+        /* [4] 습관 뷰 스타일 */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
@@ -130,7 +146,7 @@
         .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
 
-        /* 🌟 [NEW] 검색 결과 뷰 스타일 */
+        /* [5] 검색 결과 뷰 스타일 */
         .search-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .search-result-group { margin-bottom: 25px; }
         .search-result-title { font-size: 16px; font-weight: 600; border-bottom: 2px solid #222; padding-bottom: 8px; margin-bottom: 15px; color: #111; }
@@ -177,7 +193,6 @@
             .view-selector { margin: 0; overflow-x: auto; justify-content: flex-start; padding-bottom: 5px; }
             .view-selector::-webkit-scrollbar { display: none; }
             
-            /* 모바일 검색바 최적화 */
             .header-right { justify-content: flex-start; flex-wrap: wrap; width: 100%; }
             .search-bar-wrap { width: 100%; flex-basis: 100%; margin-bottom: 5px;}
             .search-bar-wrap input { width: 100%; box-sizing: border-box; }
@@ -204,6 +219,7 @@
             .modal-content { width: 95% !important; padding: 20px; }
             .flex-row-mobile-col { flex-direction: column !important; gap: 10px; }
             #ledgerModal .modal-content { width: 95% !important; padding: 15px; }
+            .banner-text { max-width: 250px; }
         }
     </style>
 
@@ -224,6 +240,7 @@
 </head>
 <body>
 
+    <!-- 로그인 화면 -->
     <div id="loginContainer">
         <div class="login-box">
             <h2>도담 플래너</h2>
@@ -236,6 +253,7 @@
         </div>
     </div>
 
+    <!-- 메인 앱 화면 -->
     <div id="appContainer">
         <header>
             <div class="date-nav">
@@ -253,6 +271,8 @@
                 <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
                 <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
                 <button class="view-btn" id="btnHabit" onclick="switchView('habitContainer')">습관</button>
+                <!-- 🌟 [NEW] 목표 탭 버튼 추가 -->
+                <button class="view-btn" id="btnGoal" onclick="switchView('goalContainer')">목표</button>
             </div>
 
             <div class="header-right">
@@ -265,6 +285,7 @@
             </div>
         </header>
 
+        <!-- [0] 검색 결과 뷰 -->
         <div id="searchContainer" class="view-container">
             <div class="search-wrapper">
                 <h2 style="margin-bottom: 20px; font-size: 20px;">검색 결과: <span id="searchKeywordDisp" style="color:#007AFF;"></span></h2>
@@ -272,7 +293,52 @@
             </div>
         </div>
 
+        <!-- 🌟 [NEW] 목표(Goal) 관리 뷰 -->
+        <div id="goalContainer" class="view-container">
+            <div class="goal-wrapper">
+                <div class="section-header" style="margin-bottom: 5px;">
+                    <h2>[나침반: 나의 목표]</h2>
+                </div>
+                <p style="font-size:13px; color:#666; margin-top:-10px; margin-bottom:10px;">각 항목을 클릭하여 목표를 작성하세요. 입력창 바깥을 누르면 자동 저장됩니다.</p>
+                
+                <div class="goal-card" style="border-left: 4px solid #9375CA;">
+                    <div class="goal-card-header">💎 핵심 가치 (평생 목표)</div>
+                    <textarea id="goalCore" placeholder="내 삶의 궁극적인 방향성이나 가치를 적어보세요." onfocusout="saveGoals()"></textarea>
+                </div>
+                
+                <div class="goal-card" style="border-left: 4px solid #5DA2E6;">
+                    <div class="goal-card-header">🗺️ 장기 목표 (10년)</div>
+                    <textarea id="goalLongTerm" placeholder="앞으로 10년 뒤, 어떤 모습이 되고 싶으신가요?" onfocusout="saveGoals()"></textarea>
+                </div>
+                
+                <div class="goal-card" style="border-left: 4px solid #68B96D;">
+                    <div class="goal-card-header">🎯 연간 목표 (올해)</div>
+                    <textarea id="goalYearly" placeholder="올해 반드시 이루고 싶은 핵심 목표를 적어보세요." onfocusout="saveGoals()"></textarea>
+                </div>
+                
+                <div class="goal-card" style="border-left: 4px solid #FF9955;">
+                    <div class="goal-card-header">📌 월간 목표 (이번 달)</div>
+                    <textarea id="goalMonthly" placeholder="이번 달에 집중해야 할 목표는 무엇인가요?" onfocusout="saveGoals()"></textarea>
+                </div>
+                
+                <div class="goal-card" style="border-left: 4px solid #FF7575;">
+                    <div class="goal-card-header">🔥 주간 목표 (이번 주)</div>
+                    <textarea id="goalWeekly" placeholder="이번 주, 가장 중요한 한 가지(One Thing)는 무엇인가요?" onfocusout="saveGoals()"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- [1] 일간 뷰 -->
         <div id="dayContainer" class="view-container active">
+            <!-- 🌟 [NEW] 일간 뷰용 주간 목표 배너 -->
+            <div class="context-goal-banner" id="dayGoalBanner" style="border-left-color: #FF7575;" onclick="switchView('goalContainer')">
+                <span class="banner-icon">🔥</span>
+                <div class="banner-content">
+                    <div class="banner-label">주간 목표 (이번 주)</div>
+                    <div class="banner-text" id="dayGoalText"></div>
+                </div>
+            </div>
+
             <div id="allDayContainer" class="all-day-wrapper"></div>
             <div class="main-container">
                 <div class="left-half">
@@ -294,7 +360,17 @@
             </div>
         </div>
 
+        <!-- [2] 주간 뷰 -->
         <div id="weekContainer" class="view-container">
+            <!-- 🌟 [NEW] 주간 뷰용 월간 목표 배너 -->
+            <div class="context-goal-banner" id="weekGoalBanner" style="border-left-color: #FF9955;" onclick="switchView('goalContainer')">
+                <span class="banner-icon">📌</span>
+                <div class="banner-content">
+                    <div class="banner-label">월간 목표 (이번 달)</div>
+                    <div class="banner-text" id="weekGoalText"></div>
+                </div>
+            </div>
+
             <div class="week-wrapper">
                 <div class="week-header-row" id="weekHeader"></div>
                 <div class="week-body" id="weekBodyScroll">
@@ -304,7 +380,17 @@
             </div>
         </div>
 
+        <!-- [3] 월간 뷰 -->
         <div id="monthContainer" class="view-container">
+            <!-- 🌟 [NEW] 월간 뷰용 연간 목표 배너 -->
+            <div class="context-goal-banner" id="monthGoalBanner" style="border-left-color: #68B96D;" onclick="switchView('goalContainer')">
+                <span class="banner-icon">🎯</span>
+                <div class="banner-content">
+                    <div class="banner-label">연간 목표 (올해)</div>
+                    <div class="banner-text" id="monthGoalText"></div>
+                </div>
+            </div>
+
             <div class="month-wrapper">
                 <div class="month-header-row">
                     <div class="sun-text">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat-text">토</div>
@@ -313,6 +399,7 @@
             </div>
         </div>
 
+        <!-- [4] 습관 뷰 -->
         <div id="habitContainer" class="view-container">
             <div class="habit-wrapper">
                 <div class="section-header" style="margin-bottom: 20px;"><h2>[Habit Tracker]</h2></div>
@@ -321,11 +408,13 @@
         </div>
     </div>
 
+    <!-- 📱 모바일 하단 탭바 -->
     <div class="mobile-tab-bar" id="mobileTabBar">
         <div class="mobile-tab-btn active" id="tabPlanner" onclick="switchMobileTab('planner')">📅 플래너</div>
         <div class="mobile-tab-btn" id="tabMemo" onclick="switchMobileTab('memo')">📝 메모장</div>
     </div>
 
+    <!-- [일정] 입력 모달 -->
     <div id="todoModal" class="modal-overlay">
         <div class="modal-content" style="width: 380px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
@@ -392,6 +481,7 @@
         </div>
     </div>
 
+    <!-- [가계부] 팝업 모달 -->
     <div id="ledgerModal" class="modal-overlay">
         <div class="modal-content" style="width: 550px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
@@ -459,7 +549,10 @@
         let currentUser = null;
         let inactivityTimer;
 
-        let todos = []; let memos = {}; let ledgers = [];
+        // 🌟 [NEW] 목표 데이터 저장소 추가
+        let todos = []; let memos = {}; let ledgers = []; 
+        let goals = { core: "", longTerm: "", yearly: "", monthly: "", weekly: "" };
+
         let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
@@ -494,12 +587,15 @@
                 if (doc.exists) {
                     const d = doc.data();
                     todos = d.todos || []; memos = d.memos || {}; ledgers = d.ledgers || [];
+                    // 🌟 [NEW] 목표 데이터 불러오기 (기존 유저의 빈 값 대비)
+                    goals = d.goals || { core: "", longTerm: "", yearly: "", monthly: "", weekly: "" };
                     
                     if (todos.length === 0 && (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com')) {
                         forceMigration(userRef);
                     } else {
                         initEditor();
                         updateDateDisplay();
+                        renderGoals(); // 🌟 [NEW]
                     }
                 } else {
                     if (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com') {
@@ -516,9 +612,11 @@
                 if(oldDoc.exists) {
                     const od = oldDoc.data();
                     todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
-                    userRef.set({ todos, memos, ledgers });
+                    goals = od.goals || { core: "", longTerm: "", yearly: "", monthly: "", weekly: "" };
+                    userRef.set({ todos, memos, ledgers, goals });
                     initEditor();
                     updateDateDisplay();
+                    renderGoals();
                 } else {
                     initEmptyData();
                 }
@@ -526,10 +624,46 @@
         }
 
         function initEmptyData() {
-            todos = []; memos = {}; ledgers = [];
-            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers });
+            todos = []; memos = {}; ledgers = []; goals = { core: "", longTerm: "", yearly: "", monthly: "", weekly: "" };
+            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers, goals });
             initEditor();
             updateDateDisplay();
+            renderGoals();
+        }
+
+        // 🌟 [NEW] 목표 데이터 화면 렌더링 및 동기화
+        function renderGoals() {
+            // 1. 목표 탭 입력창에 텍스트 채우기
+            document.getElementById("goalCore").value = goals.core || "";
+            document.getElementById("goalLongTerm").value = goals.longTerm || "";
+            document.getElementById("goalYearly").value = goals.yearly || "";
+            document.getElementById("goalMonthly").value = goals.monthly || "";
+            document.getElementById("goalWeekly").value = goals.weekly || "";
+
+            // 2. 상단 컨텍스트 배너에 텍스트 채우기
+            const dText = document.getElementById("dayGoalText");
+            dText.innerText = goals.weekly || "클릭하여 이번 주 목표를 설정해보세요!";
+            dText.className = goals.weekly ? "banner-text" : "banner-text banner-empty";
+
+            const wText = document.getElementById("weekGoalText");
+            wText.innerText = goals.monthly || "클릭하여 이번 달 목표를 설정해보세요!";
+            wText.className = goals.monthly ? "banner-text" : "banner-text banner-empty";
+
+            const mText = document.getElementById("monthGoalText");
+            mText.innerText = goals.yearly || "클릭하여 올해 목표를 설정해보세요!";
+            mText.className = goals.yearly ? "banner-text" : "banner-text banner-empty";
+        }
+
+        // 🌟 [NEW] 목표 데이터 DB에 저장하기 (입력창 밖으로 마우스 벗어날 때 실행됨)
+        function saveGoals() {
+            goals.core = document.getElementById("goalCore").value.trim();
+            goals.longTerm = document.getElementById("goalLongTerm").value.trim();
+            goals.yearly = document.getElementById("goalYearly").value.trim();
+            goals.monthly = document.getElementById("goalMonthly").value.trim();
+            goals.weekly = document.getElementById("goalWeekly").value.trim();
+            
+            saveData();
+            renderGoals(); // 배너 텍스트 즉시 갱신
         }
 
         function handleLogin() {
@@ -682,7 +816,7 @@
         function switchView(viewId) {
             currentView = viewId;
             document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-            const targetBtn = document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : viewId === 'habitContainer' ? 'btnHabit' : null);
+            const targetBtn = document.getElementById(viewId === 'dayContainer' ? 'btnDay' : viewId === 'weekContainer' ? 'btnWeek' : viewId === 'monthContainer' ? 'btnMonth' : viewId === 'habitContainer' ? 'btnHabit' : viewId === 'goalContainer' ? 'btnGoal' : null);
             if(targetBtn) targetBtn.classList.add('active');
 
             document.querySelectorAll('.view-container').forEach(v => v.classList.remove('active'));
@@ -704,6 +838,8 @@
                 titleText = currentDate.getFullYear() + "년 " + (currentDate.getMonth()+1) + "월";
             } else if (currentView === 'habitContainer') {
                 titleText = "Habit Tracker";
+            } else if (currentView === 'goalContainer') {
+                titleText = "나의 목표 관리"; // 목표 뷰일 때 타이틀
             } else {
                 const dayIdx = currentDate.getDay();
                 let colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
@@ -722,6 +858,7 @@
             else if (currentView === 'weekContainer') renderWeekView();
             else if (currentView === 'monthContainer') renderMonthView();
             else if (currentView === 'habitContainer') renderHabitView();
+            
             if (document.getElementById('ledgerModal').style.display === 'flex') renderLedger();
         }
 
@@ -732,7 +869,6 @@
             updateDateDisplay(); 
         }
 
-        /* 🌟 [NEW] 통합 검색 로직 */
         function handleSearch() {
             const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
             
@@ -752,7 +888,6 @@
             const isTagSearch = keyword.startsWith('#');
             const searchStr = isTagSearch ? keyword.substring(1) : keyword;
 
-            // 1. 일정/할일 검색 (태그, 제목 일치)
             const matchedTodos = todos.filter(t => {
                 if (isTagSearch) {
                     return t.tags && t.tags.some(tag => tag.toLowerCase() === searchStr);
@@ -763,7 +898,6 @@
                 }
             });
 
-            // 2. 메모 검색 (모든 날짜의 풀텍스트 뒤지기)
             const matchedMemos = [];
             if (!isTagSearch) {
                 for(const [dateKey, memoData] of Object.entries(memos)) {
@@ -771,7 +905,6 @@
                     if(memoData && memoData.blocks) {
                         memoData.blocks.forEach(b => {
                             if(b.data && b.data.text) textContent += b.data.text + " ";
-                            // 체크리스트 내용 등 추가 탐색 가능
                             if(b.data && b.data.items) b.data.items.forEach(i => textContent += i.text + " "); 
                         });
                     } else if (typeof memoData === 'string') {
@@ -784,7 +917,6 @@
                 }
             }
 
-            // 결과 렌더링
             if(matchedTodos.length > 0) {
                 resultsArea.innerHTML += `<div class="search-result-group"><div class="search-result-title">📌 일정 및 할 일 (${matchedTodos.length}건)</div></div>`;
                 const groupDiv = resultsArea.lastChild;
@@ -807,7 +939,7 @@
                 const groupDiv = resultsArea.lastChild;
                 
                 matchedMemos.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
-                    const cleanText = m.text.replace(/<\/?[^>]+(>|$)/g, ""); // HTML 태그 제거
+                    const cleanText = m.text.replace(/<\/?[^>]+(>|$)/g, ""); 
                     const preview = cleanText.length > 60 ? cleanText.substring(0, 60) + "..." : cleanText;
                     groupDiv.innerHTML += `
                     <div class="search-item-row" onclick="goToDate('${m.date}')">
@@ -822,7 +954,6 @@
             }
         }
 
-        /* 🌟 [NEW] 태그 클릭 시 검색창으로 연동 */
         function handleTagClick(tag, e) {
             e.stopPropagation();
             const searchInput = document.getElementById("searchInput");
@@ -830,7 +961,6 @@
             handleSearch();
         }
 
-        /* 🌟 [NEW] 검색 결과 클릭 시 해당 날짜로 즉시 점프 */
         function goToDate(dateStr) {
             currentDate = new Date(dateStr);
             document.getElementById("searchInput").value = "";
@@ -853,7 +983,6 @@
                 let repeatLabel = ''; if(t.repeat === 'daily') repeatLabel = '🔁 매일'; if(t.repeat === 'weekly') repeatLabel = '🔁 매주'; if(t.repeat === 'monthly') repeatLabel = '🔁 매월'; if(t.repeat === 'yearly') repeatLabel = '🔁 매년';
                 const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
                 
-                // 🌟 [NEW] 할 일 목록에 예쁜 태그 렌더링
                 const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag" onclick="handleTagClick('${tag}', event)">#${tag}</span>`).join(' ') : '';
                 
                 const meta = `<div class="task-meta">${tagsHtml} ${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
@@ -975,7 +1104,6 @@
         function saveTodo() {
             const task = document.getElementById("taskInput").value; const targetDateStr = document.getElementById("taskDateInput").value; const newTs = new Date(targetDateStr).setHours(0,0,0,0);
             
-            // 🌟 [NEW] 태그 입력값 배열로 쪼개서 저장
             const rawTags = document.getElementById("taskTagsInput").value;
             const tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
 
@@ -1006,14 +1134,13 @@
                 isAllDay: document.getElementById("allDayCheck").checked, 
                 repeat: document.getElementById("repeatSelect").value, 
                 repeatDays: Array.from(document.querySelectorAll('#weeklyDays input:checked')).map(cb => cb.value),
-                tags: tagsArray // 🌟 [NEW] 태그 배열 추가
+                tags: tagsArray
             };
             
             if(editingId) todos[todos.findIndex(x => x.id === editingId)] = { ...todos.find(x => x.id === editingId), ...data };
             else todos.push({ id: Date.now().toString(), ...data, completedDates: [] });
             saveData(); closeModal(); updateDateDisplay();
             
-            // 만약 검색 중이었다면 검색 결과도 즉시 갱신
             if(currentView === 'searchContainer') handleSearch();
         }
 
@@ -1024,14 +1151,13 @@
                 originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task; document.getElementById("taskDateInput").value = originalDateStr; document.getElementById("priorityType").value = t.type || "A"; document.getElementById("startTimeInput").value = t.startTime || ""; document.getElementById("endTimeInput").value = t.endTime || ""; document.getElementById("allDayCheck").checked = t.isAllDay; document.getElementById("isHabitCheck").checked = t.isHabit || false; document.getElementById("repeatSelect").value = t.repeat || "none";
                 
-                // 🌟 [NEW] 저장된 태그 불러오기
                 document.getElementById("taskTagsInput").value = t.tags && t.tags.length > 0 ? t.tags.join(", ") : "";
                 
                 if (t.repeatDays) document.querySelectorAll('#weeklyDays input').forEach(cb => { cb.checked = t.repeatDays.includes(cb.value); });
                 document.getElementById("deleteBtn").style.display = "block";
             } else {
                 setCategory(true); document.getElementById("taskInput").value = ""; document.getElementById("taskDateInput").value = passedDateStr || getDateString(currentDate); document.getElementById("priorityType").value = "A"; document.getElementById("startTimeInput").value = st || ""; document.getElementById("endTimeInput").value = et || ""; document.getElementById("allDayCheck").checked = false; document.getElementById("isHabitCheck").checked = false; document.getElementById("repeatSelect").value = "none"; document.querySelectorAll('#weeklyDays input').forEach(cb => cb.checked = false); document.getElementById("deleteBtn").style.display = "none";
-                document.getElementById("taskTagsInput").value = ""; // 태그 초기화
+                document.getElementById("taskTagsInput").value = "";
             }
             toggleWeeklyDays(); toggleTimeInput(); m.style.display = "flex";
         }
@@ -1049,7 +1175,8 @@
         
         function saveData() { 
             if(!currentUser) return;
-            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers }); 
+            // 🌟 [NEW] goals 데이터도 함께 저장
+            db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers, goals }); 
         }
         
         function openLedger() { document.getElementById('ledgerDateStr').innerText = (currentDate.getMonth()+1) + "/" + currentDate.getDate(); renderLedger(); document.getElementById('ledgerModal').style.display = 'flex'; }
