@@ -53,13 +53,12 @@
         .view-container { flex: 1; overflow: hidden; display: none; flex-direction: column; min-height: 0; }
         .view-container.active { display: flex; }
 
-        /* 🌟 [NEW] 목표 (Goal) 뷰 - 멀티 리스트 스타일 반영 */
+        /* 목표 (Goal) 뷰 */
         .goal-wrapper { display: flex; flex-direction: column; gap: 15px; padding: 25px; background: #fff; border-radius: 12px; border: 1px solid #e5e5e5; flex: 1; overflow-y: auto; box-shadow: 0 4px 12px rgba(0,0,0,0.02); -webkit-overflow-scrolling: touch; }
         .goal-card { background: #fafafa; border: 1px solid #eee; border-radius: 8px; padding: 18px; transition: 0.2s; display: flex; flex-direction: column; gap: 8px; }
         .goal-card:hover { border-color: #ddd; box-shadow: 0 4px 10px rgba(0,0,0,0.03); background: #fff; }
         .goal-card-header { font-size: 14px; font-weight: 700; color: #555; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; border-bottom: 1px solid #eaeaea; padding-bottom: 8px;}
         
-        /* 다중 목표 리스트 디자인 */
         .goal-item-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; }
         .goal-item { display: flex; align-items: flex-start; gap: 8px; font-size: 15px; color: #222; background: #fff; padding: 8px 10px; border-radius: 6px; border: 1px solid #eee; }
         .goal-item input[type="checkbox"] { margin-top: 3px; cursor: pointer; accent-color: #222; width: 16px; height: 16px; flex-shrink: 0; }
@@ -68,16 +67,13 @@
         .del-goal-btn { border: none; background: none; color: #ccc; cursor: pointer; font-size: 18px; padding: 0 5px; line-height: 1; transition: 0.2s; }
         .del-goal-btn:hover { color: #ff3b30; }
         
-        /* 입력창 디자인 */
         .goal-add-input { width: 100%; border: none; background: transparent; font-size: 14px; padding: 8px 5px; outline: none; border-bottom: 1px dashed #ccc; transition: 0.2s; }
         .goal-add-input:focus { border-bottom-color: #222; }
         .goal-add-input::placeholder { color: #aaa; font-style: italic; }
 
-        /* 핵심가치는 기존 텍스트에어리어 유지 */
         #valCore { width: 100%; border: none; background: transparent; resize: none; font-size: 15px; outline: none; color: #111; font-family: inherit; line-height: 1.6; min-height: 45px; transition: 0.2s; margin-top: 5px;}
         #valCore::placeholder { color: #aaa; font-style: italic; font-size: 14px; }
         
-        /* 🌟 배너 디자인 개선 */
         .context-goal-banner { background: #fff; border: 1px solid #e5e5e5; padding: 12px 18px; border-radius: 10px; margin-bottom: 15px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; box-shadow: 0 2px 6px rgba(0,0,0,0.015); flex-shrink: 0; }
         .context-goal-banner:hover { border-color: #ccc; box-shadow: 0 4px 12px rgba(0,0,0,0.04); transform: translateY(-1px); }
         .banner-icon { font-size: 22px; }
@@ -88,10 +84,11 @@
         .banner-done { text-decoration: line-through; color: #888; }
         .banner-progress { font-size: 12px; color: #007AFF; font-weight: 700; margin-right: 5px; }
 
-        /* [1] 일간 뷰 스타일 */
+        /* [1] 일간 뷰 스타일 (🌟 정렬 오류 완벽 수정) */
         .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
-        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 20px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; }
+        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 15px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; flex-wrap: wrap; }
         .all-day-item:hover { border-color: #222; }
+        
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; min-height: 0; }
         .todo-section, .schedule-section, .memo-section { flex: 1; background-color: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; min-height: 0; }
@@ -102,17 +99,27 @@
         #dayScheduleGrid { position: relative; width: 100%; }
         
         ul { list-style: none; padding: 0; margin: 0; }
-        li.todo-li { padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; }
         
-        .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; margin-right: 2px; }
+        /* 🌟 To-Do 리스트 아이템 레이아웃 완벽 교정 */
+        #todoList li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; }
+        #todoList li:hover { background-color: #fafafa; }
+        #todoList input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: #222; flex-shrink: 0; }
+        
+        .todo-content { flex: 1; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        
+        .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-A { background-color: #FF3B30; } .dot-B { background-color: #007AFF; } .dot-C { background-color: #8E8E93; }
 
-        .task-meta { display: flex; gap: 8px; font-size: 11px; color: #888; margin-left: auto; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
-        .repeat-badge { background-color: #f0f0f0; padding: 2px 6px; border-radius: 4px; }
-        .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; }
+        /* 좁아져도 글자가 찌그러지지 않고 적당히 밀어냄 */
+        .task-text { flex: 1 1 120px; font-size: 15px; color: #222; line-height: 1.4; word-break: keep-all; font-weight: 500;}
         
-        .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 2px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; }
+        /* 뱃지들이 화면이 좁으면 아래로 스르륵 내려감 */
+        .task-meta { display: flex; gap: 6px; font-size: 11px; color: #888; margin-left: auto; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
+        
+        /* 뱃지들 내부 글자 안 깨지게 고정 */
+        .repeat-badge { background-color: #f0f0f0; padding: 3px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
+        .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
+        .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; white-space: nowrap; flex-shrink: 0; }
         .app-tag:hover { background-color: #d2e3fc; }
 
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
@@ -233,6 +240,7 @@
             .modal-content { width: 95% !important; padding: 20px; }
             .flex-row-mobile-col { flex-direction: column !important; gap: 10px; }
             #ledgerModal .modal-content { width: 95% !important; padding: 15px; }
+            .banner-text { max-width: 250px; }
         }
     </style>
 
@@ -305,7 +313,7 @@
             </div>
         </div>
 
-        <!-- 🌟 [NEW] 동적 날짜 + 멀티 체크리스트 기반 목표 관리 뷰 -->
+        <!-- 목표 관리 뷰 -->
         <div id="goalContainer" class="view-container">
             <div class="goal-wrapper">
                 <div class="section-header" style="margin-bottom: 5px;">
@@ -313,34 +321,29 @@
                 </div>
                 <p style="font-size:13px; color:#666; margin-top:-10px; margin-bottom:10px;">💡 빈칸에 목표를 적고 '엔터'를 누르면 리스트가 추가됩니다. 상단 ◀ ▶ 버튼으로 과거/미래 목표도 조회하세요!</p>
                 
-                <!-- 핵심 가치는 단일 텍스트 유지 -->
                 <div class="goal-card" id="cardCore" style="border-left: 4px solid #9375CA;">
                     <div class="goal-card-header">💎 핵심 가치 (평생)</div>
                     <textarea id="valCore" placeholder="내 삶의 궁극적인 방향성이나 가치를 자유롭게 적어보세요." onfocusout="saveCoreGoal()"></textarea>
                 </div>
                 
-                <!-- 장기 목표 리스트 -->
                 <div class="goal-card" id="cardLongTerm" style="border-left: 4px solid #5DA2E6;">
                     <div class="goal-card-header">🗺️ 장기 목표 (<span id="labelLongTerm"></span>)</div>
                     <ul class="goal-item-list" id="listLongTerm"></ul>
                     <input type="text" class="goal-add-input" placeholder="+ 새로운 장기 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'longTerm')">
                 </div>
                 
-                <!-- 연간 목표 리스트 -->
                 <div class="goal-card" id="cardYearly" style="border-left: 4px solid #68B96D;">
                     <div class="goal-card-header">🎯 연간 목표 (<span id="labelYearly"></span>)</div>
                     <ul class="goal-item-list" id="listYearly"></ul>
                     <input type="text" class="goal-add-input" placeholder="+ 올해의 새로운 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'yearly')">
                 </div>
                 
-                <!-- 월간 목표 리스트 -->
                 <div class="goal-card" id="cardMonthly" style="border-left: 4px solid #FF9955;">
                     <div class="goal-card-header">📌 월간 목표 (<span id="labelMonthly"></span>)</div>
                     <ul class="goal-item-list" id="listMonthly"></ul>
                     <input type="text" class="goal-add-input" placeholder="+ 이번 달의 새로운 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'monthly')">
                 </div>
                 
-                <!-- 주간 목표 리스트 -->
                 <div class="goal-card" id="cardWeekly" style="border-left: 4px solid #FF7575;">
                     <div class="goal-card-header">🔥 주간 목표 (<span id="labelWeekly"></span>)</div>
                     <ul class="goal-item-list" id="listWeekly"></ul>
@@ -565,7 +568,7 @@
         let inactivityTimer;
 
         let todos = []; let memos = {}; let ledgers = []; 
-        let goals = {}; // 동적 키 기반 목표 저장소 (배열 형태)
+        let goals = {}; 
 
         let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
@@ -601,7 +604,6 @@
             return { key: `d_${start}`, label: `${start}년~${start+9}년` };
         }
         
-        // 🌟 [NEW] 레벨에 맞는 현재 날짜 키를 반환
         function getCurrentGoalKey(level) {
             if(level === 'longTerm') return getDecadeInfo(currentDate).key;
             if(level === 'yearly') return getYearInfo(currentDate).key;
@@ -671,11 +673,9 @@
             initEditor(); updateDateDisplay();
         }
 
-        /* 🌟 [NEW] 다중 목표 리스트 화면 렌더링 및 배너 요약 */
         function renderGoals() {
             const dec = getDecadeInfo(currentDate); const y = getYearInfo(currentDate); const m = getMonthInfo(currentDate); const w = getWeekInfo(currentDate);
             
-            // 타이틀 라벨 (날짜 표시)
             document.getElementById("labelLongTerm").innerText = dec.label;
             document.getElementById("labelYearly").innerText = y.label;
             document.getElementById("labelMonthly").innerText = m.label;
@@ -685,15 +685,12 @@
             document.getElementById("bannerLabelMonthly").innerText = m.label;
             document.getElementById("bannerLabelWeekly").innerText = w.label;
 
-            // 1. 핵심 가치 (텍스트 형태)
             document.getElementById("valCore").value = goals["core"] || "";
 
-            // 2. 다중 목표 리스트 렌더링
             ['longTerm', 'yearly', 'monthly', 'weekly'].forEach(lvl => {
                 const key = getCurrentGoalKey(lvl);
                 let gArr = goals[key] || [];
                 
-                // (과거 평면 데이터를 배열로 마이그레이션 방어 코드)
                 if (!Array.isArray(gArr)) {
                     gArr = gArr.text ? [{ id: Date.now().toString(), text: gArr.text, completed: gArr.completed || false }] : [];
                     goals[key] = gArr; 
@@ -713,7 +710,6 @@
                 });
             });
 
-            // 3. 상단 배너 스마트 요약 (진행도 + 내용)
             const wArr = goals[w.key] || [];
             const mArr = goals[m.key] || [];
             const yArr = goals[y.key] || [];
@@ -723,7 +719,6 @@
             updateBanner("monthGoalText", yArr, "연간");
         }
 
-        // 배너 텍스트 렌더링 헬퍼 함수
         function updateBanner(elementId, arr, typeName) {
             const el = document.getElementById(elementId);
             if (!arr || arr.length === 0) {
@@ -741,14 +736,11 @@
             }
         }
 
-        /* 🌟 [NEW] 목표 추가/수정/삭제 로직 */
-        // 핵심가치 텍스트 저장
         function saveCoreGoal() {
             goals['core'] = document.getElementById('valCore').value.trim();
             saveData();
         }
 
-        // 엔터키 누를 때 리스트에 목표 추가
         function addGoalItem(e, level) {
             if(e.key !== 'Enter') return;
             const input = e.target;
@@ -761,10 +753,9 @@
             
             input.value = "";
             saveData();
-            renderGoals(); // UI 즉시 반영
+            renderGoals(); 
         }
 
-        // 체크박스 토글
         function toggleGoalItem(level, id) {
             const key = getCurrentGoalKey(level);
             const arr = goals[key];
@@ -776,7 +767,6 @@
             }
         }
 
-        // X 버튼으로 삭제
         function deleteGoalItem(level, id) {
             if(!confirm("이 목표를 삭제하시겠습니까?")) return;
             const key = getCurrentGoalKey(level);
@@ -980,7 +970,6 @@
             else if (currentView === 'monthContainer') renderMonthView();
             else if (currentView === 'habitContainer') renderHabitView();
             
-            // 날짜가 바뀔 때마다 해당 날짜의 목표 화면 및 배너 자동 연동
             renderGoals();
 
             if (document.getElementById('ledgerModal').style.display === 'flex') renderLedger();
@@ -1109,7 +1098,9 @@
                 
                 const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag" onclick="handleTagClick('${tag}', event)">#${tag}</span>`).join(' ') : '';
                 
-                const meta = `<div class="task-meta">${tagsHtml} ${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : (t.startTime ? `<span>${t.startTime}~${t.endTime}</span>` : '')}</div>`;
+                const timeHtml = t.startTime ? `<span style="white-space:nowrap; font-weight:600; padding:3px 0;">${t.startTime}~${t.endTime}</span>` : '';
+
+                const meta = `<div class="task-meta">${tagsHtml} ${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : timeHtml}</div>`;
 
                 if (isEffectiveAllDay) {
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
