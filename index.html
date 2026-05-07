@@ -127,7 +127,7 @@
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* [2], [3], [4], [5] 뷰 스타일 */
+        /* [2], [3], [4], [5] 뷰 스타일 (유지) */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
         .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
@@ -556,14 +556,14 @@
         let currentDate = new Date(); let currentView = 'dayContainer'; let isTaskFlag = true;
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
-        let editor; let mt;
+        let editor = null; let mt = null;
+        let currentEditorDate = null; // 🌟 현재 렌더링된 에디터 날짜 추적
 
         const pastelPalette = ["#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792", "#FF7575", "#FF9955", "#D2B53B", "#68B96D", "#5DA2E6", "#9375CA", "#F074AA", "#4DA6A6", "#C28956", "#93857F"];
         const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스", "2027-01-01": "신정", "2027-02-06": "설날 연휴", "2027-02-07": "설날", "2027-02-08": "설날 연휴", "2027-03-01": "삼일절", "2027-05-05": "어린이날", "2027-05-13": "부처님오신날", "2027-06-06": "현충일", "2027-08-15": "광복절", "2027-08-16": "대체공휴일", "2027-09-14": "추석 연휴", "2027-09-15": "추석", "2027-09-16": "추석 연휴", "2027-10-03": "개천절", "2027-10-09": "한글날", "2027-12-25": "크리스마스" };
 
         function getDateString(d) { const o = d.getTimezoneOffset() * 60000; return (new Date(d.getTime() - o)).toISOString().slice(0, 10); }
 
-        /* 동적 날짜 헬퍼 함수들 */
         function getWeekInfo(dateObj) {
             let d = new Date(dateObj); d.setHours(0,0,0,0);
             let day = d.getDay();
@@ -624,7 +624,7 @@
                     if (todos.length === 0 && (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com')) {
                         forceMigration(userRef);
                     } else {
-                        initEditor(); updateDateDisplay(); renderGoals();
+                        updateDateDisplay(); renderGoals();
                     }
                 } else {
                     if (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com') {
@@ -643,7 +643,7 @@
                     todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
                     goals = od.goals || {};
                     userRef.set({ todos, memos, ledgers, goals });
-                    initEditor(); updateDateDisplay(); renderGoals();
+                    updateDateDisplay(); renderGoals();
                 } else {
                     initEmptyData();
                 }
@@ -653,7 +653,7 @@
         function initEmptyData() {
             todos = []; memos = {}; ledgers = []; goals = {};
             db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers, goals });
-            initEditor(); updateDateDisplay();
+            updateDateDisplay(); renderGoals();
         }
 
         function renderGoals() {
@@ -816,16 +816,37 @@
             }
         }
 
-        function getMemoDataForDate(dateStr) {
-            let data = memos[dateStr];
-            if (!data) return { blocks: [] };
-            if (typeof data === 'string') return { blocks: [{ type: "paragraph", data: { text: data.replace(/\n/g, '<br>') } }] };
-            return data;
-        }
+        /* 🌟 [핵심] 오염된 에디터 데이터 자동 복구 및 강력한 렌더링 시스템 */
+        function loadEditorForDate(dateStr) {
+            const editorDiv = document.getElementById('editorjs');
+            // 에디터 영역이 화면에 안 보이면 로드 스킵 (충돌 방지)
+            if (!editorDiv || editorDiv.offsetParent === null) return;
+            // 이미 현재 날짜가 켜져 있다면 스킵
+            if (currentEditorDate === dateStr && editor) return; 
 
-        function initEditor() {
-            if(editor) { editor.destroy(); editor = null; } 
+            // 기존 에디터가 있으면 안전하게 파괴
+            if (editor && typeof editor.destroy === 'function') {
+                try { editor.destroy(); } catch(e) {}
+                editor = null;
+            }
             
+            // 🌟 오염된 메모 데이터(ID 누락) 자동 복구
+            let memoData = memos[dateStr];
+            if (!memoData) {
+                memoData = { blocks: [] };
+            } else if (typeof memoData === 'string') {
+                memoData = { blocks: [{ id: Math.random().toString(36).substr(2, 9), type: "paragraph", data: { text: memoData.replace(/\n/g, '<br>') } }] };
+            } else {
+                // 원본 데이터를 훼손하지 않기 위해 깊은 복사
+                memoData = JSON.parse(JSON.stringify(memoData));
+            }
+            
+            if (!memoData.blocks) memoData.blocks = [];
+            // ID가 없는 불량 블록에 새 ID 발급 (에러 방지)
+            memoData.blocks.forEach(b => {
+                if (!b.id) b.id = Math.random().toString(36).substr(2, 9);
+            });
+
             const editorTools = {
                 header: Header, list: List, checklist: Checklist, Marker: Marker, table: Table,
                 image: {
@@ -863,52 +884,33 @@
             };
             if (typeof ToggleBlock !== 'undefined') editorTools.toggle = { class: ToggleBlock };
 
+            // 새 에디터 생성
             editor = new EditorJS({
                 holder: 'editorjs',
                 placeholder: '기록을 남기세요... ( 빈 줄에서 / 를 누르면 메뉴가 나옵니다)',
                 tools: editorTools,
-                data: getMemoDataForDate(getDateString(currentDate)),
+                data: memoData,
                 onChange: () => {
                     editor.save().then((outputData) => {
-                        memos[getDateString(currentDate)] = outputData;
+                        memos[dateStr] = outputData;
                         clearTimeout(mt); mt = setTimeout(saveData, 1000);
                         adjustMemoHeight();
-                    });
+                    }).catch(e => console.error(e));
                 }
             });
-
-            document.getElementById('editorjs').addEventListener('focusout', () => {
-                if (editor) {
-                    editor.save().then((outputData) => {
-                        memos[getDateString(currentDate)] = outputData;
-                        saveData();
-                    });
-                }
-            });
-            window.addEventListener("resize", adjustMemoHeight);
+            currentEditorDate = dateStr;
+            
+            // 렌더링 완료 후 높이 조절
+            editor.isReady.then(() => {
+                setTimeout(adjustMemoHeight, 100);
+            }).catch(e => console.error(e));
         }
 
         function adjustMemoHeight() {
             const el = document.getElementById("editorjs");
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 768 && el) {
                 el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px';
-            } else { el.style.height = '100%'; }
-        }
-
-        /* 🌟 [NEW] 에디터를 안전하게 보호하는 렌더링 래퍼 함수 */
-        function safeRenderEditor() {
-            if (!editor || typeof editor.isReady === 'undefined') return;
-            const editorDiv = document.getElementById("editorjs");
-            // 에디터가 화면에 표시될 때(display: none이 아닐 때)만 렌더링 실행
-            if (editorDiv && editorDiv.offsetParent !== null) {
-                editor.isReady.then(() => {
-                    try {
-                        editor.render(getMemoDataForDate(getDateString(currentDate)));
-                    } catch(e) {
-                        console.error("에디터 렌더링 스킵:", e);
-                    }
-                });
-            }
+            } else if (el) { el.style.height = '100%'; }
         }
 
         function switchMobileTab(tab) {
@@ -918,7 +920,8 @@
                 document.body.classList.add('show-memo'); document.getElementById('tabMemo').classList.add('active');
                 setTimeout(() => {
                     adjustMemoHeight();
-                    safeRenderEditor(); // 모바일에서 탭 열렸을 때 안전 렌더링
+                    // 모바일에서 메모 탭으로 넘어오면 에디터 로드 강제 확인
+                    loadEditorForDate(getDateString(currentDate)); 
                 }, 100); 
             } else {
                 if (currentView !== 'dayContainer') switchView('dayContainer');
@@ -962,7 +965,9 @@
             document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             
-            safeRenderEditor(); // 에디터 안전 렌더링 호출
+            if (currentView === 'dayContainer') {
+                loadEditorForDate(getDateString(currentDate));
+            }
             setTimeout(adjustMemoHeight, 100);
             
             if (currentView === 'dayContainer') renderDayView();
@@ -1222,19 +1227,44 @@
             const rawTags = document.getElementById("taskTagsInput").value;
             const tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
 
+            // 🌟 팝업의 "간단 메모"를 저장할 때 ID 생성 규칙 추가 (오류 방지)
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
-                let oldData = getMemoDataForDate(originalDateStr); let blockToMove = null;
+                let oldData = memos[originalDateStr]; let blockToMove = null;
                 if (oldData && oldData.blocks) {
                     const idx = oldData.blocks.findIndex(b => b.type === 'paragraph' && typeof b.data.text === 'string' && b.data.text.includes(`📌 [${originalTaskName}`));
-                    if (idx > -1) { blockToMove = oldData.blocks.splice(idx, 1)[0]; memos[originalDateStr] = oldData; }
+                    if (idx > -1) { 
+                        blockToMove = oldData.blocks.splice(idx, 1)[0]; 
+                        memos[originalDateStr] = oldData; 
+                    }
                 }
-                if (blockToMove) { let targetData = getMemoDataForDate(targetDateStr); targetData.blocks.push(blockToMove); memos[targetDateStr] = targetData; }
+                if (blockToMove) { 
+                    let targetData = memos[targetDateStr];
+                    if (!targetData) targetData = { blocks: [] };
+                    else if (typeof targetData === 'string') targetData = { blocks: [{ id: Math.random().toString(36).substr(2, 9), type: "paragraph", data: { text: targetData.replace(/\n/g, '<br>') } }] };
+                    else targetData = JSON.parse(JSON.stringify(targetData)); // 깊은 복사
+                    
+                    if (!targetData.blocks) targetData.blocks = [];
+                    if (!blockToMove.id) blockToMove.id = Math.random().toString(36).substr(2, 9); // 필수 ID 보강
+                    
+                    targetData.blocks.push(blockToMove); 
+                    memos[targetDateStr] = targetData; 
+                }
             }
             
             const taskMemo = document.getElementById("taskMemoInput").value;
             if (taskMemo.trim() !== "") {
-                let targetData = getMemoDataForDate(targetDateStr);
-                targetData.blocks.push({ type: 'paragraph', data: { text: `📌 [${task}] 메모:<br>${taskMemo.replace(/\n/g, '<br>')}` } });
+                let targetData = memos[targetDateStr];
+                if (!targetData) targetData = { blocks: [] };
+                else if (typeof targetData === 'string') targetData = { blocks: [{ id: Math.random().toString(36).substr(2, 9), type: "paragraph", data: { text: targetData.replace(/\n/g, '<br>') } }] };
+                else targetData = JSON.parse(JSON.stringify(targetData));
+                
+                if (!targetData.blocks) targetData.blocks = [];
+                
+                targetData.blocks.push({ 
+                    id: Math.random().toString(36).substr(2, 9), // 🌟 [핵심] 필수 ID
+                    type: 'paragraph', 
+                    data: { text: `📌 [${task}] 메모:<br>${taskMemo.replace(/\n/g, '<br>')}` } 
+                });
                 memos[targetDateStr] = targetData;
             }
 
@@ -1254,9 +1284,15 @@
             
             if(editingId) todos[todos.findIndex(x => x.id === editingId)] = { ...todos.find(x => x.id === editingId), ...data };
             else todos.push({ id: Date.now().toString(), ...data, completedDates: [] });
+            
             saveData(); closeModal(); updateDateDisplay();
             
             if(currentView === 'searchContainer') handleSearch();
+            else if (currentView === 'dayContainer' && targetDateStr === getDateString(currentDate)) {
+                // 현재 보고 있는 날짜에 메모가 추가되었으면 에디터 강제 새로고침
+                currentEditorDate = null; 
+                loadEditorForDate(getDateString(currentDate));
+            }
         }
 
         function openModal(id, st, et, passedDateStr) {
@@ -1298,6 +1334,24 @@
         function addLedgerEntry() { const item = document.getElementById('ledgerItem').value; const amount = document.getElementById('ledgerAmount').value; const debit = document.getElementById('ledgerDebit').value; const credit = document.getElementById('ledgerCredit').value; if(!item || !amount || !debit || !credit) return alert("모든 칸을 입력해주세요."); ledgers.push({ id: Date.now().toString(), date: getDateString(currentDate), item, amount: Number(amount), debit, credit }); document.getElementById('ledgerItem').value = ''; document.getElementById('ledgerAmount').value = ''; document.getElementById('ledgerDebit').value = ''; document.getElementById('ledgerCredit').value = ''; saveData(); renderLedger(); }
         function deleteLedger(id) { if(confirm("삭제하시겠습니까?")) { ledgers = ledgers.filter(l => l.id !== id); saveData(); renderLedger(); } }
         function renderLedger() { const todayStr = getDateString(currentDate); const todayLedgers = ledgers.filter(l => l.date === todayStr); const tbody = document.getElementById('ledgerTodayBody'); tbody.innerHTML = ''; todayLedgers.forEach(l => { tbody.innerHTML += `<tr><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #333;">${l.item}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; font-weight: 600; color: #222;">${l.amount.toLocaleString()}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.debit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.credit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9;"><button onclick="deleteLedger('${l.id}')" style="background:none; border:none; color:#ff3b30; cursor:pointer; font-size:14px;">✕</button></td></tr>`; }); const balances = {}; ledgers.forEach(l => { if (!balances[l.debit]) balances[l.debit] = 0; if (!balances[l.credit]) balances[l.credit] = 0; balances[l.debit] += l.amount; balances[l.credit] -= l.amount; }); const dBal = document.getElementById('ledgerDebitBalances'); const cBal = document.getElementById('ledgerCreditBalances'); dBal.innerHTML = ''; cBal.innerHTML = ''; let hasDebit = false; let hasCredit = false; for(const [acc, bal] of Object.entries(balances)) { if(bal > 0) { dBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${bal.toLocaleString()}원</span></div>`; hasDebit = true; } else if(bal < 0) { cBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${Math.abs(bal).toLocaleString()}원</span></div>`; hasCredit = true; } } if(!hasDebit) dBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; if(!hasCredit) cBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; }
+
+        /* 🌟 에디터 내용 유실 방지: 화면 리사이즈 및 포커스 아웃 이벤트 최적화 */
+        window.addEventListener("resize", () => {
+            if(currentView === 'dayContainer') adjustMemoHeight();
+        });
+
+        // 에디터 바깥을 클릭했을 때 자동 저장
+        document.addEventListener('click', (e) => {
+            const editorDiv = document.getElementById('editorjs');
+            if (editor && editorDiv && !editorDiv.contains(e.target) && e.target.id !== 'editorjs') {
+                if (typeof editor.save === 'function') {
+                    editor.save().then((outputData) => {
+                        memos[getDateString(currentDate)] = outputData;
+                        saveData();
+                    }).catch(() => {});
+                }
+            }
+        });
 
     </script>
 </body>
