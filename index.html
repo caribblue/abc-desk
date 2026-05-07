@@ -84,7 +84,7 @@
         .banner-done { text-decoration: line-through; color: #888; }
         .banner-progress { font-size: 12px; color: #007AFF; font-weight: 700; margin-right: 5px; }
 
-        /* [1] 일간 뷰 스타일 (🌟 정렬 오류 완벽 수정) */
+        /* [1] 일간 뷰 스타일 */
         .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
         .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 15px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; flex-wrap: wrap; }
         .all-day-item:hover { border-color: #222; }
@@ -99,8 +99,6 @@
         #dayScheduleGrid { position: relative; width: 100%; }
         
         ul { list-style: none; padding: 0; margin: 0; }
-        
-        /* 🌟 To-Do 리스트 아이템 레이아웃 완벽 교정 */
         #todoList li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: 0.2s; }
         #todoList li:hover { background-color: #fafafa; }
         #todoList input[type="checkbox"] { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: #222; flex-shrink: 0; }
@@ -110,13 +108,9 @@
         .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-A { background-color: #FF3B30; } .dot-B { background-color: #007AFF; } .dot-C { background-color: #8E8E93; }
 
-        /* 좁아져도 글자가 찌그러지지 않고 적당히 밀어냄 */
         .task-text { flex: 1 1 120px; font-size: 15px; color: #222; line-height: 1.4; word-break: keep-all; font-weight: 500;}
-        
-        /* 뱃지들이 화면이 좁으면 아래로 스르륵 내려감 */
         .task-meta { display: flex; gap: 6px; font-size: 11px; color: #888; margin-left: auto; align-items: center; flex-wrap: wrap; justify-content: flex-end;}
         
-        /* 뱃지들 내부 글자 안 깨지게 고정 */
         .repeat-badge { background-color: #f0f0f0; padding: 3px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
         .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
         .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; white-space: nowrap; flex-shrink: 0; }
@@ -133,7 +127,7 @@
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* [2], [3], [4], [5] 뷰 스타일 (유지) */
+        /* [2], [3], [4], [5] 뷰 스타일 */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
         .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
@@ -261,7 +255,6 @@
 </head>
 <body>
 
-    <!-- 로그인 화면 -->
     <div id="loginContainer">
         <div class="login-box">
             <h2>도담 플래너</h2>
@@ -274,7 +267,6 @@
         </div>
     </div>
 
-    <!-- 메인 앱 화면 -->
     <div id="appContainer">
         <header>
             <div class="date-nav">
@@ -305,7 +297,6 @@
             </div>
         </header>
 
-        <!-- [0] 검색 결과 뷰 -->
         <div id="searchContainer" class="view-container">
             <div class="search-wrapper">
                 <h2 style="margin-bottom: 20px; font-size: 20px;">검색 결과: <span id="searchKeywordDisp" style="color:#007AFF;"></span></h2>
@@ -313,7 +304,6 @@
             </div>
         </div>
 
-        <!-- 목표 관리 뷰 -->
         <div id="goalContainer" class="view-container">
             <div class="goal-wrapper">
                 <div class="section-header" style="margin-bottom: 5px;">
@@ -352,7 +342,6 @@
             </div>
         </div>
 
-        <!-- [1] 일간 뷰 -->
         <div id="dayContainer" class="view-container active">
             <div class="context-goal-banner" id="dayGoalBanner" style="border-left-color: #FF7575;" onclick="switchView('goalContainer')">
                 <span class="banner-icon">🔥</span>
@@ -382,7 +371,6 @@
             </div>
         </div>
 
-        <!-- [2] 주간 뷰 -->
         <div id="weekContainer" class="view-container">
             <div class="context-goal-banner" id="weekGoalBanner" style="border-left-color: #FF9955;" onclick="switchView('goalContainer')">
                 <span class="banner-icon">📌</span>
@@ -400,7 +388,6 @@
             </div>
         </div>
 
-        <!-- [3] 월간 뷰 -->
         <div id="monthContainer" class="view-container">
             <div class="context-goal-banner" id="monthGoalBanner" style="border-left-color: #68B96D;" onclick="switchView('goalContainer')">
                 <span class="banner-icon">🎯</span>
@@ -417,7 +404,6 @@
             </div>
         </div>
 
-        <!-- [4] 습관 뷰 -->
         <div id="habitContainer" class="view-container">
             <div class="habit-wrapper">
                 <div class="section-header" style="margin-bottom: 20px;"><h2>[Habit Tracker]</h2></div>
@@ -426,13 +412,11 @@
         </div>
     </div>
 
-    <!-- 📱 모바일 하단 탭바 -->
     <div class="mobile-tab-bar" id="mobileTabBar">
         <div class="mobile-tab-btn active" id="tabPlanner" onclick="switchMobileTab('planner')">📅 플래너</div>
         <div class="mobile-tab-btn" id="tabMemo" onclick="switchMobileTab('memo')">📝 메모장</div>
     </div>
 
-    <!-- [일정] 입력 모달 -->
     <div id="todoModal" class="modal-overlay">
         <div class="modal-content" style="width: 380px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
@@ -499,7 +483,6 @@
         </div>
     </div>
 
-    <!-- [가계부] 팝업 모달 -->
     <div id="ledgerModal" class="modal-overlay">
         <div class="modal-content" style="width: 550px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
@@ -732,7 +715,7 @@
                 if (total > 1) summary += ` 외 ${total - 1}건`;
                 
                 el.innerHTML = summary;
-                el.className = compCount === total ? "banner-text banner-done" : "banner-text";
+                el.className = compCount === total && total > 0 ? "banner-text banner-done" : "banner-text";
             }
         }
 
@@ -912,12 +895,31 @@
             } else { el.style.height = '100%'; }
         }
 
+        /* 🌟 [NEW] 에디터를 안전하게 보호하는 렌더링 래퍼 함수 */
+        function safeRenderEditor() {
+            if (!editor || typeof editor.isReady === 'undefined') return;
+            const editorDiv = document.getElementById("editorjs");
+            // 에디터가 화면에 표시될 때(display: none이 아닐 때)만 렌더링 실행
+            if (editorDiv && editorDiv.offsetParent !== null) {
+                editor.isReady.then(() => {
+                    try {
+                        editor.render(getMemoDataForDate(getDateString(currentDate)));
+                    } catch(e) {
+                        console.error("에디터 렌더링 스킵:", e);
+                    }
+                });
+            }
+        }
+
         function switchMobileTab(tab) {
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
             if(tab === 'memo') {
                 if (currentView !== 'dayContainer') switchView('dayContainer'); 
                 document.body.classList.add('show-memo'); document.getElementById('tabMemo').classList.add('active');
-                setTimeout(adjustMemoHeight, 100); 
+                setTimeout(() => {
+                    adjustMemoHeight();
+                    safeRenderEditor(); // 모바일에서 탭 열렸을 때 안전 렌더링
+                }, 100); 
             } else {
                 if (currentView !== 'dayContainer') switchView('dayContainer');
                 document.body.classList.remove('show-memo'); document.getElementById('tabPlanner').classList.add('active');
@@ -960,9 +962,7 @@
             document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             
-            if (editor && typeof editor.isReady !== 'undefined') {
-                editor.isReady.then(() => { editor.render(getMemoDataForDate(getDateString(currentDate))); });
-            }
+            safeRenderEditor(); // 에디터 안전 렌더링 호출
             setTimeout(adjustMemoHeight, 100);
             
             if (currentView === 'dayContainer') renderDayView();
@@ -1106,7 +1106,7 @@
                     alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
                 } else {
                     if (isTask) {
-                        const li = document.createElement("li"); li.className = cName; li.title = t.task;
+                        const li = document.createElement("li"); li.className = `todo-li ${cName}`; li.title = t.task;
                         li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')"><div class="todo-content" onclick="openModal('${t.id}')"><div class="priority-dot dot-${t.type}"></div><span class="task-text">${t.task}</span>${meta}</div>`;
                         ul.appendChild(li);
                     }
