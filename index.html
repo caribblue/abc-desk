@@ -85,11 +85,9 @@
         .banner-done { text-decoration: line-through; color: #888; }
         .banner-progress { font-size: 12px; color: #007AFF; font-weight: 700; margin-right: 5px; }
 
-        /* [1] 일간 뷰 스타일 */
+        /* 일간 뷰 스타일 */
         .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
-        
-        /* 🌟 투두리스트 겹침 완벽 분리 시스템 */
-        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; flex-direction: column; gap: 6px; transition: 0.2s; box-sizing: border-box; width: 100%; }
+        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 15px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; flex-wrap: wrap; }
         .all-day-item:hover { border-color: #222; }
         
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
@@ -156,7 +154,7 @@
         .holiday-label { background-color: #f5f5f7; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: inline-block; align-self: flex-start; margin-bottom: 2px; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
-        /* 습관 Tracker 스타일 */
+        /* 데스크탑 기본 습관 Tracker 스타일 */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; width: 100%; box-sizing: border-box;}
         .habit-table-container { flex: 1; overflow-x: auto; overflow-y: hidden; padding-bottom: 10px; -webkit-overflow-scrolling: touch; width: 100%; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
@@ -169,6 +167,9 @@
         .habit-empty:hover { background-color: #e5e5ea; }
         .streak-badge { background-color: #f0f0f0; color: #555; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
+        .habit-title-text { font-size: 13px; }
+        .habit-progress-text { font-size: 11px; margin-bottom: 6px; }
+        .habit-progress-wrap { margin-top: 14px; padding-top: 10px; }
 
         .search-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .search-result-group { margin-bottom: 25px; }
@@ -205,13 +206,11 @@
         .cdx-marker { background: rgba(255, 235, 59, 0.4); padding: 2px 4px; border-radius: 4px; }
         .ce-toolbar__actions { right: 100%; margin-right: 5px; }
 
-        /* 📱 모바일 최적화 (🌟 갤럭시 핏 완벽 스크롤 복구) */
+        /* 📱 모바일 최적화 (🌟 습관 탭 여백 및 넓이 최종 교정) */
         @media (max-width: 768px) {
-            /* 🌟 네이티브 스크롤로 복구 (100dvh 삭제, body 스크롤 허용) */
             body { height: auto !important; overflow-y: auto !important; overflow-x: hidden !important; }
             #appContainer { padding: 15px 15px 90px 15px !important; height: auto !important; display: flex !important; flex-direction: column; overflow: visible !important; width: 100vw; max-width: 100%; box-sizing: border-box; }
             
-            /* 헤더 짤림 수정 */
             header { flex-direction: column; align-items: stretch; gap: 10px; margin-bottom: 10px; display: flex; flex-shrink: 0;}
             .date-nav { justify-content: space-between; width: 100%; gap: 5px; }
             .date-nav h1 { font-size: 17px; width: auto; flex: 1; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;}
@@ -224,7 +223,6 @@
             .search-bar-wrap input { width: 100%; box-sizing: border-box; }
             .search-bar-wrap input:focus { width: 100%; }
 
-            /* 콘텐츠 영역 자유 스크롤 */
             .view-container.active { display: flex !important; flex-direction: column; height: auto !important; overflow: visible !important; }
             .main-container { flex-direction: column; display: flex; height: auto; }
             .left-half { display: flex; flex-direction: column; width: 100%; height: auto; overflow: visible; margin-bottom: 15px; }
@@ -238,9 +236,20 @@
             .week-wrapper, .month-wrapper { width: 100%; overflow: hidden !important; box-sizing: border-box; height: auto; }
             .week-body, .month-grid { overflow-x: auto !important; overflow-y: hidden !important; height: auto; }
             
-            /* 🌟 습관 가로 스크롤 잘림 완벽 해결 */
+            /* 🌟 모바일 전용 습관 트래커 다이어트 및 체크박스 최적화 */
             .habit-wrapper { width: 100%; padding: 15px !important; height: auto; overflow: hidden !important; box-sizing: border-box;}
             .habit-table-container { width: 100%; overflow-x: auto !important; overflow-y: hidden !important; height: auto; padding-bottom: 10px; }
+            
+            .habit-table .sticky-col { width: 145px !important; min-width: 145px !important; padding: 10px 8px !important; }
+            .habit-table th.sticky-col { font-size: 11px !important; padding: 8px !important; }
+            .habit-title-text { max-width: 60px !important; font-size: 12px !important; }
+            .habit-progress-text { font-size: 10px !important; margin-bottom: 4px !important; }
+            .habit-progress-wrap { margin-top: 8px !important; padding-top: 8px !important; }
+            .streak-badge { padding: 2px 4px !important; font-size: 10px !important; letter-spacing: -0.5px; }
+            
+            /* 체크박스 크기를 줄여 한 화면에 더 많이 보이게 */
+            .habit-done, .habit-empty { width: 24px !important; height: 24px !important; font-size: 12px !important; }
+            .habit-table th, .habit-table td { min-width: 35px !important; padding: 8px 3px !important; }
             
             .mobile-tab-bar { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid #e5e5e5; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
             .mobile-tab-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 600; color: #888; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 4px; align-items: center;}
@@ -617,7 +626,7 @@
                 currentUser = user;
                 document.getElementById('loginContainer').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
-                if (window.innerWidth <= 768) { document.getElementById('appContainer').style.display = 'flex'; }
+                if (window.innerWidth <= 768) { document.getElementById('appContainer').style.display = 'block'; }
                 loadUserData(user);
                 startInactivityTimer();
             } else {
@@ -1243,7 +1252,9 @@
             const container = document.getElementById("habitGrid"); container.innerHTML = ""; const habits = todos.filter(t => t.isHabit);
             if(habits.length === 0) { container.innerHTML = "<div style='padding:40px; color:#888; text-align:center; font-size:14px;'>등록된 습관이 없습니다.<br>할 일을 추가할 때 [🌱 습관으로 등록]을 체크해보세요!</div>"; return; }
             const table = document.createElement("table"); table.className = "habit-table";
-            const thead = document.createElement("thead"); const trHead = document.createElement("tr"); trHead.innerHTML = `<th class="sticky-col">습관명 (연속 기록)</th>`;
+            const thead = document.createElement("thead"); const trHead = document.createElement("tr"); 
+            // 🌟 텍스트 다이어트
+            trHead.innerHTML = `<th class="sticky-col">습관명 <span style="font-weight:normal; font-size:11px;">(연속/누적)</span></th>`;
             const dates = [];
             for(let i = -15; i <= 15; i++) {
                 let d = new Date(currentDate); d.setDate(d.getDate() + i); dates.push(d);
@@ -1264,10 +1275,11 @@
                 const streakBadge = `<span class="streak-badge ${streak >= 3 ? "streak-fire" : ""}">${streak}일/${totalDays}일</span>`; 
                 const hColor = pastelPalette[index % pastelPalette.length];
                 
+                // 🌟 목표달성 HTML (클래스 부여로 모바일 폰트 제어)
                 const progressHtml = `
-                    <div style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #eee;">
-                        <div style="display:flex; justify-content:space-between; font-size: 11px; color: #666; margin-bottom: 6px;">
-                            <span>🏆 목표달성</span>
+                    <div class="habit-progress-wrap" style="margin-top: 14px; padding-top: 10px; border-top: 1px dashed #eee;">
+                        <div class="habit-progress-text" style="display:flex; justify-content:space-between; font-size: 11px; color: #666; margin-bottom: 6px;">
+                            <span>🏆 달성</span>
                             <span style="color:#007AFF; font-weight:700;">${achievement.percent.toFixed(2)}%</span>
                         </div>
                         <div style="width: 100%; height: 6px; background-color: #f0f0f0; border-radius: 3px; overflow: hidden;">
@@ -1278,10 +1290,10 @@
 
                 tr.innerHTML = `<td class="sticky-col">
                     <div style="display:flex; flex-direction:column; justify-content: center; height:100%;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:2px;">
                             <div style="display:flex; align-items:center; overflow:hidden;">
-                                <div class="priority-dot" style="background-color: ${hColor};"></div>
-                                <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;" title="${t.task}">${t.task}</span>
+                                <div class="priority-dot" style="background-color: ${hColor}; margin-right:3px;"></div>
+                                <span class="habit-title-text" style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;" title="${t.task}">${t.task}</span>
                             </div>
                             ${streakBadge}
                         </div>
