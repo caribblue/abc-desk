@@ -127,11 +127,11 @@
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* [2], [3], [4], [5] 뷰 스타일 (유지) */
+        /* [2], [3], [4], [5] 뷰 스타일 */
         .week-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.02); min-height: 0; }
         .week-header-row { display: flex; margin-left: 55px; border-bottom: 1px solid #e5e5e5; background: #fafafa; flex-shrink: 0; }
         .week-header-cell { flex: 1; text-align: center; font-size: 13px; font-weight: 600; padding: 12px 0; border-right: 1px solid #f0f0f0; pointer-events: none; min-width: 80px; }
-        .week-body { display: flex; flex: 1; overflow-y: auto; position: relative; -webkit-overflow-scrolling: touch; }
+        .week-body { display: flex; flex: 1; overflow: auto; position: relative; -webkit-overflow-scrolling: touch; }
         .week-time-col { width: 55px; flex-shrink: 0; border-right: 1px solid #f0f0f0; background: #fff; }
         .week-time-slot { height: 50px; text-align: center; padding-top: 5px; font-size: 12px; color: #888; border-bottom: 1px solid transparent; box-sizing: border-box; }
         .week-grid-cols { display: flex; flex: 1; position: relative; background-image: linear-gradient(to bottom, #f0f0f0 1px, transparent 1px); background-size: 100% 50px; min-width: 560px; }
@@ -151,12 +151,14 @@
         .holiday-label { background-color: #f5f5f7; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: inline-block; align-self: flex-start; margin-bottom: 2px; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
+        /* 습관 Tracker 스타일 (🌟 추가된 목표달성 UI 넓이 대응) */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
         .habit-table th, .habit-table td { border: 1px solid #f0f0f0; padding: 10px 5px; min-width: 45px; }
         .habit-table th { background: #fafafa; font-weight: 600; color: #555; position: sticky; top: 0; z-index: 10; }
-        .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 180px; min-width: 180px; text-align: left; padding: 0 15px; border-right: 2px solid #e5e5e5; }
+        /* 왼쪽 고정 영역 넓이 확장 */
+        .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 220px; min-width: 220px; text-align: left; padding: 0 15px; border-right: 2px solid #e5e5e5; }
         .habit-table th.sticky-col { z-index: 12; background: #fafafa; }
         .habit-done { width: 28px; height: 28px; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
         .habit-empty { width: 28px; height: 28px; background-color: #f5f5f7; border-radius: 6px; margin: 0 auto; cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
@@ -557,7 +559,7 @@
         let originalDateStr = null; let originalTaskName = null; let editingId = null;
 
         let editor = null; let mt = null;
-        let currentEditorDate = null; // 🌟 현재 렌더링된 에디터 날짜 추적
+        let currentEditorDate = null; 
 
         const pastelPalette = ["#FF8A8A", "#FFAB73", "#E3C654", "#81C784", "#74B9FF", "#A389D4", "#F28CB9", "#60C0C0", "#D09A6B", "#A49792", "#FF7575", "#FF9955", "#D2B53B", "#68B96D", "#5DA2E6", "#9375CA", "#F074AA", "#4DA6A6", "#C28956", "#93857F"];
         const KOR_HOLIDAYS = { "2026-01-01": "신정", "2026-02-16": "설날 연휴", "2026-02-17": "설날", "2026-02-18": "설날 연휴", "2026-03-01": "삼일절", "2026-03-02": "대체공휴일", "2026-05-05": "어린이날", "2026-05-24": "부처님오신날", "2026-05-25": "대체공휴일", "2026-06-03": "지방선거", "2026-06-06": "현충일", "2026-08-15": "광복절", "2026-08-17": "대체공휴일", "2026-09-24": "추석 연휴", "2026-09-25": "추석", "2026-09-26": "추석 연휴", "2026-09-28": "대체공휴일", "2026-10-03": "개천절", "2026-10-05": "대체공휴일", "2026-10-09": "한글날", "2026-12-25": "크리스마스", "2027-01-01": "신정", "2027-02-06": "설날 연휴", "2027-02-07": "설날", "2027-02-08": "설날 연휴", "2027-03-01": "삼일절", "2027-05-05": "어린이날", "2027-05-13": "부처님오신날", "2027-06-06": "현충일", "2027-08-15": "광복절", "2027-08-16": "대체공휴일", "2027-09-14": "추석 연휴", "2027-09-15": "추석", "2027-09-16": "추석 연휴", "2027-10-03": "개천절", "2027-10-09": "한글날", "2027-12-25": "크리스마스" };
@@ -624,7 +626,7 @@
                     if (todos.length === 0 && (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com')) {
                         forceMigration(userRef);
                     } else {
-                        updateDateDisplay(); renderGoals();
+                        updateDateDisplay(); 
                     }
                 } else {
                     if (user.email === 'namo.cho@gmail.com' || user.email === 'namho.cho@gmail.com') {
@@ -643,7 +645,7 @@
                     todos = od.todos || []; memos = od.memos || {}; ledgers = od.ledgers || [];
                     goals = od.goals || {};
                     userRef.set({ todos, memos, ledgers, goals });
-                    updateDateDisplay(); renderGoals();
+                    updateDateDisplay(); 
                 } else {
                     initEmptyData();
                 }
@@ -653,7 +655,7 @@
         function initEmptyData() {
             todos = []; memos = {}; ledgers = []; goals = {};
             db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers, goals });
-            updateDateDisplay(); renderGoals();
+            updateDateDisplay(); 
         }
 
         function renderGoals() {
@@ -816,37 +818,16 @@
             }
         }
 
-        /* 🌟 [핵심] 오염된 에디터 데이터 자동 복구 및 강력한 렌더링 시스템 */
-        function loadEditorForDate(dateStr) {
-            const editorDiv = document.getElementById('editorjs');
-            // 에디터 영역이 화면에 안 보이면 로드 스킵 (충돌 방지)
-            if (!editorDiv || editorDiv.offsetParent === null) return;
-            // 이미 현재 날짜가 켜져 있다면 스킵
-            if (currentEditorDate === dateStr && editor) return; 
+        function getMemoDataForDate(dateStr) {
+            let data = memos[dateStr];
+            if (!data) return { blocks: [] };
+            if (typeof data === 'string') return { blocks: [{ type: "paragraph", data: { text: data.replace(/\n/g, '<br>') } }] };
+            return data;
+        }
 
-            // 기존 에디터가 있으면 안전하게 파괴
-            if (editor && typeof editor.destroy === 'function') {
-                try { editor.destroy(); } catch(e) {}
-                editor = null;
-            }
+        function initEditor() {
+            if(editor) { editor.destroy(); editor = null; } 
             
-            // 🌟 오염된 메모 데이터(ID 누락) 자동 복구
-            let memoData = memos[dateStr];
-            if (!memoData) {
-                memoData = { blocks: [] };
-            } else if (typeof memoData === 'string') {
-                memoData = { blocks: [{ id: Math.random().toString(36).substr(2, 9), type: "paragraph", data: { text: memoData.replace(/\n/g, '<br>') } }] };
-            } else {
-                // 원본 데이터를 훼손하지 않기 위해 깊은 복사
-                memoData = JSON.parse(JSON.stringify(memoData));
-            }
-            
-            if (!memoData.blocks) memoData.blocks = [];
-            // ID가 없는 불량 블록에 새 ID 발급 (에러 방지)
-            memoData.blocks.forEach(b => {
-                if (!b.id) b.id = Math.random().toString(36).substr(2, 9);
-            });
-
             const editorTools = {
                 header: Header, list: List, checklist: Checklist, Marker: Marker, table: Table,
                 image: {
@@ -884,23 +865,21 @@
             };
             if (typeof ToggleBlock !== 'undefined') editorTools.toggle = { class: ToggleBlock };
 
-            // 새 에디터 생성
             editor = new EditorJS({
                 holder: 'editorjs',
                 placeholder: '기록을 남기세요... ( 빈 줄에서 / 를 누르면 메뉴가 나옵니다)',
                 tools: editorTools,
-                data: memoData,
+                data: getMemoDataForDate(getDateString(currentDate)),
                 onChange: () => {
                     editor.save().then((outputData) => {
-                        memos[dateStr] = outputData;
+                        memos[getDateString(currentDate)] = outputData;
                         clearTimeout(mt); mt = setTimeout(saveData, 1000);
                         adjustMemoHeight();
                     }).catch(e => console.error(e));
                 }
             });
-            currentEditorDate = dateStr;
+            currentEditorDate = getDateString(currentDate);
             
-            // 렌더링 완료 후 높이 조절
             editor.isReady.then(() => {
                 setTimeout(adjustMemoHeight, 100);
             }).catch(e => console.error(e));
@@ -913,6 +892,20 @@
             } else if (el) { el.style.height = '100%'; }
         }
 
+        function safeRenderEditor() {
+            if (!editor || typeof editor.isReady === 'undefined') return;
+            const editorDiv = document.getElementById("editorjs");
+            if (editorDiv && editorDiv.offsetParent !== null) {
+                editor.isReady.then(() => {
+                    try {
+                        editor.render(getMemoDataForDate(getDateString(currentDate)));
+                    } catch(e) {
+                        console.error("에디터 렌더링 스킵:", e);
+                    }
+                });
+            }
+        }
+
         function switchMobileTab(tab) {
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
             if(tab === 'memo') {
@@ -920,8 +913,7 @@
                 document.body.classList.add('show-memo'); document.getElementById('tabMemo').classList.add('active');
                 setTimeout(() => {
                     adjustMemoHeight();
-                    // 모바일에서 메모 탭으로 넘어오면 에디터 로드 강제 확인
-                    loadEditorForDate(getDateString(currentDate)); 
+                    safeRenderEditor(); 
                 }, 100); 
             } else {
                 if (currentView !== 'dayContainer') switchView('dayContainer');
@@ -965,9 +957,7 @@
             document.getElementById("currentDateStr").innerHTML = titleText;
             document.getElementById("datePicker").value = getDateString(currentDate);
             
-            if (currentView === 'dayContainer') {
-                loadEditorForDate(getDateString(currentDate));
-            }
+            safeRenderEditor(); 
             setTimeout(adjustMemoHeight, 100);
             
             if (currentView === 'dayContainer') renderDayView();
@@ -1171,6 +1161,53 @@
             }
         }
 
+        /* 🌟 [NEW] 원장님의 복리 계산 수학 공식 적용 */
+        function calculateHabitAchievement(completedDates) {
+            if (!completedDates || completedDates.length === 0) return { score: 0, percent: 0 };
+            
+            // 날짜순 정렬
+            let sorted = [...new Set(completedDates)].sort((a, b) => new Date(a) - new Date(b));
+            
+            let streaks = [];
+            let currentStreak = 0;
+            let lastDate = null;
+            
+            for (let i = 0; i < sorted.length; i++) {
+                let d = new Date(sorted[i]);
+                d.setHours(0,0,0,0);
+                
+                if (lastDate === null) {
+                    currentStreak = 1;
+                } else {
+                    let diffTime = d.getTime() - lastDate.getTime();
+                    let diffDays = Math.round(diffTime / (1000 * 3600 * 24));
+                    
+                    if (diffDays === 1) {
+                        currentStreak++;
+                    } else {
+                        streaks.push(currentStreak);
+                        currentStreak = 1;
+                    }
+                }
+                lastDate = d;
+            }
+            if (currentStreak > 0) streaks.push(currentStreak);
+            
+            // 분자: 각 연속일수의 1.1 지수승 합
+            let score = 0;
+            streaks.forEach(s => {
+                score += Math.pow(1.1, s);
+            });
+            
+            // 분모: 1.1의 100승 (초반 퍼센트가 매우 낮게 나옴)
+            let denominator = Math.pow(1.1, 100);
+            
+            let percent = (score / denominator) * 100;
+            if (percent > 100) percent = 100;
+            
+            return { score: score, percent: percent };
+        }
+
         function renderHabitView() {
             const container = document.getElementById("habitGrid"); container.innerHTML = ""; const habits = todos.filter(t => t.isHabit);
             if(habits.length === 0) { container.innerHTML = "<div style='padding:40px; color:#888; text-align:center; font-size:14px;'>등록된 습관이 없습니다.<br>할 일을 추가할 때 [🌱 습관으로 등록]을 체크해보세요!</div>"; return; }
@@ -1186,10 +1223,43 @@
             }
             thead.appendChild(trHead); table.appendChild(thead);
             const tbody = document.createElement("tbody");
+            
             habits.forEach((t, index) => {
-                const tr = document.createElement("tr"); const streak = calculateStreak(t.completedDates);
-                const streakBadge = `<span class="streak-badge ${streak >= 3 ? "streak-fire" : ""}">${streak}일</span>`; const hColor = pastelPalette[index % pastelPalette.length];
-                tr.innerHTML = `<td class="sticky-col"><div style="display:flex; justify-content:space-between; align-items:center; gap:5px;"><div style="display:flex; align-items:center; overflow:hidden;"><div class="priority-dot" style="background-color: ${hColor};"></div><span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100px;" title="${t.task}">${t.task}</span></div>${streakBadge}</div></td>`;
+                const tr = document.createElement("tr"); 
+                const streak = calculateStreak(t.completedDates); // 현재 연속 기록
+                const totalDays = t.completedDates ? t.completedDates.length : 0; // 누적 달성일
+                const achievement = calculateHabitAchievement(t.completedDates); // 🌟 [NEW] 원장님 공식 적용
+                
+                // 🌟 [NEW] 연속/전체일수 표기
+                const streakBadge = `<span class="streak-badge ${streak >= 3 ? "streak-fire" : ""}">${streak}일/${totalDays}일</span>`; 
+                const hColor = pastelPalette[index % pastelPalette.length];
+                
+                // 🌟 [NEW] 목표달성 프로그레스 바 UI
+                const progressHtml = `
+                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #eee;">
+                        <div style="display:flex; justify-content:space-between; font-size: 11px; color: #666; margin-bottom: 4px;">
+                            <span>🏆 목표달성</span>
+                            <span style="color:#007AFF; font-weight:700;">${achievement.percent.toFixed(2)}%</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background-color: #f0f0f0; border-radius: 3px; overflow: hidden;">
+                            <div style="width: ${achievement.percent}%; height: 100%; background-color: ${hColor}; border-radius: 3px; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+                `;
+
+                tr.innerHTML = `<td class="sticky-col">
+                    <div style="display:flex; flex-direction:column; justify-content: center; height:100%;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
+                            <div style="display:flex; align-items:center; overflow:hidden;">
+                                <div class="priority-dot" style="background-color: ${hColor};"></div>
+                                <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;" title="${t.task}">${t.task}</span>
+                            </div>
+                            ${streakBadge}
+                        </div>
+                        ${progressHtml}
+                    </div>
+                </td>`;
+                
                 dates.forEach(d => {
                     const dateKey = getDateString(d); const isDone = t.completedDates && t.completedDates.includes(dateKey); const td = document.createElement("td");
                     if(isDone) td.innerHTML = `<div class="habit-done" style="background-color:${hColor};" onclick="toggleComplete('${t.id}', event, '${dateKey}')">✔</div>`;
@@ -1198,6 +1268,7 @@
                 });
                 tbody.appendChild(tr);
             });
+            
             table.appendChild(tbody); container.appendChild(table);
             setTimeout(() => { if(container.scrollWidth > container.clientWidth) container.scrollLeft = (container.scrollWidth / 2) - (container.clientWidth / 2); }, 10);
         }
@@ -1227,7 +1298,6 @@
             const rawTags = document.getElementById("taskTagsInput").value;
             const tagsArray = rawTags.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
 
-            // 🌟 팝업의 "간단 메모"를 저장할 때 ID 생성 규칙 추가 (오류 방지)
             if (editingId && originalDateStr && originalDateStr !== targetDateStr) {
                 let oldData = memos[originalDateStr]; let blockToMove = null;
                 if (oldData && oldData.blocks) {
@@ -1241,10 +1311,10 @@
                     let targetData = memos[targetDateStr];
                     if (!targetData) targetData = { blocks: [] };
                     else if (typeof targetData === 'string') targetData = { blocks: [{ id: Math.random().toString(36).substr(2, 9), type: "paragraph", data: { text: targetData.replace(/\n/g, '<br>') } }] };
-                    else targetData = JSON.parse(JSON.stringify(targetData)); // 깊은 복사
+                    else targetData = JSON.parse(JSON.stringify(targetData)); 
                     
                     if (!targetData.blocks) targetData.blocks = [];
-                    if (!blockToMove.id) blockToMove.id = Math.random().toString(36).substr(2, 9); // 필수 ID 보강
+                    if (!blockToMove.id) blockToMove.id = Math.random().toString(36).substr(2, 9); 
                     
                     targetData.blocks.push(blockToMove); 
                     memos[targetDateStr] = targetData; 
@@ -1261,7 +1331,7 @@
                 if (!targetData.blocks) targetData.blocks = [];
                 
                 targetData.blocks.push({ 
-                    id: Math.random().toString(36).substr(2, 9), // 🌟 [핵심] 필수 ID
+                    id: Math.random().toString(36).substr(2, 9),
                     type: 'paragraph', 
                     data: { text: `📌 [${task}] 메모:<br>${taskMemo.replace(/\n/g, '<br>')}` } 
                 });
@@ -1289,7 +1359,6 @@
             
             if(currentView === 'searchContainer') handleSearch();
             else if (currentView === 'dayContainer' && targetDateStr === getDateString(currentDate)) {
-                // 현재 보고 있는 날짜에 메모가 추가되었으면 에디터 강제 새로고침
                 currentEditorDate = null; 
                 loadEditorForDate(getDateString(currentDate));
             }
