@@ -151,19 +151,19 @@
         .holiday-label { background-color: #f5f5f7; color: #555; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 600; display: inline-block; align-self: flex-start; margin-bottom: 2px; }
         .month-event { font-size: 11px; padding: 4px 6px; border-radius: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-left: 3px solid; }
 
-        /* 습관 Tracker 스타일 (🌟 추가된 목표달성 UI 넓이 대응) */
+        /* 🌟 [NEW] 습관 Tracker 스타일 (여백 및 너비 교정 완료) */
         .habit-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
         .habit-table-container { flex: 1; overflow: auto; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
         .habit-table { border-collapse: collapse; width: 100%; font-size: 13px; text-align: center; min-width: 800px; }
         .habit-table th, .habit-table td { border: 1px solid #f0f0f0; padding: 10px 5px; min-width: 45px; }
         .habit-table th { background: #fafafa; font-weight: 600; color: #555; position: sticky; top: 0; z-index: 10; }
-        /* 왼쪽 고정 영역 넓이 확장 */
-        .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 220px; min-width: 220px; text-align: left; padding: 0 15px; border-right: 2px solid #e5e5e5; }
+        /* 왼쪽 고정 영역 위아래 여백 복구 및 넓이 240px로 확장 */
+        .habit-table .sticky-col { position: sticky; left: 0; background: #fff; z-index: 11; width: 240px; min-width: 240px; text-align: left; padding: 14px 15px; border-right: 2px solid #e5e5e5; }
         .habit-table th.sticky-col { z-index: 12; background: #fafafa; }
         .habit-done { width: 28px; height: 28px; border-radius: 6px; margin: 0 auto; display: flex; align-items: center; justify-content: center; color: white; font-size: 14px; cursor: pointer; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.1); }
         .habit-empty { width: 28px; height: 28px; background-color: #f5f5f7; border-radius: 6px; margin: 0 auto; cursor: pointer; transition: 0.2s; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.05); }
         .habit-empty:hover { background-color: #e5e5ea; }
-        .streak-badge { background-color: #f0f0f0; color: #555; padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+        .streak-badge { background-color: #f0f0f0; color: #555; padding: 4px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; }
         .streak-fire { background-color: #FF3B30; color: #fff; }
 
         .search-wrapper { display: flex; flex-direction: column; background: #fff; border: 1px solid #e5e5e5; border-radius: 12px; flex: 1; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); overflow: hidden; min-height: 0; }
@@ -1161,11 +1161,9 @@
             }
         }
 
-        /* 🌟 [NEW] 원장님의 복리 계산 수학 공식 적용 */
         function calculateHabitAchievement(completedDates) {
             if (!completedDates || completedDates.length === 0) return { score: 0, percent: 0 };
             
-            // 날짜순 정렬
             let sorted = [...new Set(completedDates)].sort((a, b) => new Date(a) - new Date(b));
             
             let streaks = [];
@@ -1193,13 +1191,11 @@
             }
             if (currentStreak > 0) streaks.push(currentStreak);
             
-            // 분자: 각 연속일수의 1.1 지수승 합
             let score = 0;
             streaks.forEach(s => {
                 score += Math.pow(1.1, s);
             });
             
-            // 분모: 1.1의 100승 (초반 퍼센트가 매우 낮게 나옴)
             let denominator = Math.pow(1.1, 100);
             
             let percent = (score / denominator) * 100;
@@ -1226,18 +1222,16 @@
             
             habits.forEach((t, index) => {
                 const tr = document.createElement("tr"); 
-                const streak = calculateStreak(t.completedDates); // 현재 연속 기록
-                const totalDays = t.completedDates ? t.completedDates.length : 0; // 누적 달성일
-                const achievement = calculateHabitAchievement(t.completedDates); // 🌟 [NEW] 원장님 공식 적용
+                const streak = calculateStreak(t.completedDates); 
+                const totalDays = t.completedDates ? t.completedDates.length : 0; 
+                const achievement = calculateHabitAchievement(t.completedDates); 
                 
-                // 🌟 [NEW] 연속/전체일수 표기
                 const streakBadge = `<span class="streak-badge ${streak >= 3 ? "streak-fire" : ""}">${streak}일/${totalDays}일</span>`; 
                 const hColor = pastelPalette[index % pastelPalette.length];
                 
-                // 🌟 [NEW] 목표달성 프로그레스 바 UI
                 const progressHtml = `
-                    <div style="margin-top: 8px; padding-top: 8px; border-top: 1px dashed #eee;">
-                        <div style="display:flex; justify-content:space-between; font-size: 11px; color: #666; margin-bottom: 4px;">
+                    <div style="margin-top: 10px; padding-top: 10px; border-top: 1px dashed #eee;">
+                        <div style="display:flex; justify-content:space-between; font-size: 11px; color: #666; margin-bottom: 6px;">
                             <span>🏆 목표달성</span>
                             <span style="color:#007AFF; font-weight:700;">${achievement.percent.toFixed(2)}%</span>
                         </div>
@@ -1252,7 +1246,7 @@
                         <div style="display:flex; justify-content:space-between; align-items:center; gap:5px;">
                             <div style="display:flex; align-items:center; overflow:hidden;">
                                 <div class="priority-dot" style="background-color: ${hColor};"></div>
-                                <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:90px;" title="${t.task}">${t.task}</span>
+                                <span style="font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;" title="${t.task}">${t.task}</span>
                             </div>
                             ${streakBadge}
                         </div>
