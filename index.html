@@ -317,7 +317,7 @@
                     <input type="date" id="datePicker" onchange="handleDateSelect(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                 </div>
                 <h1 id="currentMonthStr" style="font-size: 24px; font-weight: 800; color: #111; margin: 0; flex: 1; margin-left: 15px;">Oct 2019</h1>
-                <div onclick="goToday()" style="font-size: 15px; font-weight: 700; color: #4A47A3; cursor: pointer;">Today</div>
+                <div onclick="goToday()" style="font-size: 15px; font-weight: 700; color: #2ECC71; cursor: pointer;">Today</div>
             </div>
             <div id="weekStrip" style="display: flex; justify-content: space-between; align-items: center;">
                 <!-- JS에서 요일 자동 생성됨 -->
@@ -950,7 +950,7 @@
                     let isSelected = d.toDateString() === currentDate.toDateString();
                     
                     let col = document.createElement("div");
-                    col.style.cssText = `display:flex; flex-direction:column; align-items:center; justify-content:center; width:42px; height:58px; border-radius:14px; cursor:pointer; transition:0.2s; ${isSelected ? 'background-color:#4A47A3; box-shadow:0 4px 10px rgba(74, 71, 163, 0.3);' : ''}`;
+                    col.style.cssText = `display:flex; flex-direction:column; align-items:center; justify-content:center; width:42px; height:58px; border-radius:14px; cursor:pointer; transition:0.2s; ${isSelected ? 'background-color:#2ECC71; box-shadow:0 4px 10px rgba(46, 204, 113, 0.3);' : ''}`;
                     col.onclick = () => { currentDate = new Date(d); updateDateDisplay(); };
                     
                     col.innerHTML = `
@@ -1312,7 +1312,7 @@
         function initWeekGrid() { const labels = document.getElementById("weekTimeLabels"); labels.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="week-time-slot"; r.innerText=`${i}:00`; labels.appendChild(r); } }
         function toggleWeeklyDays() { document.getElementById("weeklyDays").style.display = document.getElementById("repeatSelect").value === "weekly" ? "flex" : "none"; }
         function closeModal() { document.getElementById("todoModal").style.display = "none"; }
-        function goToday() { currentDate = new Date(); document.getElementById("searchInput").value = ""; updateDateDisplay(); }
+        function goToday() { currentDate = new Date(); updateDateDisplay(); }
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
         function toggleComplete(id, e, forceDateStr) { e.stopPropagation(); const dateKey = forceDateStr || getDateString(currentDate); const t = todos.find(x => x.id === id); if(t) { if(!t.completedDates) t.completedDates = []; const idx = t.completedDates.indexOf(dateKey); if(idx > -1) t.completedDates.splice(idx, 1); else t.completedDates.push(dateKey); saveData(); updateDateDisplay(); } }
