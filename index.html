@@ -309,40 +309,20 @@
     </div>
 
     <div id="appContainer">
-        <header>
-            <div class="date-nav">
-                <button class="icon-btn" onclick="changeDate(-1)">◀</button>
-                <div class="date-picker-wrap">
-                    <h1 id="currentDateStr">로딩 중...</h1>
-                    <input type="date" id="datePicker" onchange="handleDateSelect(event)">
+        <!-- 🌟 [NEW] 이미지와 동일한 깔끔한 모바일 캘린더 헤더 -->
+        <header style="display: flex; flex-direction: column; background: #fff; padding: 15px 20px 10px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; margin: -15px -15px 15px -15px; flex-shrink: 0;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
+                <div style="position: relative; width: 28px; height: 28px; color: #888;">
+                    <svg viewBox="0 0 24 24" width="100%" height="100%" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <input type="date" id="datePicker" onchange="handleDateSelect(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                 </div>
-                <button class="icon-btn" onclick="changeDate(1)">▶</button>
-                <button class="today-btn" onclick="goToday()">오늘</button>
+                <h1 id="currentMonthStr" style="font-size: 24px; font-weight: 800; color: #111; margin: 0; flex: 1; margin-left: 15px;">Oct 2019</h1>
+                <div onclick="goToday()" style="font-size: 15px; font-weight: 700; color: #4A47A3; cursor: pointer;">Today</div>
             </div>
-
-            <div class="view-selector">
-                <button class="view-btn active" id="btnDay" onclick="switchView('dayContainer')">일간</button>
-                <button class="view-btn" id="btnWeek" onclick="switchView('weekContainer')">주간</button>
-                <button class="view-btn" id="btnMonth" onclick="switchView('monthContainer')">월간</button>
-                <button class="view-btn" id="btnHabit" onclick="switchView('habitContainer')">습관</button>
-                <button class="view-btn" id="btnGoal" onclick="switchView('goalContainer')">목표</button>
-            </div>
-
-            <div class="header-right">
-                <div class="search-bar-wrap">
-                    <span style="position:absolute; left:10px; top:9px; color:#888; font-size:14px; pointer-events: none;">🔍</span>
-                    <input type="text" id="searchInput" placeholder="태그 및 내용 검색..." oninput="handleSearch()">
-                </div>
-                <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+            <div id="weekStrip" style="display: flex; justify-content: space-between; align-items: center;">
+                <!-- JS에서 요일 자동 생성됨 -->
             </div>
         </header>
-
-        <div id="searchContainer" class="view-container">
-            <div class="search-wrapper">
-                <h2 style="margin-bottom: 20px; font-size: 20px;">검색 결과: <span id="searchKeywordDisp" style="color:#007AFF;"></span></h2>
-                <div class="scrollable-area" id="searchResultsArea" style="padding-right: 15px;"></div>
-            </div>
-        </div>
 
         <div id="goalContainer" class="view-container">
             <div class="goal-wrapper">
@@ -383,13 +363,6 @@
         </div>
 
         <div id="dayContainer" class="view-container active">
-            <div class="context-goal-banner" id="dayGoalBanner" style="border-left-color: #FF7575;" onclick="switchMobileTab('goal')">
-                <span class="banner-icon">🔥</span>
-                <div class="banner-content">
-                    <div class="banner-label">주간 목표 (<span id="bannerLabelWeekly"></span>)</div>
-                    <div class="banner-text" id="dayGoalText"></div>
-                </div>
-            </div>
             <div id="allDayContainer" class="all-day-wrapper"></div>
             <div class="main-container">
                 <div class="left-half">
@@ -412,13 +385,6 @@
         </div>
 
         <div id="weekContainer" class="view-container">
-            <div class="context-goal-banner" id="weekGoalBanner" style="border-left-color: #FF9955;" onclick="switchMobileTab('goal')">
-                <span class="banner-icon">📌</span>
-                <div class="banner-content">
-                    <div class="banner-label">월간 목표 (<span id="bannerLabelMonthly"></span>)</div>
-                    <div class="banner-text" id="weekGoalText"></div>
-                </div>
-            </div>
             <div class="week-wrapper">
                 <div class="week-header-row" id="weekHeader"></div>
                 <div class="week-body" id="weekBodyScroll">
@@ -429,13 +395,6 @@
         </div>
 
         <div id="monthContainer" class="view-container">
-            <div class="context-goal-banner" id="monthGoalBanner" style="border-left-color: #68B96D;" onclick="switchMobileTab('goal')">
-                <span class="banner-icon">🎯</span>
-                <div class="banner-content">
-                    <div class="banner-label">연간 목표 (<span id="bannerLabelYearly"></span>)</div>
-                    <div class="banner-text" id="monthGoalText"></div>
-                </div>
-            </div>
             <div class="month-wrapper">
                 <div class="month-header-row">
                     <div class="sun-text">일</div><div>월</div><div>화</div><div>수</div><div>목</div><div>금</div><div class="sat-text">토</div>
@@ -704,10 +663,6 @@
             document.getElementById("labelMonthly").innerText = m.label;
             document.getElementById("labelWeekly").innerText = w.label;
 
-            document.getElementById("bannerLabelYearly").innerText = y.label;
-            document.getElementById("bannerLabelMonthly").innerText = m.label;
-            document.getElementById("bannerLabelWeekly").innerText = w.label;
-
             document.getElementById("valCore").value = goals["core"] || "";
 
             ['longTerm', 'yearly', 'monthly', 'weekly'].forEach(lvl => {
@@ -720,43 +675,20 @@
                 }
 
                 const ul = document.getElementById(`list${lvl.charAt(0).toUpperCase() + lvl.slice(1)}`);
-                ul.innerHTML = "";
-                gArr.forEach(item => {
-                    const li = document.createElement("li");
-                    li.className = `goal-item ${item.completed ? 'completed' : ''}`;
-                    li.innerHTML = `
-                        <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleGoalItem('${lvl}', '${item.id}')">
-                        <span>${item.text}</span>
-                        <button class="del-goal-btn" onclick="deleteGoalItem('${lvl}', '${item.id}')">×</button>
-                    `;
-                    ul.appendChild(li);
-                });
+                if(ul) {
+                    ul.innerHTML = "";
+                    gArr.forEach(item => {
+                        const li = document.createElement("li");
+                        li.className = `goal-item ${item.completed ? 'completed' : ''}`;
+                        li.innerHTML = `
+                            <input type="checkbox" ${item.completed ? 'checked' : ''} onchange="toggleGoalItem('${lvl}', '${item.id}')">
+                            <span>${item.text}</span>
+                            <button class="del-goal-btn" onclick="deleteGoalItem('${lvl}', '${item.id}')">×</button>
+                        `;
+                        ul.appendChild(li);
+                    });
+                }
             });
-
-            const wArr = goals[w.key] || [];
-            const mArr = goals[m.key] || [];
-            const yArr = goals[y.key] || [];
-
-            updateBanner("dayGoalText", wArr, "주간");
-            updateBanner("weekGoalText", mArr, "월간");
-            updateBanner("monthGoalText", yArr, "연간");
-        }
-
-        function updateBanner(elementId, arr, typeName) {
-            const el = document.getElementById(elementId);
-            if (!arr || arr.length === 0) {
-                el.innerText = `클릭하여 새로운 ${typeName} 목표를 추가해보세요!`;
-                el.className = "banner-text banner-empty";
-            } else {
-                const compCount = arr.filter(x => x.completed).length;
-                const total = arr.length;
-                const firstText = arr[0].text;
-                let summary = `<span class="banner-progress">[${compCount}/${total}]</span> ${firstText}`;
-                if (total > 1) summary += ` 외 ${total - 1}건`;
-                
-                el.innerHTML = summary;
-                el.className = compCount === total && total > 0 ? "banner-text banner-done" : "banner-text";
-            }
         }
 
         function saveCoreGoal() {
@@ -997,21 +929,37 @@
         }
 
         function updateDateDisplay() { 
-            const dStr = ['일','월','화','수','목','금','토']; let titleText = "";
-            if (currentView === 'monthContainer') {
-                titleText = currentDate.getFullYear() + "년 " + (currentDate.getMonth()+1) + "월";
-            } else if (currentView === 'habitContainer') {
-                titleText = "Habit Tracker";
-            } else if (currentView === 'goalContainer') {
-                titleText = "나의 목표 관리";
-            } else {
-                const dayIdx = currentDate.getDay();
-                let colorClass = dayIdx === 0 ? "sun-text" : (dayIdx === 6 ? "sat-text" : "");
-                if (KOR_HOLIDAYS[getDateString(currentDate)]) colorClass = "sun-text";
-                titleText = (currentDate.getMonth()+1) + "월 " + currentDate.getDate() + "일 (<span class='" + colorClass + "'>" + dStr[dayIdx] + "</span>)";
+            const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
+            
+            const monthStr = document.getElementById("currentMonthStr");
+            if(monthStr) monthStr.innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            
+            const datePicker = document.getElementById("datePicker");
+            if(datePicker) datePicker.value = getDateString(currentDate);
+
+            const weekStrip = document.getElementById("weekStrip");
+            if(weekStrip) {
+                weekStrip.innerHTML = "";
+                const startOfWeek = new Date(currentDate);
+                startOfWeek.setDate(currentDate.getDate() - currentDate.getDay());
+                
+                for(let i=0; i<7; i++) {
+                    let d = new Date(startOfWeek);
+                    d.setDate(startOfWeek.getDate() + i);
+                    let isSelected = d.toDateString() === currentDate.toDateString();
+                    
+                    let col = document.createElement("div");
+                    col.style.cssText = `display:flex; flex-direction:column; align-items:center; justify-content:center; width:42px; height:58px; border-radius:14px; cursor:pointer; transition:0.2s; ${isSelected ? 'background-color:#4A47A3; box-shadow:0 4px 10px rgba(74, 71, 163, 0.3);' : ''}`;
+                    col.onclick = () => { currentDate = new Date(d); updateDateDisplay(); };
+                    
+                    col.innerHTML = `
+                        <span style="font-size:12px; font-weight:600; margin-bottom:4px; color:${isSelected ? '#fff' : '#aaa'};">${dayNames[i]}</span>
+                        <span style="font-size:16px; font-weight:700; color:${isSelected ? '#fff' : '#333'};">${d.getDate()}</span>
+                    `;
+                    weekStrip.appendChild(col);
+                }
             }
-            document.getElementById("currentDateStr").innerHTML = titleText;
-            document.getElementById("datePicker").value = getDateString(currentDate);
             
             safeRenderEditor(); 
             setTimeout(adjustMemoHeight, 100);
@@ -1031,96 +979,9 @@
             updateDateDisplay(); 
         }
 
-        function handleSearch() {
-            const keyword = document.getElementById("searchInput").value.trim().toLowerCase();
-            
-            if(!keyword) {
-                if(currentView === 'searchContainer') switchView('dayContainer'); 
-                return;
-            }
-            
-            if(currentView !== 'searchContainer') {
-                switchView('searchContainer');
-            }
-            
-            document.getElementById("searchKeywordDisp").innerText = `'${keyword}'`;
-            const resultsArea = document.getElementById("searchResultsArea");
-            resultsArea.innerHTML = "";
-
-            const isTagSearch = keyword.startsWith('#');
-            const searchStr = isTagSearch ? keyword.substring(1) : keyword;
-
-            const matchedTodos = todos.filter(t => {
-                if (isTagSearch) {
-                    return t.tags && t.tags.some(tag => tag.toLowerCase() === searchStr);
-                } else {
-                    const inTitle = t.task.toLowerCase().includes(searchStr);
-                    const inTags = t.tags && t.tags.some(tag => tag.toLowerCase().includes(searchStr));
-                    return inTitle || inTags;
-                }
-            });
-
-            const matchedMemos = [];
-            if (!isTagSearch) {
-                for(const [dateKey, memoData] of Object.entries(memos)) {
-                    let textContent = "";
-                    if(memoData && memoData.blocks) {
-                        memoData.blocks.forEach(b => {
-                            if(b.data && b.data.text) textContent += b.data.text + " ";
-                            if(b.data && b.data.items) b.data.items.forEach(i => textContent += i.text + " "); 
-                        });
-                    } else if (typeof memoData === 'string') {
-                        textContent = memoData;
-                    }
-                    
-                    if(textContent.toLowerCase().includes(searchStr)) {
-                        matchedMemos.push({ date: dateKey, text: textContent });
-                    }
-                }
-            }
-
-            if(matchedTodos.length > 0) {
-                resultsArea.innerHTML += `<div class="search-result-group"><div class="search-result-title">📌 일정 및 할 일 (${matchedTodos.length}건)</div></div>`;
-                const groupDiv = resultsArea.lastChild;
-                
-                matchedTodos.sort((a,b) => b.createDate - a.createDate).forEach(t => {
-                    const dStr = getDateString(new Date(t.createDate));
-                    const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag">#${tag}</span>`).join(' ') : '';
-                    groupDiv.innerHTML += `
-                    <div class="search-item-row" onclick="goToDateAndOpenModal('${dStr}', '${t.id}')">
-                        <div class="search-date-badge">${dStr}</div>
-                        <div class="priority-dot dot-${t.type}"></div>
-                        <div class="search-text-content">${t.task}</div>
-                        <div style="margin-left:auto; display:flex; gap:5px;">${tagsHtml}</div>
-                    </div>`;
-                });
-            }
-
-            if(matchedMemos.length > 0) {
-                resultsArea.innerHTML += `<div class="search-result-group"><div class="search-result-title">📝 메모 (${matchedMemos.length}건)</div></div>`;
-                const groupDiv = resultsArea.lastChild;
-                
-                matchedMemos.sort((a,b) => new Date(b.date) - new Date(a.date)).forEach(m => {
-                    const cleanText = m.text.replace(/<\/?[^>]+(>|$)/g, ""); 
-                    const preview = cleanText.length > 60 ? cleanText.substring(0, 60) + "..." : cleanText;
-                    groupDiv.innerHTML += `
-                    <div class="search-item-row" onclick="goToDate('${m.date}')">
-                        <div class="search-date-badge">${m.date}</div>
-                        <div class="search-text-content">${preview}</div>
-                    </div>`;
-                });
-            }
-
-            if(matchedTodos.length === 0 && matchedMemos.length === 0) {
-                resultsArea.innerHTML = "<div style='padding:50px; text-align:center; color:#888;'>검색 결과가 없습니다.</div>";
-            }
-        }
-
         function handleTagClick(tag, e) {
             e.stopPropagation();
-            const searchInput = document.getElementById("searchInput");
-            searchInput.value = `#${tag}`;
-            handleSearch();
+            // 검색 기능 삭제됨
         }
 
         function goToDate(dateStr) {
