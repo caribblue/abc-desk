@@ -410,7 +410,16 @@
                     <div class="todo-section" id="todoSectionWrap" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                         <div class="scrollable-area" style="overflow: visible;"><ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul></div>
                     </div>
-                    <div class="schedule-section">
+                    <!-- 🌟 스케줄 영역 'Today' 요약 및 토글 버튼 -->
+                    <div style="margin-top: 24px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent;" onclick="toggleScheduleList()">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                            <span>Today</span>
+                        </div>
+                        <svg id="scheduleToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s; transform: rotate(0deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    </div>
+
+                    <div class="schedule-section" id="scheduleSectionWrap">
                         <div class="scrollable-area" id="dayScheduleGrid"></div>
                     </div>
                 </div>
@@ -1197,6 +1206,22 @@
                 toggleIcon.style.transform = "rotate(0deg)";
                 if(allDay) allDay.style.display = "flex";
                 if(todoSec) todoSec.style.display = "flex";
+            }
+        }
+
+        // 🌟 [NEW] 스케줄 접기/펴기 기능 함수
+        let isScheduleCollapsed = false;
+        function toggleScheduleList() {
+            isScheduleCollapsed = !isScheduleCollapsed;
+            const toggleIcon = document.getElementById("scheduleToggleIcon");
+            const scheduleSec = document.getElementById("scheduleSectionWrap");
+            
+            if (isScheduleCollapsed) {
+                toggleIcon.style.transform = "rotate(180deg)";
+                if(scheduleSec) scheduleSec.style.display = "none";
+            } else {
+                toggleIcon.style.transform = "rotate(0deg)";
+                if(scheduleSec) scheduleSec.style.display = "flex";
             }
         }
 
