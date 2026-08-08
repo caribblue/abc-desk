@@ -155,8 +155,8 @@
         .bg-C { background-color: rgba(142, 142, 147, 0.1); border-left-color: #8E8E93; color: #444; }
         .completed { opacity: 0.5; text-decoration: line-through; }
 
-        .time-slot { height: 50px; border-bottom: 1px solid #f0f0f0; display: flex; box-sizing: border-box; }
-        .time-label { color: #888; font-size: 12px; width: 45px; padding-top: 5px; border-right: 1px solid #f0f0f0; margin-right: 10px; text-align: center; flex-shrink: 0; }
+        .time-slot { height: 50px; border-bottom: 1px solid #f8f8f8; display: flex; box-sizing: border-box; }
+        .time-label { color: #aaa; font-size: 11px; font-weight: 600; width: 45px; padding-top: 0; border-right: none; margin-right: 5px; text-align: right; flex-shrink: 0; transform: translateY(-7px); padding-right: 10px; }
         .schedule-event-block { position: absolute; border-left: 4px solid; border-radius: 4px; padding: 4px 8px; z-index: 10; box-sizing: border-box; cursor: pointer; overflow: hidden; display: flex; flex-direction: column; }
         .event-time-text { font-size: 10px; font-weight: bold; margin-bottom: 2px; opacity: 0.8;}
         .event-title-text { font-size: 12px; font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -410,8 +410,7 @@
                     <div class="todo-section" id="todoSectionWrap" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                         <div class="scrollable-area" style="overflow: visible;"><ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul></div>
                     </div>
-                    <div class="schedule-section">
-                        <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
+                    <div class="schedule-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                         <div class="scrollable-area" id="dayScheduleGrid"></div>
                     </div>
                 </div>
@@ -1036,10 +1035,18 @@
 
         function renderDayView() {
             const dateKey = getDateString(currentDate); const ul = document.getElementById("todoList"); const grid = document.getElementById("dayScheduleGrid"); const alc = document.getElementById("allDayContainer");
-            ul.innerHTML = ""; alc.innerHTML = ""; grid.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
+            ul.innerHTML = ""; alc.innerHTML = ""; grid.innerHTML = "";
 
             let completedCount = 0;
             let totalTaskCount = 0;
+
+            const now = new Date();
+            const isToday = getDateString(currentDate) === getDateString(now);
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTimeStr = `${currentHour.toString().padStart(2,'0')}:${currentMinute.toString().padStart(2,'0')}`;
+
+            let scheduleEvents = [];
 
             todos.forEach(t => {
                 if (!shouldShow(t, currentDate)) return;
@@ -1051,56 +1058,123 @@
                 if (isTask || isEffectiveAllDay) {
                     totalTaskCount++;
                     if (isDone) completedCount++;
-                }
-                
-                // 🌟 배지(글씨) 대신 깔끔한 아이콘으로 변경
-                const habitIconHtml = t.isHabit ? `<span style="font-size:14px; margin-left:4px;" title="습관">🌱</span>` : '';
-                const repeatIconHtml = (t.repeat !== 'none') ? `<svg style="margin-left:4px; vertical-align:middle;" viewBox="0 0 24 24" width="14" height="14" stroke="#aaa" stroke-width="2" fill="none"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>` : '';
-                
-                const tagsHtml = t.tags && t.tags.length > 0 ? `<div style="display:flex; gap:6px; margin-top:4px;">` + t.tags.map(tag => `<span style="color:#aaa; font-size:12px; font-weight:500;">#${tag}</span>`).join('') + `</div>` : '';
-                
-                // 시간 텍스트 우측 배치용
-                const timeStr = t.startTime ? t.startTime : (isEffectiveAllDay ? '종일' : '');
-                const statusHtml = isDone ? `<span class="todo-card-status">Done</span>` : '';
+                    
+                    // 🌟 카드 렌더링 (기존 투두 리스트 유지)
+                    const habitIconHtml = t.isHabit ? `<span style="font-size:14px; margin-left:4px;" title="습관">🌱</span>` : '';
+                    const repeatIconHtml = (t.repeat !== 'none') ? `<svg style="margin-left:4px; vertical-align:middle;" viewBox="0 0 24 24" width="14" height="14" stroke="#aaa" stroke-width="2" fill="none"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>` : '';
+                    const tagsHtml = t.tags && t.tags.length > 0 ? `<div style="display:flex; gap:6px; margin-top:4px;">` + t.tags.map(tag => `<span style="color:#aaa; font-size:12px; font-weight:500;">#${tag}</span>`).join('') + `</div>` : '';
+                    const timeStr = t.startTime ? t.startTime : (isEffectiveAllDay ? '종일' : '');
+                    const statusHtml = isDone ? `<span class="todo-card-status">Done</span>` : '';
 
-                // 🌟 카드 HTML 구조 
-                const cardHtml = `
-                    <input type="checkbox" class="todo-checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')">
-                    <div class="todo-card-content" onclick="openModal('${t.id}')">
-                        <div class="todo-card-left">
-                            <div class="todo-card-title-wrap">
-                                <span class="todo-card-title">${t.task}</span>
-                                ${habitIconHtml} ${repeatIconHtml}
+                    const cardHtml = `
+                        <input type="checkbox" class="todo-checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')">
+                        <div class="todo-card-content" onclick="openModal('${t.id}')">
+                            <div class="todo-card-left">
+                                <div class="todo-card-title-wrap">
+                                    <span class="todo-card-title">${t.task}</span>
+                                    ${habitIconHtml} ${repeatIconHtml}
+                                </div>
+                                ${tagsHtml}
                             </div>
-                            ${tagsHtml}
+                            <div class="todo-card-right">
+                                <span class="todo-card-time">${timeStr}</span>
+                                ${statusHtml}
+                            </div>
                         </div>
-                        <div class="todo-card-right">
-                            <span class="todo-card-time">${timeStr}</span>
-                            ${statusHtml}
-                        </div>
-                    </div>
-                `;
+                    `;
 
-                if (isEffectiveAllDay) {
-                    alc.innerHTML += `<div class="todo-card ${cName}">${cardHtml}</div>`;
-                } else {
-                    if (isTask) {
+                    if (isEffectiveAllDay) {
+                        alc.innerHTML += `<div class="todo-card ${cName}">${cardHtml}</div>`;
+                    } else if (isTask) {
                         const li = document.createElement("li"); 
                         li.className = `todo-card ${cName}`; 
                         li.title = t.task;
                         li.innerHTML = cardHtml;
                         ul.appendChild(li);
                     }
-                    if (t.startTime && t.endTime) {
-                        const [sH, sM] = t.startTime.split(":").map(Number); const [eH, eM] = t.endTime.split(":").map(Number);
-                        const b = document.createElement("div"); b.className = `schedule-event-block bg-${t.type} ${cName}`;
-                        b.style.top = (sH * 60 + sM) / 60 * 50 + "px"; b.style.height = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20) + "px"; b.style.left = "55px"; b.style.right = "10px"; b.title = `[${t.startTime}~${t.endTime}] ${t.task}`; b.onclick = (e) => { e.stopPropagation(); openModal(t.id); };
-                        b.innerHTML = `<div class="event-time-text">${t.startTime}</div><div class="event-title-text">${t.task}</div>`; grid.appendChild(b);
-                    }
+                }
+                
+                // 🌟 스케줄 이벤트 수집 (투두가 아니고, 시작시간이 있는 경우)
+                if (t.startTime && t.endTime && !isTask && !isEffectiveAllDay) {
+                    if (isToday && t.endTime < currentTimeStr) return; // 지난 스케줄 표시 안 함
+                    scheduleEvents.push({...t, cName});
                 }
             });
 
-            // 🌟 상단 투두 완료 갯수 업데이트
+            // 🌟 동적 타임라인 계산 (앞 3시간, 뒤 5시간 또는 일정 끝날때까지)
+            let startHour = 9, endHour = 18;
+            if (isToday) {
+                startHour = Math.max(0, currentHour - 3);
+                let maxH = currentHour;
+                scheduleEvents.forEach(e => {
+                    let eH = parseInt(e.endTime.split(':')[0]);
+                    if (eH > maxH) maxH = eH;
+                });
+                endHour = Math.min(24, Math.max(currentHour + 5, maxH + 1));
+            } else {
+                if (scheduleEvents.length > 0) {
+                    let minH = 24, maxH = 0;
+                    scheduleEvents.forEach(e => {
+                        let sH = parseInt(e.startTime.split(':')[0]);
+                        let eH = parseInt(e.endTime.split(':')[0]);
+                        if (sH < minH) minH = sH;
+                        if (eH > maxH) maxH = eH;
+                    });
+                    startHour = Math.max(0, minH - 1);
+                    endHour = Math.min(24, maxH + 2);
+                }
+            }
+
+            // 🌟 그리드 시간 슬롯 생성
+            for (let i = startHour; i <= endHour; i++) {
+                const r = document.createElement("div");
+                r.className="time-slot";
+                r.onclick=()=>openModal(null,`${i.toString().padStart(2,'0')}:00`,`${((i+1)%24).toString().padStart(2,'0')}:00`);
+                r.innerHTML=`<div class="time-label">${i}:00</div>`;
+                grid.appendChild(r);
+            }
+
+            // 🌟 현재 시간 표시 라인 (파란색 선과 점)
+            if (isToday && currentHour >= startHour && currentHour <= endHour) {
+                let topPx = ((currentHour - startHour) * 60 + currentMinute) / 60 * 50;
+                const timeLine = document.createElement("div");
+                timeLine.style.cssText = `position:absolute; top:${topPx}px; left:45px; right:0; height:2px; background-color:#5B67C8; z-index:20; display:flex; align-items:center; pointer-events:none;`;
+                timeLine.innerHTML = `<div style="width:10px; height:10px; border-radius:50%; background-color:#5B67C8; margin-left:-5px;"></div>`;
+                grid.appendChild(timeLine);
+            }
+
+            // 🌟 스케줄 블록 렌더링 (파스텔 톤 적용)
+            scheduleEvents.forEach(t => {
+                const [sH, sM] = t.startTime.split(":").map(Number);
+                const [eH, eM] = t.endTime.split(":").map(Number);
+                
+                let topPx = ((sH * 60 + sM) - (startHour * 60)) / 60 * 50;
+                let heightPx = Math.max(((eH * 60 + eM) - (sH * 60 + sM)) / 60 * 50, 20);
+
+                if (sH < startHour) {
+                    topPx = 0;
+                    heightPx = Math.max(((eH * 60 + eM) - (startHour * 60)) / 60 * 50, 20);
+                }
+
+                // 우선순위(A, B, C)에 따른 이미지 스타일 색상
+                let pColor = t.type === 'A' ? '#F4D9F9' : (t.type === 'B' ? '#D6E4FF' : '#D1F4D9');
+                let dColor = t.type === 'A' ? '#A83B92' : (t.type === 'B' ? '#2252A3' : '#2A9D49');
+
+                const b = document.createElement("div");
+                b.style.cssText = `position:absolute; top:${topPx}px; height:${heightPx}px; left:55px; right:10px; background-color:${pColor}; color:${dColor}; border-radius:8px; padding:8px 12px; box-sizing:border-box; cursor:pointer; overflow:hidden; display:flex; flex-direction:column; z-index:10; border:1px solid rgba(0,0,0,0.05);`;
+                b.title = `[${t.startTime}~${t.endTime}] ${t.task}`;
+                b.onclick = (e) => { e.stopPropagation(); openModal(t.id); };
+                b.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                        <div style="font-size:13px; font-weight:700;">${t.task}</div>
+                        <div style="font-size:16px; opacity:0.5; margin-top:-5px;">⋮</div>
+                    </div>
+                    <div style="font-size:11px; margin-top:4px; font-weight:600; opacity:0.8;">${t.startTime} - ${t.endTime}</div>
+                `;
+                grid.appendChild(b);
+            });
+
+            // 상단 투두 완료 갯수 업데이트
             const summaryText = document.getElementById("todoSummaryText");
             if(summaryText) {
                 summaryText.innerText = `${completedCount} Completed`;
@@ -1391,7 +1465,7 @@
         }
 
         function setCategory(isTask) { isTaskFlag = isTask; document.getElementById('catTodo').classList.toggle('active', isTask); document.getElementById('catSched').classList.toggle('active', !isTask); document.getElementById('habitCheckWrap').style.display = isTask ? "block" : "none"; }
-        function initDaySchedule() { const g = document.getElementById("dayScheduleGrid"); g.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="time-slot"; r.onclick=()=>openModal(null,`${i.toString().padStart(2,'0')}:00`,`${((i+1)%24).toString().padStart(2,'0')}:00`); r.innerHTML=`<div class="time-label">${i}:00</div>`; g.appendChild(r); } }
+        function initDaySchedule() { /* 동적 렌더링으로 대체됨 */ }
         function initWeekGrid() { const labels = document.getElementById("weekTimeLabels"); labels.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="week-time-slot"; r.innerText=`${i}:00`; labels.appendChild(r); } }
         function toggleWeeklyDays() { document.getElementById("weeklyDays").style.display = document.getElementById("repeatSelect").value === "weekly" ? "flex" : "none"; }
         function closeModal() { document.getElementById("todoModal").style.display = "none"; }
