@@ -316,7 +316,6 @@
                     <span style="position:absolute; left:10px; top:9px; color:#888; font-size:14px; pointer-events: none;">🔍</span>
                     <input type="text" id="searchInput" placeholder="태그 및 내용 검색..." oninput="handleSearch()">
                 </div>
-                <button class="ledger-btn" onclick="openLedger()">📒 가계부</button>
                 <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
             </div>
         </header>
@@ -509,56 +508,7 @@
         </div>
     </div>
 
-    <div id="ledgerModal" class="modal-overlay">
-        <div class="modal-content" style="width: 550px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 10px;">
-                <h3 style="margin:0">가계부 (복식부기)</h3>
-                <button class="btn-delete" onclick="closeLedger()">닫기</button>
-            </div>
-            <div style="background: #fafafa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-                <div style="font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">당일 입력 (<span id="ledgerDateStr"></span>)</div>
-                <div class="flex-row-mobile-col" style="display:flex; gap:8px; margin-bottom: 8px;">
-                    <input type="text" id="ledgerItem" placeholder="내역 (예: 커피)" style="flex:2; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                    <input type="number" id="ledgerAmount" placeholder="금액" style="flex:1.5; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                </div>
-                <div class="flex-row-mobile-col" style="display:flex; gap:8px;">
-                    <input type="text" id="ledgerDebit" placeholder="왼쪽(자산증가/비용)" style="flex:1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                    <input type="text" id="ledgerCredit" placeholder="오른쪽(자산감소/수입)" style="flex:1; padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
-                    <button style="background: #222; color: #fff; border: none; border-radius: 6px; padding: 10px 15px; font-weight: 600; cursor: pointer; transition: 0.2s;" onclick="addLedgerEntry()">입력</button>
-                </div>
-            </div>
-            <div style="margin-bottom: 20px;">
-                <div style="font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">오늘의 내역</div>
-                <div style="max-height: 120px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; -webkit-overflow-scrolling: touch;">
-                    <table style="width: 100%; text-align: center; font-size: 13px; border-collapse: collapse; min-width: 350px;">
-                        <thead style="background: #fafafa; position: sticky; top: 0;">
-                            <tr>
-                                <th style="padding: 8px; border-bottom: 1px solid #eee; color: #555;">내역</th>
-                                <th style="padding: 8px; border-bottom: 1px solid #eee; color: #555;">금액</th>
-                                <th style="padding: 8px; border-bottom: 1px solid #eee; color: #FF3B30;">왼쪽</th>
-                                <th style="padding: 8px; border-bottom: 1px solid #eee; color: #007AFF;">오른쪽</th>
-                                <th style="padding: 8px; border-bottom: 1px solid #eee;"></th>
-                            </tr>
-                        </thead>
-                        <tbody id="ledgerTodayBody"></tbody>
-                    </table>
-                </div>
-            </div>
-            <div>
-                <div style="font-size: 13px; font-weight: 600; color: #555; margin-bottom: 8px;">현재 잔고 현황 (총계)</div>
-                <div class="flex-row-mobile-col" style="display: flex; gap: 15px;">
-                    <div style="flex: 1; border: 1px solid #f0f0f0; border-radius: 8px; padding: 12px; min-height: 80px; background: #fff;">
-                        <div style="font-size: 11px; font-weight: bold; color: #FF3B30; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px;">자산 / 비용 (왼쪽 잔액)</div>
-                        <div id="ledgerDebitBalances" style="font-size: 13px; display: flex; flex-direction: column; gap: 6px; font-weight: 500;"></div>
-                    </div>
-                    <div style="flex: 1; border: 1px solid #f0f0f0; border-radius: 8px; padding: 12px; min-height: 80px; background: #fff;">
-                        <div style="font-size: 11px; font-weight: bold; color: #007AFF; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px;">부채 / 수입 / 자본 (오른쪽 잔액)</div>
-                        <div id="ledgerCreditBalances" style="font-size: 13px; display: flex; flex-direction: column; gap: 6px; font-weight: 500;"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- 가계부 모달 삭제됨 -->
 
     <script>
         const firebaseConfig = {
@@ -628,12 +578,10 @@
                 document.getElementById('appContainer').style.display = 'flex';
                 if (window.innerWidth <= 768) { document.getElementById('appContainer').style.display = 'block'; }
                 loadUserData(user);
-                startInactivityTimer();
             } else {
                 currentUser = null;
                 document.getElementById('loginContainer').style.display = 'flex';
                 document.getElementById('appContainer').style.display = 'none';
-                stopInactivityTimer();
             }
         });
 
@@ -816,31 +764,7 @@
             }
         }
 
-        function startInactivityTimer() {
-            resetTimer();
-            window.addEventListener('mousemove', resetTimer);
-            window.addEventListener('keydown', resetTimer);
-            window.addEventListener('touchstart', resetTimer);
-            window.addEventListener('click', resetTimer);
-        }
-
-        function stopInactivityTimer() {
-            clearTimeout(inactivityTimer);
-            window.removeEventListener('mousemove', resetTimer);
-            window.removeEventListener('keydown', resetTimer);
-            window.removeEventListener('touchstart', resetTimer);
-            window.removeEventListener('click', resetTimer);
-        }
-
-        function resetTimer() {
-            clearTimeout(inactivityTimer);
-            if(currentUser) {
-                inactivityTimer = setTimeout(() => {
-                    auth.signOut();
-                    alert("1시간 동안 활동이 없어 안전하게 자동 로그아웃 되었습니다.");
-                }, 3600000); 
-            }
-        }
+        /* 1시간 자동 로그아웃 기능 삭제됨 */
 
         function getMemoDataForDate(dateStr) {
             let data = memos[dateStr];
@@ -997,8 +921,6 @@
             else if (currentView === 'habitContainer') renderHabitView();
             
             renderGoals();
-
-            if (document.getElementById('ledgerModal').style.display === 'flex') renderLedger();
         }
 
         function changeDate(o) { 
@@ -1439,11 +1361,7 @@
             db.collection("users").doc(currentUser.uid).set({ todos, memos, ledgers, goals }); 
         }
         
-        function openLedger() { document.getElementById('ledgerDateStr').innerText = (currentDate.getMonth()+1) + "/" + currentDate.getDate(); renderLedger(); document.getElementById('ledgerModal').style.display = 'flex'; }
-        function closeLedger() { document.getElementById('ledgerModal').style.display = 'none'; }
-        function addLedgerEntry() { const item = document.getElementById('ledgerItem').value; const amount = document.getElementById('ledgerAmount').value; const debit = document.getElementById('ledgerDebit').value; const credit = document.getElementById('ledgerCredit').value; if(!item || !amount || !debit || !credit) return alert("모든 칸을 입력해주세요."); ledgers.push({ id: Date.now().toString(), date: getDateString(currentDate), item, amount: Number(amount), debit, credit }); document.getElementById('ledgerItem').value = ''; document.getElementById('ledgerAmount').value = ''; document.getElementById('ledgerDebit').value = ''; document.getElementById('ledgerCredit').value = ''; saveData(); renderLedger(); }
-        function deleteLedger(id) { if(confirm("삭제하시겠습니까?")) { ledgers = ledgers.filter(l => l.id !== id); saveData(); renderLedger(); } }
-        function renderLedger() { const todayStr = getDateString(currentDate); const todayLedgers = ledgers.filter(l => l.date === todayStr); const tbody = document.getElementById('ledgerTodayBody'); tbody.innerHTML = ''; todayLedgers.forEach(l => { tbody.innerHTML += `<tr><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #333;">${l.item}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; font-weight: 600; color: #222;">${l.amount.toLocaleString()}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.debit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9; color: #555;">${l.credit}</td><td style="padding: 8px; border-bottom: 1px solid #f9f9f9;"><button onclick="deleteLedger('${l.id}')" style="background:none; border:none; color:#ff3b30; cursor:pointer; font-size:14px;">✕</button></td></tr>`; }); const balances = {}; ledgers.forEach(l => { if (!balances[l.debit]) balances[l.debit] = 0; if (!balances[l.credit]) balances[l.credit] = 0; balances[l.debit] += l.amount; balances[l.credit] -= l.amount; }); const dBal = document.getElementById('ledgerDebitBalances'); const cBal = document.getElementById('ledgerCreditBalances'); dBal.innerHTML = ''; cBal.innerHTML = ''; let hasDebit = false; let hasCredit = false; for(const [acc, bal] of Object.entries(balances)) { if(bal > 0) { dBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${bal.toLocaleString()}원</span></div>`; hasDebit = true; } else if(bal < 0) { cBal.innerHTML += `<div style="display:flex; justify-content:space-between;"><span>${acc}</span><span style="color:#222;">${Math.abs(bal).toLocaleString()}원</span></div>`; hasCredit = true; } } if(!hasDebit) dBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; if(!hasCredit) cBal.innerHTML = `<span style="color:#aaa; font-size:11px;">잔액 없음</span>`; }
+        /* 가계부 기능 삭제됨 */
 
         /* 🌟 에디터 내용 유실 방지: 화면 리사이즈 및 포커스 아웃 이벤트 최적화 */
         window.addEventListener("resize", () => {
