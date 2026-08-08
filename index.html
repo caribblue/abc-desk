@@ -1068,8 +1068,8 @@
                     totalTaskCount++;
                     if (isDone) completedCount++;
                     
-                    // 🌟 카드 렌더링 (기존 투두 리스트 유지)
-                    const habitIconHtml = t.isHabit ? `<span style="font-size:14px; margin-left:4px;" title="습관">🌱</span>` : '';
+                    // 🌟 습관 아이콘을 깔끔한 선형 '번개(스트릭/에너지)' 아이콘으로 교체
+                    const habitIconHtml = t.isHabit ? `<svg style="margin-left:4px; vertical-align:middle;" title="습관" viewBox="0 0 24 24" width="14" height="14" stroke="#2ECC71" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>` : '';
                     const repeatIconHtml = (t.repeat !== 'none') ? `<svg style="margin-left:4px; vertical-align:middle;" viewBox="0 0 24 24" width="14" height="14" stroke="#aaa" stroke-width="2" fill="none"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>` : '';
                     const tagsHtml = t.tags && t.tags.length > 0 ? `<div style="display:flex; gap:6px; margin-top:4px;">` + t.tags.map(tag => `<span style="color:#aaa; font-size:12px; font-weight:500;">#${tag}</span>`).join('') + `</div>` : '';
                     const timeStr = t.startTime ? t.startTime : (isEffectiveAllDay ? '종일' : '');
