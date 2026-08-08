@@ -933,7 +933,7 @@
             const dayNames = ["S", "M", "T", "W", "T", "F", "S"];
             
             const monthStr = document.getElementById("currentMonthStr");
-            if(monthStr) monthStr.innerText = `${monthNames[currentDate.getMonth()]} ${currentDate.getFullYear()}`;
+            if(monthStr) monthStr.innerHTML = `${monthNames[currentDate.getMonth()]} <span style="font-weight: 500; font-size: 18px; color: #888; margin-left: 4px;">${currentDate.getFullYear()}</span>`;
             
             const datePicker = document.getElementById("datePicker");
             if(datePicker) datePicker.value = getDateString(currentDate);
