@@ -86,9 +86,7 @@
         .banner-progress { font-size: 12px; color: #007AFF; font-weight: 700; margin-right: 5px; }
 
         /* 일간 뷰 스타일 */
-        .all-day-wrapper { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; min-height: 10px; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0;}
-        .all-day-item { background-color: #fff; border: 1px solid #e5e5e5; padding: 12px 15px; border-radius: 8px; font-size: 15px; font-weight: 500; color: #333; box-shadow: 0 2px 4px rgba(0,0,0,0.02); cursor: pointer; display: flex; align-items: center; gap: 10px; transition: 0.2s; flex-wrap: wrap; }
-        .all-day-item:hover { border-color: #222; }
+        .all-day-wrapper { display: flex; flex-direction: column; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0; }
         
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; min-height: 0; }
@@ -100,24 +98,55 @@
         #dayScheduleGrid { position: relative; width: 100%; }
         
         ul { list-style: none; padding: 0; margin: 0; }
-        #todoList li { padding: 12px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: flex-start; gap: 12px; cursor: pointer; transition: 0.2s; }
-        #todoList li:hover { background-color: #fafafa; }
-        #todoList input[type="checkbox"] { width: 18px; height: 18px; margin-top: 3px; cursor: pointer; accent-color: #222; flex-shrink: 0; }
+
+        /* 🌟 [NEW] 모바일 카드형 투두 리스트 */
+        .todo-card {
+            background-color: #FAF8F8; /* 이미지처럼 따뜻한 오프화이트 톤 */
+            border-radius: 18px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+            border: none;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+        .todo-card:hover { background-color: #f5f3f3; }
+        .todo-card.completed { opacity: 0.6; }
         
-        .todo-content { flex: 1; display: flex; flex-direction: column; gap: 4px; overflow: hidden; width: 100%; }
-        .task-main { display: flex; align-items: flex-start; gap: 8px; width: 100%; }
-        .task-main .priority-dot { margin-top: 5px; flex-shrink: 0; }
+        .todo-checkbox {
+            appearance: none; -webkit-appearance: none;
+            width: 24px; height: 24px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            background-color: #fff;
+            margin: 0; cursor: pointer;
+            position: relative; flex-shrink: 0;
+            transition: 0.2s;
+        }
+        .todo-checkbox:checked {
+            background-color: #A3B8A8; border-color: #A3B8A8;
+        }
+        .todo-checkbox:checked::after {
+            content: '✔'; position: absolute; color: white;
+            font-size: 14px; left: 5px; top: 1px;
+        }
+
+        .todo-card-content { flex: 1; display: flex; justify-content: space-between; align-items: center; overflow: hidden; }
+        .todo-card-left { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
+        .todo-card-title-wrap { display: flex; align-items: center; gap: 6px; }
+        .todo-card-title { font-size: 16px; font-weight: 700; color: #665c5c; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .todo-card.completed .todo-card-title { text-decoration: line-through; color: #aaa; }
+        
+        .todo-card-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .todo-card-time { font-size: 13px; font-weight: 700; color: #aaa; }
+        .todo-card-status { font-size: 12px; font-weight: 700; color: #6A9C78; }
         
         .priority-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
         .dot-A { background-color: #FF3B30; } .dot-B { background-color: #007AFF; } .dot-C { background-color: #8E8E93; }
-
-        .task-text { font-size: 15px; color: #222; line-height: 1.4; word-break: break-word; flex: 1; margin: 0; padding: 0; font-weight: 500;}
-        .task-meta { display: flex; gap: 6px; font-size: 11px; color: #888; align-items: center; flex-wrap: wrap; justify-content: flex-start; padding-left: 18px; box-sizing: border-box; }
-        
-        .repeat-badge { background-color: #f0f0f0; padding: 3px 6px; border-radius: 4px; white-space: nowrap; flex-shrink: 0; }
-        .habit-badge { background-color: #e5f0ea; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; white-space: nowrap; flex-shrink: 0; }
         .app-tag { background-color: #e8f0fe; color: #1a73e8; padding: 3px 6px; border-radius: 4px; font-weight: 600; transition: 0.2s; white-space: nowrap; flex-shrink: 0; }
-        .app-tag:hover { background-color: #d2e3fc; }
 
         .bg-A { background-color: rgba(255, 59, 48, 0.1); border-left-color: #FF3B30; color: #991f16; }
         .bg-B { background-color: rgba(0, 122, 255, 0.1); border-left-color: #007AFF; color: #004085; }
@@ -310,7 +339,7 @@
 
     <div id="appContainer">
         <!-- 🌟 [NEW] 이미지와 동일한 깔끔한 모바일 캘린더 헤더 -->
-        <header style="display: flex; flex-direction: column; background: #fff; padding: 15px 20px 10px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin-bottom: 20px; margin: -15px -15px 15px -15px; flex-shrink: 0;">
+        <header style="display: flex; flex-direction: column; background: #fff; padding: 15px 20px 10px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin: -15px -15px 5px -15px; flex-shrink: 0;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                 <div style="position: relative; width: 28px; height: 28px; color: #888;">
                     <svg viewBox="0 0 24 24" width="100%" height="100%" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
@@ -363,12 +392,12 @@
         </div>
 
         <div id="dayContainer" class="view-container active">
-            <div id="allDayContainer" class="all-day-wrapper"></div>
+            <div id="allDayContainer" class="all-day-wrapper" style="margin-bottom: 0;"></div>
             <div class="main-container">
                 <div class="left-half">
-                    <div class="todo-section">
-                        <div class="section-header"><h2>[To Do]</h2><button class="add-btn" onclick="openModal()">+</button></div>
-                        <div class="scrollable-area"><ul id="todoList"></ul></div>
+                    <!-- [To Do] 텍스트, 경계선, 흰 배경 삭제 후 투명하게 만듦 -->
+                    <div class="todo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                        <div class="scrollable-area" style="overflow: visible;"><ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul></div>
                     </div>
                     <div class="schedule-section">
                         <div class="section-header"><h2>[Schedule]</h2><button class="add-btn" onclick="openModal()">+</button></div>
@@ -1000,37 +1029,47 @@
 
             todos.forEach(t => {
                 if (!shouldShow(t, currentDate)) return;
-                const isDone = t.completedDates && t.completedDates.includes(dateKey); const cName = isDone ? 'completed' : '';
+                const isDone = t.completedDates && t.completedDates.includes(dateKey); 
+                const cName = isDone ? 'completed' : '';
                 let isTask = t.isTask; if (typeof isTask === 'undefined') isTask = false; 
                 let isEffectiveAllDay = t.isAllDay || (!isTask && !t.startTime);
-                let repeatLabel = ''; if(t.repeat === 'daily') repeatLabel = '🔁 매일'; if(t.repeat === 'weekly') repeatLabel = '🔁 매주'; if(t.repeat === 'monthly') repeatLabel = '🔁 매월'; if(t.repeat === 'yearly') repeatLabel = '🔁 매년';
-                const habitBadge = t.isHabit ? `<span class="habit-badge">🌱 습관</span>` : '';
                 
-                const tagsHtml = t.tags && t.tags.length > 0 ? t.tags.map(tag => `<span class="app-tag" onclick="handleTagClick('${tag}', event)">#${tag}</span>`).join(' ') : '';
+                // 🌟 배지(글씨) 대신 깔끔한 아이콘으로 변경
+                const habitIconHtml = t.isHabit ? `<span style="font-size:14px; margin-left:4px;" title="습관">🌱</span>` : '';
+                const repeatIconHtml = (t.repeat !== 'none') ? `<svg style="margin-left:4px; vertical-align:middle;" viewBox="0 0 24 24" width="14" height="14" stroke="#aaa" stroke-width="2" fill="none"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>` : '';
                 
-                const timeHtml = t.startTime ? `<span style="white-space:nowrap; font-weight:600; padding:3px 0;">${t.startTime}~${t.endTime}</span>` : '';
+                const tagsHtml = t.tags && t.tags.length > 0 ? `<div style="display:flex; gap:6px; margin-top:4px;">` + t.tags.map(tag => `<span style="color:#aaa; font-size:12px; font-weight:500;">#${tag}</span>`).join('') + `</div>` : '';
+                
+                // 시간 텍스트 우측 배치용
+                const timeStr = t.startTime ? t.startTime : (isEffectiveAllDay ? '종일' : '');
+                const statusHtml = isDone ? `<span class="todo-card-status">Done</span>` : '';
 
-                const meta = `<div class="task-meta">${tagsHtml} ${habitBadge} ${repeatLabel ? `<span class="repeat-badge">${repeatLabel}</span>` : ''} ${isEffectiveAllDay ? `<span class="repeat-badge">종일</span>` : timeHtml}</div>`;
+                // 🌟 카드 HTML 구조 
+                const cardHtml = `
+                    <input type="checkbox" class="todo-checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')">
+                    <div class="todo-card-content" onclick="openModal('${t.id}')">
+                        <div class="todo-card-left">
+                            <div class="todo-card-title-wrap">
+                                <span class="todo-card-title">${t.task}</span>
+                                ${habitIconHtml} ${repeatIconHtml}
+                            </div>
+                            ${tagsHtml}
+                        </div>
+                        <div class="todo-card-right">
+                            <span class="todo-card-time">${timeStr}</span>
+                            ${statusHtml}
+                        </div>
+                    </div>
+                `;
 
                 if (isEffectiveAllDay) {
-                    alc.innerHTML += `<div class="all-day-item ${cName}" onclick="openModal('${t.id}')">
-                        <div class="task-main">
-                            <div class="priority-dot dot-${t.type}"></div>
-                            <span class="task-text">${t.task}</span>
-                        </div>
-                        ${meta}
-                    </div>`;
+                    alc.innerHTML += `<div class="todo-card ${cName}">${cardHtml}</div>`;
                 } else {
                     if (isTask) {
-                        const li = document.createElement("li"); li.className = `todo-li ${cName}`; li.title = t.task;
-                        li.innerHTML = `<input type="checkbox" ${isDone?'checked':''} onclick="toggleComplete('${t.id}', event, '${dateKey}')">
-                        <div class="todo-content" onclick="openModal('${t.id}')">
-                            <div class="task-main">
-                                <div class="priority-dot dot-${t.type}"></div>
-                                <span class="task-text">${t.task}</span>
-                            </div>
-                            ${meta}
-                        </div>`;
+                        const li = document.createElement("li"); 
+                        li.className = `todo-card ${cName}`; 
+                        li.title = t.task;
+                        li.innerHTML = cardHtml;
                         ul.appendChild(li);
                     }
                     if (t.startTime && t.endTime) {
