@@ -90,8 +90,26 @@
         
         .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
         .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; min-height: 0; }
-        .todo-section, .schedule-section, .memo-section { flex: 1; background-color: #fff; border: 1px solid #e5e5e5; border-radius: 12px; padding: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); display: flex; flex-direction: column; min-height: 0; }
+        
+        /* 기존 껍데기 디자인 분리 (투두와 메모는 투명하게 처리) */
+        .todo-section, .schedule-section, .memo-section { flex: 1; display: flex; flex-direction: column; min-height: 0; }
         .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 15px; flex-shrink: 0;}
+        
+        /* 🌟 [NEW] 메모용 대형 다이어리 카드 스타일 */
+        .memo-card {
+            background-color: #ffffff;
+            border-radius: 16px;
+            padding: 20px 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            border: 1px solid #e5e5e5;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+            width: 100%;
+        }
         h2 { font-size: 16px; font-weight: 600; margin: 0; }
         .add-btn { background: none; border: none; font-size: 24px; cursor: pointer; color: #222; line-height: 1; }
         .scrollable-area { flex: 1; overflow-y: auto; padding-right: 5px; position: relative; -webkit-overflow-scrolling: touch; }
@@ -424,9 +442,20 @@
                     </div>
                 </div>
                 <div class="right-half">
-                    <div class="memo-section">
-                        <div class="section-header"><h2>[Memo]</h2></div>
-                        <div id="editorjs"></div>
+                    <div class="memo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                        <!-- 🌟 메모 영역 'Memo' 요약 및 자동저장 인디케이터 -->
+                        <div style="margin-top: 4px; padding: 0 5px 6px 5px; display: flex; justify-content: space-between; align-items: center;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                <span>Memo</span>
+                            </div>
+                            <span style="font-size: 11px; color: #ccc; font-weight: 600;">✓ 자동 저장됨</span>
+                        </div>
+                        
+                        <!-- 🌟 메모를 감싸는 하얀색 다이어리 카드 -->
+                        <div class="memo-card">
+                            <div id="editorjs"></div>
+                        </div>
                     </div>
                 </div>
             </div>
