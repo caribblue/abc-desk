@@ -251,9 +251,26 @@
             .habit-done, .habit-empty { width: 24px !important; height: 24px !important; font-size: 12px !important; }
             .habit-table th, .habit-table td { min-width: 35px !important; padding: 8px 3px !important; }
             
-            .mobile-tab-bar { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border-top: 1px solid #e5e5e5; z-index: 1000; padding-bottom: env(safe-area-inset-bottom); }
-            .mobile-tab-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 13px; font-weight: 600; color: #888; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; gap: 4px; align-items: center;}
-            .mobile-tab-btn.active { color: #222; box-shadow: inset 0 3px 0 #222; background: #fafafa; }
+            /* 🌟 모바일 플로팅 탭바 및 중앙 FAB 메뉴 스타일 */
+            .mobile-tab-bar { display: flex; position: fixed; bottom: 20px; left: 5%; width: 90%; background: #fff; border-radius: 30px; box-shadow: 0 8px 25px rgba(0,0,0,0.12); z-index: 1000; padding: 8px 15px; justify-content: space-between; align-items: center; box-sizing: border-box; }
+            .mobile-tab-btn { flex: 1; display: flex; justify-content: center; align-items: center; padding: 10px; cursor: pointer; transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+            .mobile-tab-btn svg { width: 24px; height: 24px; stroke: #b0b0b0; transition: 0.2s; }
+            .mobile-tab-btn.active svg { stroke: #2ECC71; } /* 🌟 선택 시 초록색 활성화 */
+            
+            .center-fab-wrap { position: relative; display: flex; justify-content: center; align-items: center; padding: 0 10px; }
+            .center-fab-btn { background-color: #111; color: #fff; width: 48px; height: 48px; border-radius: 18px; display: flex; justify-content: center; align-items: center; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: 0.2s; -webkit-tap-highlight-color: transparent; }
+            .center-fab-btn:active { transform: scale(0.95); }
+            .center-fab-btn svg { width: 24px; height: 24px; stroke: #fff; }
+            
+            .fab-menu { position: absolute; bottom: 65px; left: 50%; transform: translateX(-50%) scale(0.9); background: #fff; border-radius: 12px; box-shadow: 0 5px 20px rgba(0,0,0,0.15); display: flex; flex-direction: column; overflow: hidden; opacity: 0; pointer-events: none; transition: 0.2s ease-out; z-index: 1001; }
+            .fab-menu.show { opacity: 1; pointer-events: auto; transform: translateX(-50%) scale(1); }
+            .fab-menu-item { padding: 15px 25px; font-size: 15px; font-weight: 600; color: #333; text-align: center; border-bottom: 1px solid #f0f0f0; white-space: nowrap; cursor: pointer; }
+            .fab-menu-item:last-child { border-bottom: none; }
+            .fab-menu-item:active { background: #fafafa; }
+            
+            /* 하단 패딩 늘림 (플로팅 탭바에 내용이 가려지지 않게) */
+            #profileContainer { padding-bottom: 120px; }
+            #appContainer { padding: 15px 15px 100px 15px !important; }
             
             .modal-content { width: 95% !important; padding: 20px; }
             .flex-row-mobile-col { flex-direction: column !important; gap: 10px; }
@@ -433,13 +450,62 @@
                 <div class="habit-table-container" id="habitGrid"></div>
             </div>
         </div>
+
+        <!-- 🌟 [NEW] 마이페이지(프로필) 뷰 추가 -->
+        <div id="profileContainer" class="view-container">
+            <div class="search-wrapper" style="flex: 0; margin-bottom: 15px; padding: 20px;">
+                <h2 style="margin:0; font-size:20px; color:#111;">마이페이지</h2>
+            </div>
+            <div style="background:#fff; border:1px solid #e5e5e5; border-radius:12px; padding:5px 10px; box-shadow:0 4px 12px rgba(0,0,0,0.02);">
+                <ul style="list-style:none; padding:0; margin:0;">
+                    <li style="padding:18px 10px; border-bottom:1px solid #f0f0f0; font-size:16px; font-weight:600; cursor:pointer; display:flex; justify-content:space-between;" onclick="switchMobileTab('goal')">
+                        <span style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg> 나의 목표 관리</span>
+                        <span style="color:#ccc;">></span>
+                    </li>
+                    <li style="padding:18px 10px; border-bottom:1px solid #f0f0f0; font-size:16px; font-weight:600; color:#aaa; display:flex; justify-content:space-between;">
+                        <span style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg> 환경 설정 (준비 중)</span>
+                    </li>
+                    <li style="padding:18px 10px; font-size:16px; font-weight:600; color:#ff3b30; cursor:pointer; display:flex; justify-content:space-between;" onclick="handleLogout()">
+                        <span style="display:flex; align-items:center; gap:10px;"><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg> 로그아웃</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 
+    <!-- 🌟 [NEW] 플로팅 아이콘 전용 탭바 및 중앙 추가 버튼 -->
     <div class="mobile-tab-bar" id="mobileTabBar">
-        <div class="mobile-tab-btn active" id="tabPlanner" onclick="switchMobileTab('planner')"><span>📅</span> 오늘</div>
-        <div class="mobile-tab-btn" id="tabGoal" onclick="switchMobileTab('goal')"><span>🎯</span> 목표</div>
-        <div class="mobile-tab-btn" id="tabHabit" onclick="switchMobileTab('habit')"><span>🌱</span> 습관</div>
-        <div class="mobile-tab-btn" id="tabMemo" onclick="switchMobileTab('memo')"><span>📝</span> 메모</div>
+        <!-- 첫 번째: 오늘(홈) 아이콘 -->
+        <div class="mobile-tab-btn active" id="tabPlanner" onclick="switchMobileTab('planner')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        </div>
+        
+        <!-- 두 번째: 메모(파일) 아이콘 새로 생성 -->
+        <div class="mobile-tab-btn" id="tabMemo" onclick="switchMobileTab('memo')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        </div>
+
+        <!-- 중앙 플로팅 버튼 및 액션 메뉴 -->
+        <div class="center-fab-wrap">
+            <div class="center-fab-btn" onclick="toggleFabMenu(event)">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            </div>
+            <div class="fab-menu" id="fabMenu">
+                <div class="fab-menu-item" onclick="openFabAction('todo')">할 일 추가</div>
+                <div class="fab-menu-item" onclick="openFabAction('schedule')">스케쥴 추가</div>
+                <div class="fab-menu-item" onclick="openFabAction('memo')">메모 작성</div>
+            </div>
+        </div>
+
+        <!-- 세 번째: 습관(체크 원형) 아이콘 새로 생성 -->
+        <div class="mobile-tab-btn" id="tabHabit" onclick="switchMobileTab('habit')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        </div>
+
+        <!-- 네 번째: 마이페이지(사람) 아이콘 -->
+        <div class="mobile-tab-btn" id="tabProfile" onclick="switchMobileTab('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </div>
     </div>
 
     <div id="todoModal" class="modal-overlay">
@@ -854,6 +920,7 @@
             }
         }
 
+        // 🌟 [NEW] 모바일 탭 라우팅 및 팝업(FAB) 컨트롤
         function switchMobileTab(action) {
             document.querySelectorAll('.mobile-tab-btn').forEach(btn => btn.classList.remove('active'));
             document.body.classList.remove('show-memo');
@@ -861,12 +928,6 @@
             if(action === 'planner') {
                 document.getElementById('tabPlanner').classList.add('active');
                 switchView('dayContainer');
-            } else if(action === 'goal') {
-                document.getElementById('tabGoal').classList.add('active');
-                switchView('goalContainer');
-            } else if(action === 'habit') {
-                document.getElementById('tabHabit').classList.add('active');
-                switchView('habitContainer');
             } else if(action === 'memo') {
                 document.getElementById('tabMemo').classList.add('active');
                 switchView('dayContainer'); 
@@ -875,6 +936,46 @@
                     adjustMemoHeight();
                     safeRenderEditor(); 
                 }, 100);
+            } else if(action === 'habit') {
+                document.getElementById('tabHabit').classList.add('active');
+                switchView('habitContainer');
+            } else if(action === 'profile') {
+                document.getElementById('tabProfile').classList.add('active');
+                switchView('profileContainer');
+            } else if(action === 'goal') {
+                document.getElementById('tabProfile').classList.add('active');
+                switchView('goalContainer');
+            }
+        }
+
+        // 플로팅 메뉴 열기/닫기 처리
+        function toggleFabMenu(e) {
+            e.stopPropagation();
+            document.getElementById('fabMenu').classList.toggle('show');
+        }
+
+        // 다른 곳 누르면 메뉴 닫히게 처리
+        document.addEventListener('click', (e) => {
+            const fabMenu = document.getElementById('fabMenu');
+            if (fabMenu && fabMenu.classList.contains('show')) {
+                fabMenu.classList.remove('show');
+            }
+        });
+
+        // 메뉴 항목 클릭 시 각각의 액션 실행
+        function openFabAction(type) {
+            document.getElementById('fabMenu').classList.remove('show');
+            if (type === 'todo') {
+                openModal(); setCategory(true);
+            } else if (type === 'schedule') {
+                openModal(); setCategory(false);
+            } else if (type === 'memo') {
+                switchMobileTab('memo');
+                // 메모 입력칸에 자동 포커스
+                setTimeout(() => {
+                    const editorDiv = document.querySelector('.ce-paragraph');
+                    if (editorDiv) editorDiv.focus();
+                }, 300);
             }
         }
 
