@@ -394,11 +394,20 @@
         </div>
 
         <div id="dayContainer" class="view-container active">
+            <!-- 🌟 날짜 컨트롤과 투두 리스트 사이 간격 확보 및 완료 텍스트/토글 버튼 -->
+            <div style="margin-top: 24px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent;" onclick="toggleTodoList()">
+                <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
+                    <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    <span id="todoSummaryText">0 Completed</span>
+                </div>
+                <svg id="todoToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s; transform: rotate(0deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>
+            </div>
+
             <div id="allDayContainer" class="all-day-wrapper" style="margin-bottom: 0;"></div>
             <div class="main-container">
                 <div class="left-half">
                     <!-- [To Do] 텍스트, 경계선, 흰 배경 삭제 후 투명하게 만듦 -->
-                    <div class="todo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div class="todo-section" id="todoSectionWrap" style="background: transparent; border: none; box-shadow: none; padding: 0;">
                         <div class="scrollable-area" style="overflow: visible;"><ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul></div>
                     </div>
                     <div class="schedule-section">
@@ -1029,12 +1038,20 @@
             const dateKey = getDateString(currentDate); const ul = document.getElementById("todoList"); const grid = document.getElementById("dayScheduleGrid"); const alc = document.getElementById("allDayContainer");
             ul.innerHTML = ""; alc.innerHTML = ""; grid.querySelectorAll('.schedule-event-block').forEach(el => el.remove());
 
+            let completedCount = 0;
+            let totalTaskCount = 0;
+
             todos.forEach(t => {
                 if (!shouldShow(t, currentDate)) return;
                 const isDone = t.completedDates && t.completedDates.includes(dateKey); 
                 const cName = isDone ? 'completed' : '';
                 let isTask = t.isTask; if (typeof isTask === 'undefined') isTask = false; 
                 let isEffectiveAllDay = t.isAllDay || (!isTask && !t.startTime);
+                
+                if (isTask || isEffectiveAllDay) {
+                    totalTaskCount++;
+                    if (isDone) completedCount++;
+                }
                 
                 // 🌟 배지(글씨) 대신 깔끔한 아이콘으로 변경
                 const habitIconHtml = t.isHabit ? `<span style="font-size:14px; margin-left:4px;" title="습관">🌱</span>` : '';
@@ -1082,6 +1099,31 @@
                     }
                 }
             });
+
+            // 🌟 상단 투두 완료 갯수 업데이트
+            const summaryText = document.getElementById("todoSummaryText");
+            if(summaryText) {
+                summaryText.innerText = `${completedCount} Completed`;
+            }
+        }
+
+        // 🌟 [NEW] 투두 접기/펴기 기능 함수
+        let isTodoCollapsed = false;
+        function toggleTodoList() {
+            isTodoCollapsed = !isTodoCollapsed;
+            const toggleIcon = document.getElementById("todoToggleIcon");
+            const allDay = document.getElementById("allDayContainer");
+            const todoSec = document.getElementById("todoSectionWrap");
+            
+            if (isTodoCollapsed) {
+                toggleIcon.style.transform = "rotate(180deg)";
+                if(allDay) allDay.style.display = "none";
+                if(todoSec) todoSec.style.display = "none";
+            } else {
+                toggleIcon.style.transform = "rotate(0deg)";
+                if(allDay) allDay.style.display = "flex";
+                if(todoSec) todoSec.style.display = "flex";
+            }
         }
 
         function renderWeekView() {
