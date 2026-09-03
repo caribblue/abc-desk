@@ -88,11 +88,34 @@
         /* 일간 뷰 스타일 */
         .all-day-wrapper { display: flex; flex-direction: column; max-height: 150px; overflow-y: auto; -webkit-overflow-scrolling: touch; flex-shrink: 0; }
         
-        .main-container { display: flex; gap: 20px; flex: 1; overflow: hidden; min-height: 0; }
-        .left-half, .right-half { flex: 1; display: flex; gap: 20px; overflow: hidden; min-height: 0; }
+        /* 🌟 [NEW] PC 3단 대시보드 레이아웃 */
+        .main-container { display: flex; flex-direction: row; gap: 25px; flex: 1; overflow: hidden; min-height: 0; width: 100%; }
+        .todo-section { flex: 1; max-width: 350px; display: flex; flex-direction: column; min-height: 0; }
+        .schedule-section { flex: 1.2; min-width: 300px; display: flex; flex-direction: column; min-height: 0; }
+        .memo-section { flex: 1.5; display: flex; flex-direction: column; min-height: 0; }
         
-        /* 기존 껍데기 디자인 분리 (투두와 메모는 투명하게 처리) */
-        .todo-section, .schedule-section, .memo-section { flex: 1; display: flex; flex-direction: column; min-height: 0; }
+        /* 🌟 [NEW] PC 고정 사이드바 */
+        #appContainer { display: none; flex-direction: column; height: 100vh; padding: 20px 30px 20px 100px; box-sizing: border-box; }
+        .pc-sidebar { position: fixed; left: 0; top: 0; width: 75px; height: 100vh; background: #111; display: flex; flex-direction: column; align-items: center; padding: 25px 0; gap: 30px; z-index: 1000; box-shadow: 2px 0 15px rgba(0,0,0,0.1); }
+        .pc-sidebar-icon { color: #666; cursor: pointer; transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; }
+        .pc-sidebar-icon:hover { color: #fff; }
+        .pc-sidebar-icon.active { color: #2ECC71; }
+        .pc-sidebar-logo { width: 34px; height: 34px; background: #fff; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; font-weight: 900; font-size: 20px; color: #111; }
+        
+        /* 🌟 [NEW] 퀵 애드 (인라인 추가) */
+        .quick-add-wrap { margin-top: 15px; }
+        .quick-add-input { width: 100%; border: none; background: #f0f0f0; padding: 14px 18px; border-radius: 12px; font-size: 14px; outline: none; transition: 0.2s; box-sizing: border-box; font-weight: 500; }
+        .quick-add-input:focus { background: #fff; box-shadow: 0 0 0 2px #2ECC71; }
+        .quick-add-input::placeholder { color: #aaa; }
+        
+        /* 🌟 [NEW] 우측 슬라이드 패널 (모달 대체) */
+        .slide-panel-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.1); z-index: 2000; opacity: 0; pointer-events: none; transition: 0.3s; backdrop-filter: blur(2px); }
+        .slide-panel-overlay.show { opacity: 1; pointer-events: auto; }
+        .slide-panel { position: fixed; top: 0; right: -450px; width: 420px; height: 100vh; background: #fff; box-shadow: -5px 0 30px rgba(0,0,0,0.08); z-index: 2001; transition: right 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); display: flex; flex-direction: column; }
+        .slide-panel.show { right: 0; }
+        .slide-panel-header { padding: 20px 25px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center; }
+        .slide-panel-body { padding: 25px; overflow-y: auto; flex: 1; }
+        .slide-panel-footer { padding: 20px 25px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 10px; background: #fafafa; }
         .section-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #222; padding-bottom: 10px; margin-bottom: 15px; flex-shrink: 0;}
         
         /* 🌟 [NEW] 메모용 대형 다이어리 카드 스타일 */
@@ -257,6 +280,8 @@
 
         /* 📱 모바일 최적화 (🌟 습관 탭 여백 및 넓이 최종 교정) */
         @media (max-width: 768px) {
+            .pc-sidebar { display: none !important; }
+            .slide-panel { width: 100% !important; right: -100%; }
             body { height: auto !important; overflow-y: auto !important; overflow-x: hidden !important; }
             #appContainer { padding: 15px 15px 90px 15px !important; height: auto !important; display: flex !important; flex-direction: column; overflow: visible !important; width: 100vw; max-width: 100%; box-sizing: border-box; }
             
@@ -358,104 +383,89 @@
     </div>
 
     <div id="appContainer">
-        <!-- 🌟 [NEW] 이미지와 동일한 깔끔한 모바일 캘린더 헤더 -->
-        <header style="display: flex; flex-direction: column; background: #fff; padding: 15px 20px 10px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin: -15px -15px 5px -15px; flex-shrink: 0;">
+        <!-- 🌟 [NEW] PC 전용 좌측 고정 사이드바 -->
+        <aside class="pc-sidebar">
+            <div class="pc-sidebar-logo">D</div>
+            <div class="pc-sidebar-icon active" onclick="switchMobileTab('planner')">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                <span>오늘</span>
+            </div>
+            <div class="pc-sidebar-icon" onclick="switchMobileTab('habit')">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path></svg>
+                <span>습관</span>
+            </div>
+            <div class="pc-sidebar-icon" onclick="switchMobileTab('goal')">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle></svg>
+                <span>목표</span>
+            </div>
+            <div class="pc-sidebar-icon" onclick="switchMobileTab('profile')" style="margin-top: auto;">
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                <span>MY</span>
+            </div>
+        </aside>
+
+        <!-- 상단 캘린더 헤더 유지 -->
+        <header style="display: flex; flex-direction: column; background: #fff; padding: 15px 20px 10px 20px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); margin: -15px -15px 20px -15px; flex-shrink: 0;">
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px;">
                 <div style="position: relative; width: 28px; height: 28px; color: #888;">
-                    <svg viewBox="0 0 24 24" width="100%" height="100%" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <svg viewBox="0 0 24 24" width="100%" height="100%" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                     <input type="date" id="datePicker" onchange="handleDateSelect(event)" style="position: absolute; top:0; left:0; width:100%; height:100%; opacity:0; cursor:pointer;">
                 </div>
-                <h1 id="currentMonthStr" style="font-size: 24px; font-weight: 800; color: #111; margin: 0; flex: 1; margin-left: 15px;">Oct 2019</h1>
+                <h1 id="currentMonthStr" style="font-size: 24px; font-weight: 800; color: #111; margin: 0; flex: 1; margin-left: 15px;"></h1>
                 <div onclick="goToday()" style="font-size: 15px; font-weight: 700; color: #2ECC71; cursor: pointer;">Today</div>
             </div>
-            <div id="weekStrip" style="display: flex; justify-content: space-between; align-items: center;">
-                <!-- JS에서 요일 자동 생성됨 -->
-            </div>
+            <div id="weekStrip" style="display: flex; justify-content: space-between; align-items: center;"></div>
         </header>
 
-        <div id="goalContainer" class="view-container">
-            <div class="goal-wrapper">
-                <div class="section-header" style="margin-bottom: 5px;">
-                    <h2>[나침반: 나의 목표 히스토리]</h2>
-                </div>
-                <p style="font-size:13px; color:#666; margin-top:-10px; margin-bottom:10px;">💡 빈칸에 목표를 적고 '엔터'를 누르면 리스트가 추가됩니다. 상단 ◀ ▶ 버튼으로 과거/미래 목표도 조회하세요!</p>
-                
-                <div class="goal-card" id="cardCore" style="border-left: 4px solid #9375CA;">
-                    <div class="goal-card-header">💎 핵심 가치 (평생)</div>
-                    <textarea id="valCore" placeholder="내 삶의 궁극적인 방향성이나 가치를 자유롭게 적어보세요." onfocusout="saveCoreGoal()"></textarea>
-                </div>
-                
-                <div class="goal-card" id="cardLongTerm" style="border-left: 4px solid #5DA2E6;">
-                    <div class="goal-card-header">🗺️ 장기 목표 (<span id="labelLongTerm"></span>)</div>
-                    <ul class="goal-item-list" id="listLongTerm"></ul>
-                    <input type="text" class="goal-add-input" placeholder="+ 새로운 장기 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'longTerm')">
-                </div>
-                
-                <div class="goal-card" id="cardYearly" style="border-left: 4px solid #68B96D;">
-                    <div class="goal-card-header">🎯 연간 목표 (<span id="labelYearly"></span>)</div>
-                    <ul class="goal-item-list" id="listYearly"></ul>
-                    <input type="text" class="goal-add-input" placeholder="+ 올해의 새로운 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'yearly')">
-                </div>
-                
-                <div class="goal-card" id="cardMonthly" style="border-left: 4px solid #FF9955;">
-                    <div class="goal-card-header">📌 월간 목표 (<span id="labelMonthly"></span>)</div>
-                    <ul class="goal-item-list" id="listMonthly"></ul>
-                    <input type="text" class="goal-add-input" placeholder="+ 이번 달의 새로운 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'monthly')">
-                </div>
-                
-                <div class="goal-card" id="cardWeekly" style="border-left: 4px solid #FF7575;">
-                    <div class="goal-card-header">🔥 주간 목표 (<span id="labelWeekly"></span>)</div>
-                    <ul class="goal-item-list" id="listWeekly"></ul>
-                    <input type="text" class="goal-add-input" placeholder="+ 이번 주 집중할 새로운 목표 입력 후 엔터..." onkeypress="addGoalItem(event, 'weekly')">
-                </div>
-            </div>
-        </div>
-
         <div id="dayContainer" class="view-container active">
-            <!-- 🌟 날짜 컨트롤과 투두 리스트 사이 간격 확보 및 완료 텍스트/토글 버튼 -->
-            <div style="margin-top: 24px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent;" onclick="toggleTodoList()">
+            <!-- 투두 요약 -->
+            <div style="margin-top: 5px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleTodoList()">
                 <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
                     <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                     <span id="todoSummaryText">0 Completed</span>
                 </div>
-                <svg id="todoToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s; transform: rotate(0deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                <svg id="todoToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s;"><polyline points="18 15 12 9 6 15"></polyline></svg>
             </div>
-
             <div id="allDayContainer" class="all-day-wrapper" style="margin-bottom: 0;"></div>
-            <div class="main-container">
-                <div class="left-half">
-                    <!-- [To Do] 텍스트, 경계선, 흰 배경 삭제 후 투명하게 만듦 -->
-                    <div class="todo-section" id="todoSectionWrap" style="background: transparent; border: none; box-shadow: none; padding: 0;">
-                        <div class="scrollable-area" style="overflow: visible;"><ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul></div>
-                    </div>
-                    <!-- 🌟 스케줄 영역 'Today' 요약 및 토글 버튼 -->
-                    <div style="margin-top: 4px; padding: 0 5px 0px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; -webkit-tap-highlight-color: transparent;" onclick="toggleScheduleList()">
-                        <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
-                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-                            <span>Today</span>
-                        </div>
-                        <svg id="scheduleToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s; transform: rotate(0deg);"><polyline points="18 15 12 9 6 15"></polyline></svg>
-                    </div>
 
-                    <div class="schedule-section" id="scheduleSectionWrap">
-                        <div class="scrollable-area" id="dayScheduleGrid"></div>
+            <!-- 🌟 [NEW] 3단 레이아웃 분리 -->
+            <div class="main-container">
+                <!-- 1단: 투두 리스트 -->
+                <div class="todo-section" id="todoSectionWrap" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div class="scrollable-area" style="overflow: visible;">
+                        <ul id="todoList" style="display: flex; flex-direction: column; gap: 0;"></ul>
+                        <!-- 🌟 [NEW] 인라인 퀵 애드 입력창 -->
+                        <div class="quick-add-wrap">
+                            <input type="text" id="quickAddInput" class="quick-add-input" placeholder="+ 새로운 할 일 입력 (엔터)" onkeypress="handleQuickAdd(event)">
+                        </div>
                     </div>
                 </div>
-                <div class="right-half">
-                    <div class="memo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
-                        <!-- 🌟 메모 영역 'Memo' 요약 및 자동저장 인디케이터 -->
-                        <div style="margin-top: 4px; padding: 0 5px 6px 5px; display: flex; justify-content: space-between; align-items: center;">
-                            <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
-                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                                <span>Memo</span>
-                            </div>
-                            <span style="font-size: 11px; color: #ccc; font-weight: 600;">✓ 자동 저장됨</span>
+
+                <!-- 2단: 타임라인 스케줄러 -->
+                <div class="schedule-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div style="margin-top: -30px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="toggleScheduleList()">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect></svg>
+                            <span>Timeline</span>
                         </div>
-                        
-                        <!-- 🌟 메모를 감싸는 하얀색 다이어리 카드 -->
-                        <div class="memo-card">
-                            <div id="editorjs"></div>
+                        <svg id="scheduleToggleIcon" viewBox="0 0 24 24" width="20" height="20" stroke="#8E8E93" stroke-width="2" fill="none" style="transition: transform 0.2s;"><polyline points="18 15 12 9 6 15"></polyline></svg>
+                    </div>
+                    <div id="scheduleSectionWrap" style="flex:1; display:flex; flex-direction:column; min-height:0;">
+                        <div class="scrollable-area" id="dayScheduleGrid" style="background: #fff; border-radius: 16px; border: 1px solid #e5e5e5; box-shadow: 0 4px 12px rgba(0,0,0,0.02);"></div>
+                    </div>
+                </div>
+
+                <!-- 3단: 확장된 메모장 -->
+                <div class="memo-section" style="background: transparent; border: none; box-shadow: none; padding: 0;">
+                    <div style="margin-top: -30px; padding: 0 5px 12px 5px; display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 8px; color: #8E8E93; font-weight: 600; font-size: 14px;">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+                            <span>Memo</span>
                         </div>
+                        <span style="font-size: 11px; color: #ccc; font-weight: 600;">✓ 자동 저장됨</span>
+                    </div>
+                    <div class="memo-card">
+                        <div id="editorjs"></div>
                     </div>
                 </div>
             </div>
@@ -556,69 +566,63 @@
         </div>
     </div>
 
-    <div id="todoModal" class="modal-overlay">
-        <div class="modal-content" style="width: 380px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 15px;">
-                <h3 style="margin:0">일정 추가/편집</h3>
-                <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none">삭제</button>
-            </div>
-            <div class="input-group" style="margin-bottom: 10px;">
-                <label>항목 구분</label>
+    <!-- 🌟 [NEW] 슬라이드 패널 (모달 대체) -->
+    <div id="slidePanelOverlay" class="slide-panel-overlay" onclick="closeModal()"></div>
+    <div id="todoModal" class="slide-panel">
+        <div class="slide-panel-header">
+            <h3 style="margin:0; font-size: 18px; color:#111;">일정 상세 설정</h3>
+            <button class="btn-delete" onclick="closeModal()" style="color:#aaa; font-size: 20px;">✕</button>
+        </div>
+        <div class="slide-panel-body">
+            <div class="input-group" style="margin-bottom: 15px;">
                 <div class="category-select">
                     <button class="cat-btn active" id="catTodo" onclick="setCategory(true)">할 일 (To-Do)</button>
-                    <button class="cat-btn" id="catSched" onclick="setCategory(false)">순수 일정 (Event)</button>
+                    <button class="cat-btn" id="catSched" onclick="setCategory(false)">스케줄 (Event)</button>
                 </div>
             </div>
-            <div class="input-group" id="habitCheckWrap" style="margin-top: -5px;">
-                <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:#444;">
-                    <input type="checkbox" id="isHabitCheck" style="width:14px; height:14px; margin:0;"> 🌱 이 할 일을 '습관'으로 등록하여 매일 추적하기
+            <div class="input-group"><label>내용</label><input type="text" id="taskInput" placeholder="할 일이나 일정 제목을 입력하세요"></div>
+            <div class="input-group" id="habitCheckWrap">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer; font-size:13px; color:#333; font-weight: 600; padding: 10px; background: #f9f9fb; border-radius: 8px;">
+                    <input type="checkbox" id="isHabitCheck" style="width:16px; height:16px; margin:0;"> 🌱 매일 추적하는 '습관'으로 등록
                 </label>
             </div>
-            <div class="input-group"><label>내용</label><input type="text" id="taskInput"></div>
-            
             <div class="input-group">
-                <label>해시태그 (선택)</label>
-                <input type="text" id="taskTagsInput" placeholder="쉼표(,)로 구분 (예: 상담, 특강, 회의)">
+                <label>지정 날짜 및 시간</label>
+                <div style="display:flex; gap:10px;">
+                    <input type="date" id="taskDateInput" style="flex:1;">
+                    <div style="display:flex; align-items:center; gap:5px; font-size:12px;"><input type="checkbox" id="allDayCheck" onchange="toggleTimeInput()"> 종일</div>
+                </div>
+            </div>
+            <div class="input-group" id="timeInputRow" style="display:flex; gap:10px;">
+                <input type="time" id="startTimeInput" style="flex:1;"> <span style="line-height:38px;">~</span> <input type="time" id="endTimeInput" style="flex:1;">
+            </div>
+            
+            <hr style="border:0; border-top: 1px dashed #eee; margin: 15px 0;">
+            
+            <!-- 🌟 [NEW] 상세 설정 펼치기 버튼 -->
+            <div id="advancedToggleBtn" onclick="toggleAdvancedOptions()" style="font-size: 13px; font-weight: 600; color: #888; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; padding: 12px; background: #fafafa; border-radius: 8px; transition: 0.2s;">
+                <span>상세 설정 펼치기</span>
+                <svg id="advancedToggleIcon" viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" stroke-width="2" fill="none" style="transition: transform 0.2s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
             </div>
 
-            <div class="input-group"><label>지정 날짜</label><input type="date" id="taskDateInput"></div>
-            
-            <div class="flex-row-mobile-col" style="display:flex; gap:10px;">
-                <div class="input-group" style="flex:1">
-                    <label>우선순위 (A/B/C)</label>
-                    <select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select>
-                </div>
-                <div class="input-group" style="flex:1">
-                    <label>시간</label>
-                    <div style="display:flex; align-items:center; gap:5px; font-size:12px; margin-bottom: 5px;"><input type="checkbox" id="allDayCheck" onchange="toggleTimeInput()"> 종일</div>
-                    <div id="timeInputRow" style="display:flex; gap:3px;"><input type="time" id="startTimeInput" style="width:100%; padding:5px;"> ~ <input type="time" id="endTimeInput" style="width:100%; padding:5px;"></div>
-                </div>
-            </div>
-            
-            <div class="input-group"><label>간단 메모 (에디터 연동)</label><textarea id="taskMemoInput" rows="2" style="resize:none;"></textarea></div>
-            <div class="input-group">
-                <label>반복 설정</label>
-                <select id="repeatSelect" onchange="toggleWeeklyDays()">
-                    <option value="none">반복 안 함</option>
-                    <option value="daily">매일</option>
-                    <option value="weekly">매주</option>
-                    <option value="monthly">매월</option>
-                    <option value="yearly">매년</option>
-                </select>
-                <div id="weeklyDays" class="weekly-days">
-                    <label style="font-size:12px; color:#FF3B30;"><input type="checkbox" value="일">일</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="월">월</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="화">화</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="수">수</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="목">목</label>
-                    <label style="font-size:12px;"><input type="checkbox" value="금">금</label>
-                    <label style="font-size:12px; color:#007AFF;"><input type="checkbox" value="토">토</label>
+            <!-- 🌟 [NEW] 상세 설정 숨김 영역 -->
+            <div id="advancedOptionsWrap" style="display: none; flex-direction: column; gap: 5px; margin-top: 15px;">
+                <div class="input-group"><label>우선순위 (A/B/C)</label><select id="priorityType"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+                <div class="input-group"><label>해시태그</label><input type="text" id="taskTagsInput" placeholder="쉼표(,)로 구분 (예: 학원, 특강)"></div>
+                <div class="input-group"><label>간단 메모</label><textarea id="taskMemoInput" rows="2" style="resize:none; background:#f9f9fb; border:none;"></textarea></div>
+                <div class="input-group">
+                    <label>반복 설정</label>
+                    <select id="repeatSelect" onchange="toggleWeeklyDays()"><option value="none">반복 안 함</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option><option value="yearly">매년</option></select>
+                    <div id="weeklyDays" class="weekly-days">
+                        <label style="font-size:12px; color:#FF3B30;"><input type="checkbox" value="일">일</label><label style="font-size:12px;"><input type="checkbox" value="월">월</label><label style="font-size:12px;"><input type="checkbox" value="화">화</label><label style="font-size:12px;"><input type="checkbox" value="수">수</label><label style="font-size:12px;"><input type="checkbox" value="목">목</label><label style="font-size:12px;"><input type="checkbox" value="금">금</label><label style="font-size:12px; color:#007AFF;"><input type="checkbox" value="토">토</label>
+                    </div>
                 </div>
             </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="closeModal()">취소</button>
-                <button class="btn-save" onclick="saveTodo()">저장</button>
-            </div>
+        </div>
+        <div class="slide-panel-footer">
+            <button id="deleteBtn" class="btn-delete" onclick="deleteTodo()" style="display:none; margin-right:auto;">삭제</button>
+            <button class="btn-cancel" onclick="closeModal()">취소</button>
+            <button class="btn-save" onclick="saveTodo()">저장</button>
         </div>
     </div>
 
@@ -1531,29 +1535,87 @@
             }
         }
 
+        // 🌟 [NEW] 패널 열기 (기존 모달 로직 대체)
         function openModal(id, st, et, passedDateStr) {
             editingId = id; const m = document.getElementById("todoModal");
+            const overlay = document.getElementById("slidePanelOverlay");
             if(id) {
                 const t = todos.find(x => x.id === id); let isT = t.isTask; if (typeof isT === 'undefined') isT = false; setCategory(isT);
                 originalTaskName = t.task; originalDateStr = getDateString(new Date(t.createDate));
                 document.getElementById("taskInput").value = t.task; document.getElementById("taskDateInput").value = originalDateStr; document.getElementById("priorityType").value = t.type || "A"; document.getElementById("startTimeInput").value = t.startTime || ""; document.getElementById("endTimeInput").value = t.endTime || ""; document.getElementById("allDayCheck").checked = t.isAllDay; document.getElementById("isHabitCheck").checked = t.isHabit || false; document.getElementById("repeatSelect").value = t.repeat || "none";
-                
                 document.getElementById("taskTagsInput").value = t.tags && t.tags.length > 0 ? t.tags.join(", ") : "";
-                
                 if (t.repeatDays) document.querySelectorAll('#weeklyDays input').forEach(cb => { cb.checked = t.repeatDays.includes(cb.value); });
                 document.getElementById("deleteBtn").style.display = "block";
             } else {
                 setCategory(true); document.getElementById("taskInput").value = ""; document.getElementById("taskDateInput").value = passedDateStr || getDateString(currentDate); document.getElementById("priorityType").value = "A"; document.getElementById("startTimeInput").value = st || ""; document.getElementById("endTimeInput").value = et || ""; document.getElementById("allDayCheck").checked = false; document.getElementById("isHabitCheck").checked = false; document.getElementById("repeatSelect").value = "none"; document.querySelectorAll('#weeklyDays input').forEach(cb => cb.checked = false); document.getElementById("deleteBtn").style.display = "none";
                 document.getElementById("taskTagsInput").value = "";
             }
-            toggleWeeklyDays(); toggleTimeInput(); m.style.display = "flex";
+            toggleWeeklyDays(); toggleTimeInput(); 
+            overlay.classList.add('show'); m.classList.add('show'); // 패널 슬라이드 인
         }
 
-        function setCategory(isTask) { isTaskFlag = isTask; document.getElementById('catTodo').classList.toggle('active', isTask); document.getElementById('catSched').classList.toggle('active', !isTask); document.getElementById('habitCheckWrap').style.display = isTask ? "block" : "none"; }
-        function initDaySchedule() { /* 동적 렌더링으로 대체됨 */ }
-        function initWeekGrid() { const labels = document.getElementById("weekTimeLabels"); labels.innerHTML = ""; for(let i=0; i<24; i++) { const r = document.createElement("div"); r.className="week-time-slot"; r.innerText=`${i}:00`; labels.appendChild(r); } }
+        function closeModal() { 
+            document.getElementById("slidePanelOverlay").classList.remove('show');
+            document.getElementById("todoModal").classList.remove('show'); // 패널 슬라이드 아웃
+        }
+
+        // 🌟 [NEW] 상세 설정 펼치기/접기 제어 함수
+        let isAdvancedOpen = false;
+        function toggleAdvancedOptions(forceClose = false) {
+            const wrap = document.getElementById("advancedOptionsWrap");
+            const icon = document.getElementById("advancedToggleIcon");
+            const btnSpan = document.querySelector("#advancedToggleBtn span");
+
+            if (forceClose || isAdvancedOpen) {
+                isAdvancedOpen = false;
+                if(wrap) wrap.style.display = "none";
+                if(icon) icon.style.transform = "rotate(0deg)";
+                if(btnSpan) btnSpan.innerText = "상세 설정 펼치기";
+            } else {
+                isAdvancedOpen = true;
+                if(wrap) wrap.style.display = "flex";
+                if(icon) icon.style.transform = "rotate(180deg)";
+                if(btnSpan) btnSpan.innerText = "상세 설정 접기";
+            }
+        }
+
+        // 🌟 패널이 새로 열릴 때 무조건 상세 설정을 닫아두기 위해 openModal 기존 로직에 후킹
+        const originalOpenModal = openModal;
+        openModal = function(id, st, et, passedDateStr) {
+            originalOpenModal(id, st, et, passedDateStr);
+            toggleAdvancedOptions(true); // 패널 열릴 때 상세 옵션 무조건 숨김 초기화
+        };
+
+        // 🌟 [NEW] 인라인 퀵 애드 (엔터로 즉시 할 일 추가)
+        function handleQuickAdd(e) {
+            if (e.key === 'Enter') {
+                const input = e.target;
+                const text = input.value.trim();
+                if (!text) return;
+                
+                todos.push({
+                    id: Date.now().toString(),
+                    task: text,
+                    isTask: true,
+                    createDate: new Date(getDateString(currentDate)).setHours(0,0,0,0),
+                    isHabit: false,
+                    type: "A",
+                    startTime: "",
+                    endTime: "",
+                    isAllDay: true,
+                    repeat: "none",
+                    repeatDays: [],
+                    tags: [],
+                    completedDates: []
+                });
+                
+                input.value = "";
+                saveData();
+                updateDateDisplay();
+            }
+        }
+        
         function toggleWeeklyDays() { document.getElementById("weeklyDays").style.display = document.getElementById("repeatSelect").value === "weekly" ? "flex" : "none"; }
-        function closeModal() { document.getElementById("todoModal").style.display = "none"; }
         function goToday() { currentDate = new Date(); updateDateDisplay(); }
         function handleDateSelect(e) { if(e.target.value) { currentDate = new Date(e.target.value); updateDateDisplay(); } }
         function toggleTimeInput() { const d = document.getElementById("allDayCheck").checked; document.getElementById("startTimeInput").disabled = d; document.getElementById("endTimeInput").disabled = d; }
