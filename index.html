@@ -13,6 +13,11 @@
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="dodam_512.png" />
     <link rel="apple-touch-icon" href="dodam_512.png" />
+    <link
+      rel="stylesheet"
+      media="(min-width: 1100px)"
+      href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/pretendard.css"
+    />
     <style>
       :root {
         --ink: #18283d;
@@ -1269,6 +1274,621 @@
           transform: none;
         }
       }
+      /* PC presentation only. Keep all overrides inside the same 1100px boundary. */
+      #navigation .pc-nav {
+        display: none;
+      }
+      @media (min-width: 1100px) {
+        :root {
+          --green: #326749;
+          --soft: #edf4ee;
+          --bg: #f7f9f7;
+          --ink: #202d3d;
+          --muted: #627068;
+          --line: #e3e9e4;
+          --radius: 12px;
+          font-family:
+            "Pretendard",
+            "Noto Sans KR",
+            -apple-system,
+            BlinkMacSystemFont,
+            sans-serif;
+        }
+        body {
+          font-size: 15px;
+          line-height: 1.5;
+        }
+        #app {
+          max-width: none;
+          padding: 24px 32px 32px 248px;
+        }
+        #navigation {
+          inset: 0 auto 0 0;
+          width: 216px;
+          border-radius: 0;
+          padding: 28px 16px;
+          border: 0;
+          border-right: 1px solid #e1e9e3;
+          background: linear-gradient(150deg, #edf4efee, #f6f9f6ee);
+          box-shadow: inset -1px 0 0 #fff;
+          gap: 8px;
+        }
+        #navigation .brand {
+          margin: 0 8px 30px;
+          font-size: 18px;
+          font-weight: 600;
+        }
+        #navigation button {
+          min-height: 48px;
+          padding: 12px 16px;
+          border-radius: 10px;
+          font-weight: 500;
+        }
+        #navigation .pc-nav {
+          display: flex;
+        }
+        #navigation button.active {
+          background: #dfede3;
+          color: #244f38;
+        }
+        #navigation .icon {
+          width: 20px;
+          height: 20px;
+        }
+        .nav-foot {
+          padding: 16px;
+        }
+        .topbar {
+          margin-bottom: 18px;
+          min-height: 32px;
+        }
+        .topbar > .sub {
+          font-size: 12px;
+        }
+        h1 {
+          font-size: 28px;
+          font-weight: 600;
+          letter-spacing: -0.8px;
+        }
+        h2 {
+          font-size: 18px;
+          font-weight: 600;
+          letter-spacing: -0.4px;
+        }
+        h3 {
+          font-size: 16px;
+          font-weight: 600;
+        }
+        .page-head {
+          margin-bottom: 24px;
+          min-height: 66px;
+        }
+        .page-head .sub {
+          margin-top: 4px;
+        }
+        .surface {
+          padding: 24px;
+          border-color: var(--line);
+          border-radius: 12px;
+        }
+        .primary,
+        .secondary {
+          min-height: 42px;
+          border-radius: 9px;
+          padding: 9px 16px;
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .glass-action {
+          background: linear-gradient(135deg, #3b7657, #2d6045);
+          box-shadow:
+            inset 0 1px 1px #ffffff66,
+            0 2px 5px #183e2412;
+        }
+        input,
+        textarea,
+        select {
+          border-radius: 8px;
+          min-height: 42px;
+          font-size: 14px;
+        }
+        .icon-btn {
+          width: 36px;
+          height: 36px;
+          border-radius: 8px;
+        }
+        .pc-heading-actions {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+        }
+        .pc-grid {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr) 340px;
+          gap: 24px;
+          align-items: start;
+        }
+        .pc-grid > *,
+        .pc-stack > * {
+          min-width: 0;
+        }
+        .pc-home {
+          grid-template-columns: minmax(0, 1.65fr) minmax(300px, 1fr);
+        }
+        .pc-stack {
+          display: grid;
+          gap: 24px;
+        }
+        .pc-toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          flex-wrap: wrap;
+          margin-bottom: 20px;
+        }
+        .pc-tabs {
+          display: flex;
+          gap: 4px;
+          flex-wrap: wrap;
+        }
+        .pc-tabs button {
+          padding: 7px 14px;
+          min-height: 34px;
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          font-size: 13px;
+          color: var(--muted);
+          background: white;
+        }
+        .pc-tabs button[aria-pressed="true"] {
+          color: white;
+          background: var(--green);
+          border-color: var(--green);
+        }
+        .pc-row {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          min-height: 54px;
+          border-bottom: 1px solid #edf1ed;
+        }
+        .pc-row:last-child {
+          border-bottom: 0;
+        }
+        .pc-row:hover {
+          background: #f6f9f6;
+        }
+        .pc-row.is-selected {
+          background: var(--soft);
+        }
+        .pc-row .check {
+          width: 36px;
+          min-width: 36px;
+          height: 40px;
+          border-radius: 8px;
+        }
+        .pc-row .check-mark {
+          width: 21px;
+          height: 21px;
+          border-radius: 5px;
+        }
+        .pc-task-link {
+          flex: 1;
+          min-width: 0;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          padding: 12px 4px;
+          text-align: left;
+        }
+        .pc-task-title {
+          flex: 1;
+          min-width: 0;
+          overflow-wrap: anywhere;
+          font-size: 15px;
+        }
+        .pc-task-meta {
+          flex-shrink: 0;
+          font-size: 12px;
+          color: var(--muted);
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+        }
+        .pc-row.done .pc-task-title {
+          text-decoration: line-through;
+          color: var(--muted);
+        }
+        .pc-tag {
+          display: inline-block;
+          background: var(--soft);
+          color: var(--green);
+          border-radius: 5px;
+          padding: 2px 7px;
+          margin-left: 8px;
+          font-size: 11px;
+        }
+        .pc-row .icon-btn .icon {
+          width: 17px;
+          height: 17px;
+        }
+        .pc-subtitle {
+          margin-top: 8px;
+          color: var(--muted);
+          font-size: 13px;
+        }
+        .pc-dots {
+          display: flex;
+          gap: 7px;
+          padding-right: 8px;
+        }
+        .pc-dots span {
+          width: 9px;
+          height: 9px;
+          border-radius: 50%;
+          background: #e7ece8;
+        }
+        .pc-dots span.checked {
+          background: var(--green);
+        }
+        .pc-dots span.future {
+          background: transparent;
+          border: 1px solid #e2e8e3;
+        }
+        .quick-form {
+          margin-top: 18px;
+        }
+        .quick-form input {
+          border: 1px solid var(--line);
+          background: #f9fbf9;
+        }
+        .event {
+          padding: 16px 0;
+          gap: 12px;
+        }
+        .event-time {
+          font-size: 14px;
+          font-weight: 600;
+          font-variant-numeric: tabular-nums;
+        }
+        .event-content {
+          border-left-color: #5b9371;
+        }
+        .event-content strong {
+          font-weight: 500;
+        }
+        .pc-note-form textarea {
+          height: 138px;
+          margin-top: 8px;
+        }
+        .pc-note-form .row {
+          margin-top: 10px;
+        }
+        .pc-recent {
+          width: 100%;
+          display: flex;
+          gap: 12px;
+          padding: 12px 0;
+          text-align: left;
+          border-bottom: 1px solid #edf1ed;
+          align-items: center;
+        }
+        .pc-recent span {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .pc-recent .icon {
+          width: 18px;
+        }
+        .pc-hint {
+          min-height: 210px;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          gap: 10px;
+          color: var(--muted);
+        }
+        .pc-hint h2 {
+          color: var(--ink);
+        }
+        .pc-search {
+          max-width: 320px;
+        }
+        .pc-week-scroll {
+          overflow: auto;
+          max-height: calc(100dvh - 300px);
+          min-height: 340px;
+          border: 1px solid var(--line);
+          border-radius: 10px;
+          background: #fff;
+        }
+        .pc-week {
+          min-width: 630px;
+        }
+        .pc-week-head,
+        .pc-all-day,
+        .pc-week-body {
+          display: grid;
+          grid-template-columns: 50px repeat(7, minmax(0, 1fr));
+        }
+        .pc-week-head {
+          position: sticky;
+          top: 0;
+          z-index: 3;
+          background: white;
+          border-bottom: 1px solid var(--line);
+        }
+        .pc-week-head button {
+          padding: 10px 0;
+          font-size: 12px;
+          border-left: 1px solid #edf1ed;
+        }
+        .pc-week-head strong {
+          display: block;
+          font-size: 17px;
+          font-weight: 600;
+          margin-top: 3px;
+        }
+        .pc-week-head .is-today {
+          background: var(--soft);
+          color: var(--green);
+        }
+        .pc-all-day {
+          border-bottom: 1px solid var(--line);
+        }
+        .pc-all-day > div {
+          padding: 6px 2px;
+          border-left: 1px solid #edf1ed;
+        }
+        .pc-all-day > span {
+          padding: 8px 4px;
+          font-size: 11px;
+          color: var(--muted);
+        }
+        .pc-all-day button {
+          display: block;
+          width: 100%;
+          font-size: 11px;
+          background: var(--soft);
+          text-align: left;
+          margin-bottom: 3px;
+          border-radius: 4px;
+          overflow-wrap: anywhere;
+        }
+        .pc-hours {
+          position: relative;
+          height: 1440px;
+        }
+        .pc-hours span {
+          position: absolute;
+          left: 4px;
+          font-size: 10px;
+          color: var(--muted);
+          font-variant-numeric: tabular-nums;
+        }
+        .pc-day-track {
+          position: relative;
+          height: 1440px;
+          border-left: 1px solid #e8eee9;
+          background: repeating-linear-gradient(
+            to bottom,
+            transparent 0,
+            transparent 59px,
+            #edf1ed 59px,
+            #edf1ed 60px
+          );
+        }
+        .pc-slot {
+          position: absolute;
+          width: 100%;
+          height: 60px;
+          left: 0;
+          border-radius: 0;
+        }
+        .pc-slot:hover {
+          background: #edf4ee99;
+        }
+        .pc-event-block {
+          position: absolute;
+          z-index: 1;
+          background: #dfede3;
+          border-left: 3px solid #4b8764;
+          border-radius: 4px;
+          padding: 3px 4px;
+          text-align: left;
+          overflow: hidden;
+          font-size: 11px;
+          line-height: 1.4;
+        }
+        .pc-event-block:hover {
+          background: #cfe3d5;
+          z-index: 2;
+        }
+        .pc-event-block span {
+          display: block;
+          font-size: 10px;
+          margin-top: 2px;
+        }
+        .pc-month .cal-day {
+          min-height: 78px;
+          border-radius: 8px;
+          justify-content: flex-start;
+          padding: 8px;
+        }
+        .pc-month .cal-day small {
+          max-width: 100%;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          font-size: 10px;
+        }
+        .pc-month .cal-day.selected small {
+          color: white;
+        }
+        .pc-matrix {
+          width: 100%;
+          border-collapse: collapse;
+          table-layout: fixed;
+        }
+        .pc-matrix th {
+          font-size: 12px;
+          font-weight: 500;
+          color: var(--muted);
+          padding: 14px 4px;
+          border-bottom: 1px solid var(--line);
+        }
+        .pc-matrix th:first-child {
+          width: 32%;
+          text-align: left;
+        }
+        .pc-matrix td {
+          border-bottom: 1px solid #edf1ed;
+          padding: 16px 4px;
+          text-align: center;
+        }
+        .pc-matrix td:first-child {
+          text-align: left;
+        }
+        .pc-matrix .pc-habit-name {
+          text-align: left;
+          font-size: 14px;
+          padding: 4px 0;
+          overflow-wrap: anywhere;
+        }
+        .pc-matrix .mini-check {
+          display: grid;
+          place-items: center;
+          width: 100%;
+          min-height: 36px;
+        }
+        .pc-matrix .mini-check span {
+          width: 28px;
+          height: 28px;
+        }
+        .pc-matrix button:disabled {
+          cursor: default;
+          opacity: 0.4;
+        }
+        .pc-notes {
+          display: grid;
+          grid-template-columns: 312px minmax(0, 1fr);
+          gap: 24px;
+        }
+        .pc-notes-list {
+          padding: 16px;
+        }
+        .pc-notes-list .search {
+          max-width: none;
+          margin-bottom: 12px;
+        }
+        .pc-notes-list .pc-tabs {
+          margin-bottom: 12px;
+        }
+        .pc-notes-list .notes-grid {
+          display: block;
+        }
+        .pc-notes-list .note-card {
+          width: 100%;
+          border: 0;
+          border-bottom: 1px solid var(--line);
+          border-radius: 6px;
+          padding: 16px 12px;
+          min-height: 112px;
+          gap: 6px;
+        }
+        .pc-notes-list .note-card h3 {
+          font-size: 14px;
+          font-weight: 600;
+        }
+        .pc-notes-list .note-card p {
+          font-size: 13px;
+          -webkit-line-clamp: 1;
+        }
+        .pc-notes-list .note-card small {
+          font-size: 11px;
+        }
+        .pc-notes-list .note-card .icon {
+          width: 15px;
+          height: 15px;
+        }
+        .pc-notes-list .note-card.is-selected {
+          background: #e1eee5;
+        }
+        .pc-note-placeholder {
+          min-height: 500px;
+        }
+        dialog.edit-panel[open],
+        #noteDialog[open] {
+          position: fixed;
+          inset: 170px 32px 24px auto;
+          margin: 0;
+          width: 340px;
+          height: calc(100dvh - 194px);
+          max-height: none;
+          display: flex;
+          flex-direction: column;
+          border: 1px solid var(--line);
+          border-radius: 12px;
+          box-shadow: 0 8px 32px #183e2417;
+          z-index: 30;
+        }
+        dialog.edit-panel .dialog-head,
+        #noteDialog .dialog-head {
+          padding: 16px 20px;
+        }
+        dialog.edit-panel .dialog-body,
+        #noteDialog .dialog-body {
+          padding: 20px;
+          overflow: auto;
+          flex: 1;
+        }
+        dialog.edit-panel form {
+          display: flex;
+          flex-direction: column;
+          min-height: 0;
+          flex: 1;
+        }
+        dialog.edit-panel .dialog-foot,
+        #noteDialog .dialog-foot {
+          padding: 14px 20px;
+          flex-shrink: 0;
+        }
+        #noteDialog[open] {
+          width: min(680px, calc(100vw - 300px));
+        }
+        body[data-pc-tab="notes"] #noteDialog[open] {
+          width: calc(100vw - 616px);
+        }
+        body[data-pc-tab="notes"]:has(#noteDialog[open]) .pc-note-placeholder {
+          visibility: hidden;
+        }
+        dialog .form-grid {
+          grid-template-columns: 1fr;
+        }
+        #taskDialog .dialog-head,
+        #noteDialog .dialog-head {
+          border-radius: 12px 12px 0 0;
+        }
+        #taskDialog .dialog-foot,
+        #noteDialog .dialog-foot {
+          border-radius: 0 0 12px 12px;
+        }
+        #noteTitle {
+          font-size: 23px;
+          font-weight: 600;
+        }
+        .pc-week-scroll:focus-visible {
+          outline: 2px solid var(--green);
+          outline-offset: 2px;
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .page {
+            animation: none;
+          }
+        }
+      }
     </style>
   </head>
   <body>
@@ -1377,6 +1997,9 @@
         <button data-tab="today" class="active">
           <svg class="icon"><use href="#i-home" /></svg
           ><span>오늘</span></button
+        ><button data-tab="tasks" class="pc-nav">
+          <svg class="icon"><use href="#i-check" /></svg
+          ><span>할 일</span></button
         ><button data-tab="schedule">
           <svg class="icon"><use href="#i-calendar" /></svg
           ><span>일정</span></button
@@ -1967,7 +2590,7 @@
           start = focus?.selectionStart,
           end = focus?.selectionEnd;
         $("main").innerHTML =
-          `<div class="page">${{ today: renderToday, schedule: renderSchedule, habits: renderHabits, notes: renderNotes }[tab]()}</div>`;
+          `<div class="page">${{ today: renderToday, tasks: renderDesktopTasks, schedule: renderSchedule, habits: renderHabits, notes: renderNotes }[tab]()}</div>`;
         if (draft !== undefined && $("quickTask")) $("quickTask").value = draft;
         document.querySelectorAll("[data-tab]").forEach((b) => {
           b.classList.toggle("active", b.dataset.tab === tab);
@@ -2702,6 +3325,7 @@
           unsubscribe?.();
           unsubscribe = null;
           user = u;
+          pcQuickMemo = "";
           ready = false;
           data = { todos: [], memos: {}, notesMeta: {} };
           document.querySelectorAll("dialog[open]").forEach((d) => d.close());
@@ -2782,6 +3406,481 @@
             );
         });
       }
+      // Desktop presentation layer. Mobile renderers and all Firestore writes remain shared and unchanged.
+      const pcMedia = window.matchMedia("(min-width: 1100px)");
+      const pcMobile = {
+        renderToday,
+        renderSchedule,
+        renderHabits,
+        renderNotes,
+        render,
+        setTab,
+        openDialog,
+        openTask,
+        openNote,
+        closeDialog,
+      };
+      let pcTaskFilter = "today",
+        pcScheduleMode = "week",
+        pcQuickMemo = "",
+        pcMemoSaving = false;
+      let pcWeekScroll = null,
+        pcWeekKey = "",
+        pcTransition = false;
+      names.tasks = "할 일";
+      function pcWeek(k = selected) {
+        const start = shiftDate(k, -((parseDate(k).getDay() + 6) % 7));
+        return Array.from({ length: 7 }, (_, i) => shiftDate(start, i));
+      }
+      function pcHeading(title, subtitle, action = "") {
+        return `<div class="page-head"><div><h1>${esc(title)}</h1><p class="pc-subtitle">${esc(subtitle)}</p></div><div class="pc-heading-actions">${action}</div></div>`;
+      }
+      function pcTaskRow(t, k = selected, showDate = false) {
+        return `<div class="pc-row ${done(t, k) ? "done" : ""} ${$("taskDialog").open && taskEdit === t.id ? "is-selected" : ""}"><button class="check" data-toggle="${esc(t.id)}" data-day="${k}" aria-pressed="${done(t, k)}" aria-label="${esc(t.task)} 완료 ${done(t, k) ? "취소" : "체크"}" ${t.isHabit && k > dateKey() ? "disabled" : ""}><span class="check-mark">${done(t, k) ? icon("check") : ""}</span></button><button class="pc-task-link" data-edit="${esc(t.id)}"><span class="pc-task-title">${esc(t.task)}</span><span class="pc-task-meta">${showDate ? esc(k) + "<br>" : ""}${esc(t.startTime || (t.isHabit ? repeatText(t) : ""))}${t.type === "A" ? '<span class="pc-tag">중요</span>' : ""}${(
+          t.tags || []
+        )
+          .slice(0, 1)
+          .map((x) => `<span class="pc-tag">${esc(x)}</span>`)
+          .join("")}</span></button></div>`;
+      }
+      function pcQuickTaskForm() {
+        return `<form class="quick-form" id="quickTaskForm"><input id="quickTask" required maxlength="300" placeholder="할 일 빠르게 추가" aria-label="할 일 빠르게 추가"><button class="primary" aria-label="추가">${icon("plus")}</button></form>`;
+      }
+      function pcHint(title, copy) {
+        return `<aside class="surface pc-hint"><h2>${esc(title)}</h2><p class="sub">${esc(copy)}</p></aside>`;
+      }
+      function pcSortedTasks(rows, k = selected) {
+        return [...rows].sort(
+          (a, b) =>
+            Number(done(a, k)) - Number(done(b, k)) ||
+            ({ A: 0, B: 1, C: 2 }[a.type] ?? 1) -
+              ({ A: 0, B: 1, C: 2 }[b.type] ?? 1),
+        );
+      }
+      renderToday = function () {
+        if (!pcMedia.matches) return pcMobile.renderToday();
+        const rows = tasksFor(selected),
+          completed = rows.filter((t) => done(t)).length,
+          habits = habitsFor(selected),
+          events = eventsFor(selected),
+          week = pcWeek();
+        const recent = Object.entries(data.memos || {})
+          .map(([key, value]) => ({
+            key,
+            value,
+            meta: data.notesMeta?.[key] || {},
+          }))
+          .sort((a, b) =>
+            String(b.meta.updatedAt || b.key).localeCompare(
+              String(a.meta.updatedAt || a.key),
+            ),
+          )
+          .slice(0, 3);
+        return (
+          pcHeading(
+            selected === dateKey() ? "오늘" : dateLabel(selected),
+            `${dateLabel(selected)} · 할 일 ${rows.length - completed}개 남음 · 일정 ${events.length}개 · 습관 ${habits.filter((t) => done(t)).length}/${habits.length}`,
+            `${dateControls()}<button class="primary glass-action" data-action="quick">${icon("plus")} 새로 만들기</button>`,
+          ) +
+          `<div class="pc-grid pc-home"><div class="pc-stack"><section class="surface"><div class="section-head"><h2>오늘의 할 일 <small>${completed} / ${rows.length} 완료</small></h2><button class="text-btn" data-go="tasks">전체 할 일 보기 ›</button></div>${
+            pcSortedTasks(rows)
+              .map((t) => pcTaskRow(t))
+              .join("") ||
+            empty("할 일이 없습니다. 작은 일부터 하나 적어보세요.")
+          }${pcQuickTaskForm()}</section><section class="surface"><div class="section-head"><h2>오늘의 습관</h2><button class="text-btn" data-go="habits">주간 기록 ›</button></div>${habits.map((t) => `<div class="pc-row"><button class="check" data-toggle="${esc(t.id)}" data-day="${selected}" aria-pressed="${done(t)}" aria-label="${esc(t.task)} 완료 체크" ${selected > dateKey() ? "disabled" : ""}><span class="check-mark">${done(t) ? icon("check") : ""}</span></button><button class="pc-task-link" data-edit="${esc(t.id)}"><span class="pc-task-title">${esc(t.task)}</span></button><div class="pc-dots" aria-label="이번 주 완료 기록">${week.map((k) => `<span title="${dateLabel(k)} ${done(t, k) ? "완료" : "미완료"}" class="${k > dateKey() ? "future" : done(t, k) ? "checked" : ""}"></span>`).join("")}</div></div>`).join("") || empty("오늘 예정된 습관이 없습니다.")}</section></div><aside class="pc-stack"><section class="surface"><div class="section-head"><h2>오늘의 일정</h2><button class="text-btn" data-go="schedule">전체 보기 ›</button></div>${events.map((t) => eventRow(t)).join("") || empty("예정된 일정이 없습니다.")}</section><section class="surface"><h2>빠른 메모</h2><form class="pc-note-form" id="pcMemoForm"><textarea id="pcMemoText" maxlength="10000" required aria-label="빠른 메모" placeholder="떠오른 생각을 적어보세요">${esc(pcQuickMemo)}</textarea><div class="row between"><small>작성한 내용은 메모에 저장됩니다.</small><button class="primary" ${pcMemoSaving ? "disabled" : ""}>저장</button></div><p id="pcMemoError" class="error" role="alert"></p></form></section><section class="surface"><div class="section-head"><h2>최근 메모</h2><button class="text-btn" data-go="notes">전체 보기 ›</button></div>${recent.map((n) => `<button class="pc-recent" data-note="${esc(n.key)}">${icon("note")}<span>${esc(n.meta.title || (/^\d{4}-\d{2}-\d{2}$/.test(n.key) ? n.key + " 메모" : "제목 없는 메모"))}</span></button>`).join("") || empty("저장된 메모가 없습니다.")}</section></aside></div>`
+        );
+      };
+      function renderDesktopTasks() {
+        const all = data.todos.filter((t) => t.isTask && !t.isHabit),
+          isAll = pcTaskFilter === "all";
+        let rows = [];
+        if (isAll)
+          rows = all.map((t) => ({
+            t,
+            k: dateKey(new Date(Number(t.createDate))),
+          }));
+        else if (pcTaskFilter === "today")
+          rows = tasksFor(selected).map((t) => ({ t, k: selected }));
+        else
+          for (let i = 1; i <= 30; i++) {
+            const k = shiftDate(selected, i);
+            rows.push(...tasksFor(k).map((t) => ({ t, k })));
+          }
+        rows = rows
+          .filter(({ t }) => matches(t))
+          .sort(
+            (a, b) =>
+              a.k.localeCompare(b.k) ||
+              Number(done(a.t, a.k)) - Number(done(b.t, b.k)) ||
+              ({ A: 0, B: 1, C: 2 }[a.t.type] ?? 1) -
+                ({ A: 0, B: 1, C: 2 }[b.t.type] ?? 1),
+          );
+        return (
+          pcHeading(
+            "할 일",
+            "해야 할 일을 한 곳에서 정리하세요",
+            addButton("task", "할 일 추가"),
+          ) +
+          `<div class="pc-grid"><section class="surface"><div class="pc-toolbar"><div class="pc-tabs">${[
+            ["today", "선택한 날"],
+            ["upcoming", "예정 30일"],
+            ["all", "전체"],
+          ]
+            .map(
+              ([v, n]) =>
+                `<button data-pc-task-filter="${v}" aria-pressed="${pcTaskFilter === v}">${n}</button>`,
+            )
+            .join(
+              "",
+            )}</div><input id="taskSearch" class="pc-search" type="search" placeholder="할 일 검색" aria-label="할 일 검색" value="${esc(query)}"></div><div class="row between"><p class="sub">${isAll ? "반복 항목은 한 번만 표시하며 완료는 시작일 기준입니다." : esc(dateLabel(selected))}</p>${dateControls()}</div>${rows.map(({ t, k }) => pcTaskRow(t, k, pcTaskFilter !== "today")).join("") || empty("해당하는 할 일이 없습니다.")}${pcQuickTaskForm()}</section>${pcHint("할 일 상세", "항목을 선택하면 이곳에서 날짜, 중요도, 반복과 메모를 수정할 수 있습니다.")}</div>`
+        );
+      }
+      function pcEventPositions(events) {
+        const timed = events
+          .filter((t) => !t.isAllDay && t.startTime)
+          .map((t) => ({
+            t,
+            start: pcMinutes(t.startTime),
+            end: Math.max(
+              pcMinutes(t.endTime || t.startTime),
+              pcMinutes(t.startTime) + 24,
+            ),
+          }))
+          .sort((a, b) => a.start - b.start || a.end - b.end);
+        let group = [],
+          groupEnd = -1;
+        function layout() {
+          const ends = [];
+          for (const item of group) {
+            let lane = ends.findIndex((end) => end <= item.start);
+            if (lane < 0) lane = ends.length;
+            ends[lane] = item.end;
+            item.lane = lane;
+          }
+          for (const item of group) item.lanes = ends.length;
+        }
+        for (const item of timed) {
+          if (item.start >= groupEnd) {
+            layout();
+            group = [];
+            groupEnd = -1;
+          }
+          group.push(item);
+          groupEnd = Math.max(groupEnd, item.end);
+        }
+        layout();
+        return timed;
+      }
+      function pcMinutes(time) {
+        const [h, m] = String(time || "00:00")
+          .split(":")
+          .map(Number);
+        return Math.max(0, Math.min(1439, (h || 0) * 60 + (m || 0)));
+      }
+      function pcWeekCalendar() {
+        const week = pcWeek();
+        return `<div class="pc-week-scroll" id="pcWeekScroll" tabindex="0" aria-label="주간 일정표, 세로로 스크롤하여 모든 시간 보기"><div class="pc-week"><div class="pc-week-head"><span></span>${week.map((k) => `<button class="${k === dateKey() ? "is-today" : ""}" data-date="${k}" aria-label="${dateLabel(k)}">${weekdays[parseDate(k).getDay()]}<strong>${parseDate(k).getDate()}</strong></button>`).join("")}</div><div class="pc-all-day"><span>종일</span>${week
+          .map(
+            (k) =>
+              `<div>${eventsFor(k)
+                .filter((t) => t.isAllDay || !t.startTime)
+                .map(
+                  (t) =>
+                    `<button data-edit="${esc(t.id)}">${esc(t.task)}</button>`,
+                )
+                .join("")}</div>`,
+          )
+          .join(
+            "",
+          )}</div><div class="pc-week-body"><div class="pc-hours">${Array.from({ length: 24 }, (_, h) => `<span style="top:${h * 60}px">${String(h).padStart(2, "0")}:00</span>`).join("")}</div>${week
+          .map(
+            (k) =>
+              `<div class="pc-day-track">${Array.from({ length: 24 }, (_, h) => `<button class="pc-slot" style="top:${h * 60}px" data-pc-slot="${k}" data-hour="${h}" aria-label="${dateLabel(k)} ${h}시 일정 추가"></button>`).join("")}${pcEventPositions(
+                eventsFor(k),
+              )
+                .map(
+                  ({ t, start, end, lane, lanes }) =>
+                    `<button class="pc-event-block" data-edit="${esc(t.id)}" title="${esc(t.task)} ${esc(t.startTime)}–${esc(t.endTime || "")}" style="top:${start}px;height:${Math.min(1440 - start, Math.max(24, end - start))}px;left:calc(${(lane * 100) / lanes}% + 2px);width:calc(${100 / lanes}% - 4px)">${esc(t.task)}<span>${esc(t.startTime)}${t.endTime ? "–" + esc(t.endTime) : ""}</span></button>`,
+                )
+                .join("")}</div>`,
+          )
+          .join("")}</div></div></div>`;
+      }
+      renderSchedule = function () {
+        if (!pcMedia.matches) return pcMobile.renderSchedule();
+        const week = pcWeek(),
+          rows = eventsFor(selected);
+        let content;
+        if (pcScheduleMode === "week") content = pcWeekCalendar();
+        else if (pcScheduleMode === "month")
+          content = `<div class="pc-month">${calendar()}</div>`;
+        else
+          content = `<div class="pc-stack">${
+            Array.from({ length: 30 }, (_, i) => shiftDate(selected, i))
+              .map((k) => {
+                const events = eventsFor(k);
+                return events.length
+                  ? `<section class="surface"><h2>${dateLabel(k)}</h2>${events.map((t) => eventRow(t, k)).join("")}</section>`
+                  : "";
+              })
+              .join("") || empty("선택한 날짜부터 30일 동안 일정이 없습니다.")
+          }</div>`;
+        return (
+          pcHeading(
+            "일정",
+            "하루의 시간과 한 주의 흐름을 정리하세요",
+            addButton("event", "일정 추가"),
+          ) +
+          `<div class="pc-toolbar"><div class="row"><button class="icon-btn" data-pc-period="-1" aria-label="이전 기간">${icon("left")}</button><h2>${pcScheduleMode === "week" ? esc(week[0] + " – " + week[6]) : esc(dateLabel(selected))}</h2><button class="icon-btn" data-pc-period="1" aria-label="다음 기간">${icon("right")}</button><button class="text-btn" data-action="go-today">오늘</button></div><div class="pc-tabs">${[
+            ["month", "월"],
+            ["week", "주"],
+            ["list", "목록"],
+          ]
+            .map(
+              ([v, n]) =>
+                `<button data-pc-schedule="${v}" aria-pressed="${pcScheduleMode === v}">${n}</button>`,
+            )
+            .join(
+              "",
+            )}</div></div><div class="pc-grid"><section>${content}</section><aside class="surface"><h2>${dateLabel(selected)}</h2>${rows.map((t) => eventRow(t)).join("") || empty("등록된 일정이 없습니다.")}<p class="sub">일정을 선택하면 이곳에서 수정할 수 있습니다.</p><button class="secondary wide-action" data-action="add-event">+ 일정 추가</button></aside></div>`
+        );
+      };
+      renderHabits = function () {
+        if (!pcMedia.matches) return pcMobile.renderHabits();
+        const week = pcWeek(),
+          all = data.todos.filter((t) => t.isHabit);
+        return (
+          pcHeading(
+            "습관",
+            "작은 실천을 꾸준하게",
+            addButton("habit", "습관 추가"),
+          ) +
+          `<div class="pc-toolbar"><div class="row"><button class="icon-btn" data-pc-week="-1" aria-label="지난주">${icon("left")}</button><h2>${week[0]} – ${week[6]}</h2><button class="icon-btn" data-pc-week="1" aria-label="다음주">${icon("right")}</button><button class="text-btn" data-action="go-today">이번 주</button></div><p class="sub">미래 날짜는 완료 체크할 수 없습니다.</p></div><div class="pc-grid"><section class="surface">${all.length ? `<table class="pc-matrix"><thead><tr><th scope="col">습관</th>${week.map((k) => `<th scope="col">${weekdays[parseDate(k).getDay()]}<br>${parseDate(k).getDate()}</th>`).join("")}</tr></thead><tbody>${all.map((t) => `<tr><td><button class="pc-habit-name" data-edit="${esc(t.id)}">${esc(t.task)}</button><p class="sub">${esc(repeatText(t))}</p></td>${week.map((k) => `<td>${occurs(t, k) ? `<button class="mini-check" data-toggle="${esc(t.id)}" data-day="${k}" aria-label="${esc(t.task)} ${dateLabel(k)}" aria-pressed="${done(t, k)}" ${k > dateKey() ? "disabled" : ""}><span>${done(t, k) ? icon("check") : ""}</span></button>` : '<span aria-label="예정 없음">–</span>'}</td>`).join("")}</tr>`).join("")}</tbody></table>` : empty("습관을 추가하면 주간 기록이 표시됩니다.")}</section>${pcHint("습관 상세", "습관 이름을 눌러 반복 요일과 시작일, 메모를 정리하세요.")}</div>`
+        );
+      };
+      renderNotes = function () {
+        if (!pcMedia.matches) return pcMobile.renderNotes();
+        return (
+          pcHeading(
+            "메모",
+            "떠오른 생각을 차분히 기록하세요",
+            addButton("note", "메모 작성"),
+          ) +
+          `<div class="pc-notes"><section class="surface pc-notes-list"><input id="noteSearch" class="search" type="search" placeholder="메모 검색" aria-label="메모 검색" value="${esc(query)}"><div class="pc-tabs"><button data-note-filter="all" aria-pressed="${noteFilter === "all"}">전체</button><button data-note-filter="pinned" aria-pressed="${noteFilter === "pinned"}">고정</button></div><div class="notes-grid" id="noteCards">${noteCards()}</div></section><section class="surface pc-hint pc-note-placeholder"><h2>생각을 정리하는 공간</h2><p class="sub">왼쪽에서 메모를 선택하면 여기에서 읽고 수정할 수 있습니다.</p><div><button class="secondary" data-action="add-note">+ 새 메모 작성</button></div></section></div>`
+        );
+      };
+      render = function () {
+        if (!pcMedia.matches) return pcMobile.render();
+        const scroll = $("pcWeekScroll");
+        if (scroll) {
+          pcWeekScroll = scroll.scrollTop;
+        }
+        document.body.dataset.pcTab = tab;
+        pcMobile.render();
+        if ($("pcWeekScroll")) {
+          const key = pcWeek()[0];
+          if (pcWeekKey !== key) {
+            pcWeekKey = key;
+            pcWeekScroll = null;
+          }
+          $("pcWeekScroll").scrollTop = pcWeekScroll ?? 8 * 60 + 70;
+        }
+        pcMarkSelection();
+      };
+      function pcMarkSelection() {
+        if (!pcMedia.matches) return;
+        document
+          .querySelectorAll(".pc-notes-list [data-note]")
+          .forEach((b) =>
+            b.classList.toggle(
+              "is-selected",
+              $("noteDialog").open && b.dataset.note === noteKey,
+            ),
+          );
+      }
+      openDialog = function (id) {
+        if (!pcMedia.matches || !["taskDialog", "noteDialog"].includes(id))
+          return pcMobile.openDialog(id);
+        lastFocus = document.activeElement;
+        $(id).show();
+      };
+      closeDialog = async function (id) {
+        await pcMobile.closeDialog(id);
+        if (pcMedia.matches) pcMarkSelection();
+      };
+      async function pcCloseEditors() {
+        for (const id of ["taskDialog", "noteDialog"])
+          if ($(id).open) {
+            await closeDialog(id);
+            if ($(id).open) return false;
+          }
+        return true;
+      }
+      openTask = async function (kind = "task", id = null) {
+        if (!pcMedia.matches) return pcMobile.openTask(kind, id);
+        if (pcTransition) return;
+        pcTransition = true;
+        try {
+          if (!(await pcCloseEditors())) return;
+          pcMobile.openTask(kind, id);
+          return true;
+        } finally {
+          pcTransition = false;
+        }
+      };
+      openNote = async function (key = null) {
+        if (!pcMedia.matches) return pcMobile.openNote(key);
+        if (pcTransition) return;
+        pcTransition = true;
+        try {
+          if (!(await pcCloseEditors())) return;
+          await pcMobile.openNote(key);
+          pcMarkSelection();
+        } finally {
+          pcTransition = false;
+        }
+      };
+      setTab = async function (value) {
+        if (!pcMedia.matches)
+          return pcMobile.setTab(value === "tasks" ? "today" : value);
+        if (pcTransition) return;
+        pcTransition = true;
+        try {
+          if (!(await pcCloseEditors())) return;
+          pcMobile.setTab(value);
+        } finally {
+          pcTransition = false;
+        }
+      };
+      document.addEventListener("keydown", (e) => {
+        if (
+          !pcMedia.matches ||
+          e.key !== "Escape" ||
+          document.querySelector("dialog:modal")
+        )
+          return;
+        const editor = e.target.closest?.(
+          "#taskDialog[open], #noteDialog[open]",
+        );
+        if (
+          editor &&
+          (e.target.matches("input,textarea,select") ||
+            e.target.closest(".dialog-head,.dialog-foot"))
+        ) {
+          e.preventDefault();
+          closeDialog(editor.id);
+        }
+      });
+      pcMedia.addEventListener("change", () => {
+        if (!pcMedia.matches && tab === "tasks") {
+          tab = "today";
+          query = "";
+        }
+        for (const id of ["taskDialog", "noteDialog"])
+          if ($(id).open) {
+            $(id).close();
+            if (pcMedia.matches) $(id).show();
+            else $(id).showModal();
+          }
+        if (!pcMedia.matches) delete document.body.dataset.pcTab;
+        render();
+      });
+      document.addEventListener("click", async (e) => {
+        if (!pcMedia.matches) return;
+        const b = e.target.closest("button");
+        if (!b || b.disabled) return;
+        const d = b.dataset;
+        if (d.pcTaskFilter) {
+          pcTaskFilter = d.pcTaskFilter;
+          render();
+        }
+        if (d.pcSchedule) {
+          pcScheduleMode = d.pcSchedule;
+          render();
+        }
+        if (d.pcWeek) {
+          selected = shiftDate(selected, Number(d.pcWeek) * 7);
+          render();
+        }
+        if (d.pcPeriod) {
+          const n = Number(d.pcPeriod);
+          if (pcScheduleMode === "month") {
+            const dt = parseDate(selected);
+            dt.setDate(1);
+            dt.setMonth(dt.getMonth() + n);
+            selected = dateKey(dt);
+          } else
+            selected = shiftDate(
+              selected,
+              n * (pcScheduleMode === "week" ? 7 : 30),
+            );
+          render();
+        }
+        if (d.pcSlot) {
+          if (!(await openTask("event"))) return;
+          $("taskDate").value = d.pcSlot;
+          const hour = Number(d.hour);
+          $("taskStart").value = String(hour).padStart(2, "0") + ":00";
+          $("taskEnd").value =
+            hour === 23 ? "23:59" : String(hour + 1).padStart(2, "0") + ":00";
+          taskDirty = true;
+        }
+      });
+      document.addEventListener("input", (e) => {
+        if (e.target.id === "pcMemoText") pcQuickMemo = e.target.value;
+      });
+      document.addEventListener("submit", async (e) => {
+        if (e.target.id !== "pcMemoForm") return;
+        e.preventDefault();
+        if (pcMemoSaving || !pcQuickMemo.trim()) return;
+        const text = pcQuickMemo.trim(),
+          key = "note_" + uid(),
+          now = new Date().toISOString();
+        pcMemoSaving = true;
+        e.target.querySelector("button").disabled = true;
+        try {
+          await mutate((d) => ({
+            memos: {
+              ...(d.memos || {}),
+              [key]: {
+                blocks: [
+                  {
+                    type: "paragraph",
+                    data: { text: esc(text).replace(/\n/g, "<br>") },
+                  },
+                ],
+              },
+            },
+            notesMeta: {
+              ...(d.notesMeta || {}),
+              [key]: {
+                title: text.split("\n")[0].slice(0, 60),
+                pinned: false,
+                createdAt: now,
+                updatedAt: now,
+              },
+            },
+          }));
+          if (pcQuickMemo.trim() === text) pcQuickMemo = "";
+          toast("메모를 저장했습니다.");
+        } catch (err) {
+          if ($("pcMemoError")) $("pcMemoError").textContent = err.message;
+          else toast(err.message);
+        } finally {
+          pcMemoSaving = false;
+          if ($("pcMemoText")) {
+            $("pcMemoText").value = pcQuickMemo;
+            $("pcMemoForm").querySelector("button").disabled = false;
+          }
+        }
+      });
+      window.addEventListener("beforeunload", (e) => {
+        if (pcQuickMemo.trim()) {
+          e.preventDefault();
+          e.returnValue = "";
+        }
+      });
+
       start();
     </script>
   </body>
