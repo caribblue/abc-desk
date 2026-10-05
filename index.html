@@ -1046,6 +1046,7 @@
                 >반복<select id="repeatInput">
                   <option value="none">반복 안 함</option>
                   <option value="daily">매일</option>
+                  <option value="weekdays">평일에만 (월–금)</option>
                   <option value="weekly">매주</option>
                   <option value="monthly">매월</option>
                   <option value="yearly">매년</option>
@@ -2074,7 +2075,12 @@
         $("titleInput").value = t?.title || (!id ? $("quickTitle").value : "");
         $("dueInput").value = t?.due || (!id ? $("quickDue").value : "");
         $("repeatInput").value =
-          t && t.interval > 1 ? "custom" : t?.repeat || "none";
+          t && t.interval > 1
+            ? "custom"
+            : t?.repeat === "weekly" &&
+                [...new Set(t.days || [])].sort().join(",") === "1,2,3,4,5"
+              ? "weekdays"
+              : t?.repeat || "none";
         $("intervalInput").value = t?.interval || 1;
         $("unitInput").value =
           t?.repeat && t.repeat !== "none" ? t.repeat : "daily";
@@ -2159,16 +2165,21 @@
           due = $("dueInput").value,
           repeat = parentId
             ? "none"
-            : $("repeatInput").value === "custom"
-              ? $("unitInput").value
-              : $("repeatInput").value,
+            : $("repeatInput").value === "weekdays"
+              ? "weekly"
+              : $("repeatInput").value === "custom"
+                ? $("unitInput").value
+                : $("repeatInput").value,
           interval =
             $("repeatInput").value === "custom"
               ? Number($("intervalInput").value)
               : 1,
-          days = [...$("weekdays").querySelectorAll("input:checked")].map((x) =>
-            Number(x.value),
-          ),
+          days =
+            $("repeatInput").value === "weekdays"
+              ? [1, 2, 3, 4, 5]
+              : [...$("weekdays").querySelectorAll("input:checked")].map((x) =>
+                  Number(x.value),
+                ),
           until = repeat === "none" ? "" : $("untilInput").value;
         if (due && !Core.valid(due)) throw Error("기한 날짜를 확인해 주세요.");
         if (repeat !== "none" && !due)
