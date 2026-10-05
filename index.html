@@ -1950,12 +1950,19 @@
             );
           return;
         }
-        const groups = Core.instances(planner, now).filter(
-          (g) =>
-            !g.parent.completed ||
-            g.parent.completed.day === now ||
-            g.children.some((c) => c.completed?.day === now),
-        );
+        const groups = Core.instances(planner, now)
+          .filter(
+            (g) =>
+              !g.parent.task.repeat ||
+              g.parent.task.repeat === "none" ||
+              g.parent.k <= now,
+          )
+          .filter(
+            (g) =>
+              !g.parent.completed ||
+              g.parent.completed.day === now ||
+              g.children.some((c) => c.completed?.day === now),
+          );
         groups.sort(
           (a, b) =>
             Number(a.completed) - Number(b.completed) ||
