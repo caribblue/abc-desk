@@ -1184,12 +1184,14 @@
         const copy = (v) => JSON.parse(JSON.stringify(v)),
           DAY = 86400000;
         function today(now = new Date()) {
-          return new Intl.DateTimeFormat("en-CA", {
+          const parts = new Intl.DateTimeFormat("en", {
             timeZone: "Asia/Seoul",
             year: "numeric",
             month: "2-digit",
             day: "2-digit",
-          }).format(now);
+          }).formatToParts(now);
+          const get = (type) => parts.find((p) => p.type === type).value;
+          return get("year") + "-" + get("month") + "-" + get("day");
         }
         const stamp = (k) => Date.parse(k + "T00:00:00Z"),
           key = (d) => d.toISOString().slice(0, 10),
@@ -1805,52 +1807,30 @@
       }
       async function initializeAccount(u) {
         migrating = true;
-        status("기존 기록 정리 중…");
-        const owner = ["namo.cho@gmail.com", "namho.cho@gmail.com"].includes(
-          u.email,
-        );
+        status("기록 연결 중…");
         try {
           await db.runTransaction(async (tx) => {
             const ref = db.collection("users").doc(u.uid),
               snap = await tx.get(ref);
-            const legacyRef = db
-              .collection("abc_desk_data")
-              .doc("namho_workspace");
-            const legacy = owner ? await tx.get(legacyRef) : null;
-            let d = snap.exists
-              ? snap.data()
-              : legacy?.exists
-                ? legacy.data()
-                : {};
+            if (user?.uid !== u.uid)
+              throw Error("로그인 계정이 변경되었습니다.");
+            const d = snap.exists ? snap.data() : {};
             if (d.simplePlanner) {
               if (d.simplePlanner.version !== 1)
-                throw Error(
-                  "이 파일보다 새로운 저장 형식입니다. 최신 파일로 열어 주세요.",
-                );
+                throw Error("최신 파일로 열어 주세요.");
               return;
             }
             if (d.todos && !Array.isArray(d.todos))
               throw Error("기존 할 일 데이터 형식을 확인해야 합니다.");
-            if (user?.uid !== u.uid)
-              throw Error("로그인 계정이 변경되었습니다.");
-            const p = Core.migrate(d, Core.today(), plain),
-              clean = {
-                simplePlanner: p,
-                todos: (d.todos || []).filter((t) => !t.isHabit),
-                memos: {},
-                notesMeta: {},
-              };
+            const clean = {
+              simplePlanner: Core.migrate(d, Core.today(), plain),
+              todos: (d.todos || []).filter((t) => !t.isHabit),
+              memos: {},
+              notesMeta: {},
+            };
+            // Only touch the signed-in user's document. Legacy shared collections may have separate access rules.
             if (snap.exists) tx.update(ref, clean);
-            else tx.set(ref, { ...d, ...clean });
-            // User authorized removal of old habits and standalone memo records. The shared legacy copy must not resurrect them.
-            if (legacy?.exists) {
-              const od = legacy.data();
-              tx.update(legacyRef, {
-                todos: (od.todos || []).filter((t) => !t.isHabit),
-                memos: {},
-                notesMeta: {},
-              });
-            }
+            else tx.set(ref, clean);
           });
         } finally {
           migrating = false;
@@ -1896,7 +1876,7 @@
         for (let i = 0; i < days; i++) {
           const k = Core.add(monthView, i),
             holiday = HOLIDAYS[k],
-            events = Core.eventsOn(planner, k);
+            events = Core.eventsOn(planner || { events: [] }, k);
           html += `<button class="day ${holiday || Core.weekday(k) === 0 ? "sun" : Core.weekday(k) === 6 ? "sat" : ""} ${k === Core.today() ? "today" : ""} ${k === selected ? "selected" : ""}" data-date="${k}" aria-label="${label(k)}${holiday ? ", " + holiday : ""}, 일정 ${events.length}개" aria-pressed="${k === selected}"><strong>${i + 1}</strong>${holiday ? `<small>${esc(holiday)}</small>` : ""}<span class="dot" style="opacity:${events.length ? 1 : 0}"></span></button>`;
         }
         $("calendarGrid").innerHTML = html;
@@ -1911,7 +1891,7 @@
             ? holidayRows.join(" · ")
             : "이 연도의 공휴일 정보는 제공되지 않습니다.";
         $("selectedLabel").textContent = label(selected);
-        const events = Core.eventsOn(planner, selected);
+        const events = Core.eventsOn(planner || { events: [] }, selected);
         $("agendaList").innerHTML =
           events
             .map(
@@ -2008,11 +1988,10 @@
           );
       }
       function render() {
-        if (!ready || !planner) return;
         $("todayLabel").innerHTML =
           esc(label(Core.today())) + '<span class="todaybadge">오늘</span>';
         renderCalendar();
-        renderTasks();
+        if (planner) renderTasks();
       }
       function closeEditor() {
         if (busy) return;
@@ -2619,6 +2598,7 @@
             '<div class="empty">기록을 불러오는 중입니다…</div>';
           banner("");
           status("연결 중…");
+          render();
           stop = db
             .collection("users")
             .doc(u.uid)
@@ -2628,16 +2608,32 @@
                 if (user?.uid !== u.uid) return;
                 const d = snap.exists ? snap.data() : {};
                 if (!d.simplePlanner) {
-                  if (migrating || snap.metadata.fromCache) return;
+                  ready = false;
+                  try {
+                    planner = Core.migrate(d, Core.today(), plain);
+                    render();
+                  } catch (e) {
+                    banner("저장된 할 일 형식을 확인해 주세요.");
+                    return;
+                  }
+                  if (migrating || snap.metadata.fromCache) {
+                    status("기록 연결 중…");
+                    return;
+                  }
                   try {
                     await initializeAccount(u);
                   } catch (e) {
                     if (user?.uid !== u.uid) return;
-                    banner("기존 기록을 정리하지 못했습니다. " + e.message);
-                    status("전환 실패");
+                    banner(
+                      e.code === "permission-denied"
+                        ? "기록은 표시되지만 저장 권한을 확인해야 합니다."
+                        : "저장 연결이 지연되고 있습니다. 인터넷 연결 후 다시 시도해 주세요.",
+                    );
+                    status("읽기 전용");
                   }
                   return;
                 }
+
                 if (
                   d.simplePlanner.version !== 1 ||
                   !Array.isArray(d.simplePlanner.tasks) ||
