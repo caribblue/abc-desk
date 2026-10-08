@@ -885,6 +885,37 @@
           scroll-behavior: auto !important;
         }
       }
+      .choice-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 8px;
+      }
+      .choice-grid label {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 13px;
+      }
+      .rule-pair {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+      .repeat-preview {
+        padding: 14px;
+        background: #eff7f2;
+        border-radius: 10px;
+        font-size: 13px;
+        line-height: 1.8;
+        overflow-wrap: anywhere;
+      }
+      #excludedInput {
+        min-height: 70px;
+      }
+      #advancedRules {
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+      }
     </style>
   </head>
   <body>
@@ -976,7 +1007,9 @@
             </div>
           </div>
           <div id="taskList" class="panel tasklist"></div>
-          <button id="historyButton" class="footer-link">완료 기록 ›</button>
+          <button id="seriesButton" class="footer-link" type="button">
+            반복 관리 ›</button
+          ><button id="historyButton" class="footer-link">완료 기록 ›</button>
           <div class="quick-wrap">
             <form id="quickForm" class="quick">
               <button
@@ -1012,6 +1045,21 @@
         </section>
       </main>
     </div>
+    <dialog id="seriesDialog" aria-labelledby="seriesHeading">
+      <div class="sheet-head">
+        <h2 id="seriesHeading">반복 관리</h2>
+        <button class="iconbtn" data-close="seriesDialog" aria-label="닫기">
+          ×
+        </button>
+      </div>
+      <div class="sheet-body">
+        <p class="note">
+          미래에 시작하거나 오늘 쉬는 반복도 여기서 확인할 수 있습니다. 항목을
+          누르면 전체 반복을 수정합니다.
+        </p>
+        <div id="seriesList"></div>
+      </div>
+    </dialog>
     <dialog id="editor" aria-labelledby="editorHeading">
       <div class="sheet-head">
         <h2 id="editorHeading">새 항목</h2>
@@ -1039,52 +1087,8 @@
                 id="dueInput"
                 type="date"
                 min="1900-01-01"
-                max="2099-12-31"
-            /></label>
-            <div>
-              <label class="fieldrow"
-                >반복<select id="repeatInput">
-                  <option value="none">반복 안 함</option>
-                  <option value="daily">매일</option>
-                  <option value="weekdays">평일에만 (월–금)</option>
-                  <option value="weekly">매주</option>
-                  <option value="monthly">매월</option>
-                  <option value="yearly">매년</option>
-                  <option value="custom">직접 설정</option>
-                </select></label
-              >
-              <div id="repeatMore" class="repeat-more" hidden>
-                <div class="row" id="customRepeat" hidden>
-                  <input
-                    id="intervalInput"
-                    type="number"
-                    min="1"
-                    max="100"
-                    value="1"
-                    aria-label="반복 간격"
-                    style="width: 90px"
-                  /><select id="unitInput" aria-label="반복 단위">
-                    <option value="daily">일마다</option>
-                    <option value="weekly">주마다</option>
-                    <option value="monthly">개월마다</option>
-                    <option value="yearly">년마다</option>
-                  </select>
-                </div>
-                <div id="weekdays" class="weekdays" hidden></div>
-                <label class="field"
-                  >반복 종료일 (선택)<input
-                    id="untilInput"
-                    type="date"
-                    min="1900-01-01"
-                    max="2099-12-31"
-                /></label>
-                <p class="note">
-                  기한이 지난 미완료 회차는 계속 남아요. 월말 날짜가 없는 달에는
-                  그달 마지막 날로 반복합니다.
-                </p>
-              </div>
-            </div>
-            <label class="fieldrow"
+                max="2099-12-31" /></label
+            ><label class="fieldrow"
               >상위 할 일<select id="parentInput">
                 <option value="">없음</option>
               </select></label
@@ -1130,6 +1134,159 @@
               기존 반복 일정입니다. 저장하면 현재 선택한 일정의 반복 설정을
               유지하며 전체 회차에 적용됩니다.
             </p>
+          </div>
+          <label id="scopeRow" class="field" hidden
+            >변경 적용 범위<select id="scopeInput">
+              <option value="one">이번 회차만</option>
+              <option value="future">이번 회차부터 이후</option>
+              <option value="all">전체 회차</option></select
+            ><span class="note" id="scopeNote"></span
+          ></label>
+          <div id="repeatPanel">
+            <label class="fieldrow"
+              >반복<select id="repeatInput">
+                <option value="none">반복 안 함</option>
+                <option value="daily">매일</option>
+                <option value="weekdays">평일에만 (공휴일 제외)</option>
+                <option value="weekly">매주</option>
+                <option value="monthly">매월</option>
+                <option value="yearly">매년</option>
+                <option value="custom">직접 설정</option>
+              </select></label
+            >
+            <div id="repeatMore" class="repeat-more" hidden>
+              <div class="row" id="customRepeat" hidden>
+                <input
+                  id="intervalInput"
+                  type="number"
+                  min="1"
+                  max="100"
+                  value="1"
+                  aria-label="반복 간격"
+                  style="width: 90px"
+                /><select id="unitInput" aria-label="반복 단위">
+                  <option value="daily">일마다</option>
+                  <option value="weekly">주마다</option>
+                  <option value="monthly">개월마다</option>
+                  <option value="yearly">년마다</option>
+                </select>
+              </div>
+              <div id="weekdays" class="weekdays" hidden></div>
+              <div id="advancedRules" class="stack">
+                <label class="field"
+                  >반복하는 달<select id="monthsMode">
+                    <option value="all">모든 달</option>
+                    <option value="odd">홀수 달</option>
+                    <option value="even">짝수 달</option>
+                    <option value="pick">직접 선택</option>
+                  </select></label
+                >
+                <div id="monthsPick" class="choice-grid" hidden></div>
+                <div id="monthlyRules" class="stack">
+                  <label class="field"
+                    >월별 반복 기준<select id="monthMode">
+                      <option value="dates">특정 날짜</option>
+                      <option value="nth">몇 번째 무슨 요일</option>
+                      <option value="last">마지막 날</option>
+                      <option value="lastBusiness">
+                        마지막 평일 (공휴일 제외)
+                      </option>
+                    </select></label
+                  >
+                  <label id="monthDaysRow" class="field"
+                    >날짜 (쉼표로 구분)<input
+                      id="monthDaysInput"
+                      placeholder="예: 5, 15, 25"
+                      inputmode="numeric"
+                  /></label>
+                  <div id="nthRow" class="rule-pair" hidden>
+                    <label class="field"
+                      >순서<select id="nthInput">
+                        <option value="1">첫 번째</option>
+                        <option value="2">두 번째</option>
+                        <option value="3">세 번째</option>
+                        <option value="4">네 번째</option>
+                        <option value="5">다섯 번째</option>
+                        <option value="-1">마지막</option>
+                      </select></label
+                    ><label class="field"
+                      >요일<select id="nthWeekday">
+                        <option value="1">월요일</option>
+                        <option value="2">화요일</option>
+                        <option value="3">수요일</option>
+                        <option value="4">목요일</option>
+                        <option value="5">금요일</option>
+                        <option value="6">토요일</option>
+                        <option value="0">일요일</option>
+                      </select></label
+                    >
+                  </div>
+                  <label id="missingRow" class="field"
+                    >해당 날짜가 없는 달<select id="missingInput">
+                      <option value="last">그달 마지막 날</option>
+                      <option value="skip">그달 건너뛰기</option>
+                    </select></label
+                  >
+                </div>
+                <label class="field"
+                  >주말·공휴일 처리<select id="holidayInput">
+                    <option value="keep">그대로 진행</option>
+                    <option value="skip">이번 회차 건너뛰기</option>
+                    <option value="previous">이전 평일로 이동</option>
+                    <option value="next">다음 평일로 이동</option>
+                  </select></label
+                >
+                <label id="collisionRow" class="field" hidden
+                  >이동한 날짜에 회차가 겹치면<select id="collisionInput">
+                    <option value="merge">하나로 합치기</option>
+                    <option value="separate">각각 유지</option>
+                  </select></label
+                >
+                <label class="field"
+                  >반복 종료<select id="endMode">
+                    <option value="never">종료 없음</option>
+                    <option value="date">날짜 지정</option>
+                    <option value="count">횟수 지정</option>
+                  </select></label
+                >
+                <label id="untilRow" class="field" hidden
+                  >종료일<input
+                    id="untilInput"
+                    type="date"
+                    min="1900-01-01"
+                    max="2099-12-31"
+                /></label>
+                <label id="countRow" class="field" hidden
+                  >반복 횟수<input
+                    id="countInput"
+                    type="number"
+                    min="1"
+                    max="10000"
+                    value="10"
+                /></label>
+                <label class="field"
+                  >제외 날짜 (선택)<textarea
+                    id="excludedInput"
+                    rows="2"
+                    placeholder="2026-10-15, 2026-10-16"
+                  ></textarea>
+                </label>
+                <p class="note">
+                  제외 날짜는 원래 날짜와 이동한 날짜에 모두 적용됩니다. 횟수는
+                  건너뛴 날을 제외한 실행 회차 기준입니다. 시작일 이전으로는
+                  이동하지 않습니다.
+                </p>
+              </div>
+              <div
+                id="repeatPreview"
+                class="repeat-preview"
+                aria-live="polite"
+              ></div>
+              <p class="note">
+                공휴일 정보: 2026–2035년. 이후 임시공휴일 등은 제외 날짜에
+                추가해 주세요. 다섯 번째 요일이 없는 달은 건너뜁니다.
+              </p>
+            </div>
           </div>
           <details class="memo-details" id="memoDetails">
             <summary>메모</summary>
@@ -1218,52 +1375,164 @@
           d.setUTCDate(Math.min(day, last));
           return key(d);
         }
+
+        let holidayMap = {};
+        function setHolidays(map) {
+          holidayMap = map || {};
+        }
+        function business(k) {
+          return weekday(k) !== 0 && weekday(k) !== 6 && !holidayMap[k];
+        }
+        function policy(t) {
+          return (
+            t.rule?.holiday ||
+            (t.repeat === "weekly" &&
+            (t.interval || 1) === 1 &&
+            [...new Set(t.days || [])].sort().join(",") === "1,2,3,4,5"
+              ? "skip"
+              : "keep")
+          );
+        }
         function match(t, k) {
-          if (!valid(t.due) || k < t.due || (t.until && k > t.until))
+          if (
+            !valid(t.due) ||
+            k < t.due ||
+            (t.until && k > t.until) ||
+            (t.cutBefore && k >= t.cutBefore)
+          )
             return false;
-          let n = Math.max(1, Number(t.interval) || 1);
-          switch (t.repeat) {
-            case "daily":
-              return diff(k, t.due) % n === 0;
-            case "weekly": {
-              const start = add(t.due, -((weekday(t.due) + 6) % 7));
-              return (
-                Math.floor(diff(k, start) / 7) % n === 0 &&
-                (t.days || [weekday(t.due)]).includes(weekday(k))
-              );
-            }
-            case "monthly":
-            case "yearly": {
-              const a = new Date(stamp(t.due)),
-                b = new Date(stamp(k));
-              const m =
-                (b.getUTCFullYear() - a.getUTCFullYear()) * 12 +
-                b.getUTCMonth() -
-                a.getUTCMonth();
-              return (
-                m % (n * (t.repeat === "yearly" ? 12 : 1)) === 0 &&
-                month(t.due, m) === k
-              );
-            }
-            default:
-              return k === t.due;
+          const r = t.rule || {},
+            n = Math.max(1, Number(t.interval) || 1),
+            mm = Number(k.slice(5, 7)),
+            dd = Number(k.slice(8));
+          if (r.months?.length && !r.months.includes(mm)) return false;
+          if (r.weekdays?.length && !r.weekdays.includes(weekday(k)))
+            return false;
+          if (t.repeat === "daily") return diff(k, t.due) % n === 0;
+          if (t.repeat === "weekly") {
+            const start = add(t.due, -((weekday(t.due) + 6) % 7));
+            return (
+              Math.floor(diff(k, start) / 7) % n === 0 &&
+              (t.days || [weekday(t.due)]).includes(weekday(k))
+            );
           }
+          if (t.repeat === "monthly" || t.repeat === "yearly") {
+            const m =
+              (Number(k.slice(0, 4)) - Number(t.due.slice(0, 4))) * 12 +
+              mm -
+              Number(t.due.slice(5, 7));
+            if (
+              t.repeat === "monthly"
+                ? m % n !== 0
+                : (Number(k.slice(0, 4)) - Number(t.due.slice(0, 4))) % n !== 0
+            )
+              return false;
+            if (
+              t.repeat === "yearly" &&
+              !r.months?.length &&
+              mm !== Number(t.due.slice(5, 7))
+            )
+              return false;
+            const first = k.slice(0, 7) + "-01",
+              last = add(month(first, 1), -1),
+              lastDay = Number(last.slice(8));
+            if (r.mode === "nth")
+              return (
+                weekday(k) === Number(r.weekday) &&
+                (Number(r.nth) === -1
+                  ? add(k, 7) > last
+                  : Math.ceil(dd / 7) === Number(r.nth))
+              );
+            if (r.mode === "last") return k === last;
+            if (r.mode === "lastBusiness") {
+              let d = last;
+              while (!business(d)) d = add(d, -1);
+              return k === d;
+            }
+            const wanted = r.monthDays?.length
+              ? r.monthDays
+              : [Number(t.due.slice(8))];
+            return wanted.some(
+              (d) => dd === (r.missing === "skip" ? d : Math.min(d, lastDay)),
+            );
+          }
+          return k === t.due;
+        }
+        function effective(t, k) {
+          const r = t.rule || {};
+          if (r.excluded?.includes(k)) return null;
+          let d = k,
+            p = policy(t);
+          if (p !== "keep" && !business(d)) {
+            if (p === "skip") return null;
+            let guard = 0;
+            while (!business(d) && guard++ < 370)
+              d = add(d, p === "previous" ? -1 : 1);
+            if (!business(d)) return null;
+          }
+          if (d < t.due || r.excluded?.includes(d)) return null;
+          return d;
+        }
+        // Stable occurrence keys use the original date; moving a holiday never merges completion records.
+        function occurrences(t, through = today(), future = 1) {
+          if (!t.repeat || t.repeat === "none")
+            return [{ k: t.due || "once", due: t.due || "" }];
+          if (!valid(t.due)) return [];
+          const out = [],
+            seen = new Set(),
+            r = t.rule || {};
+          let count = 0,
+            after = 0;
+          const end = [
+            t.until || "2099-12-31",
+            t.cutBefore ? add(t.cutBefore, -1) : "2099-12-31",
+            "2099-12-31",
+          ].sort()[0];
+          let scanEnd = end;
+          for (let k = t.due; k <= scanEnd; k = add(k, 1)) {
+            if (!match(t, k)) continue;
+            let due = effective(t, k);
+            if (!due) continue;
+            if (r.collision !== "separate" && seen.has(due)) continue;
+            seen.add(due);
+            count++;
+            if (r.count && count > r.count) break;
+            const ov = t.overrides?.[k];
+            if (ov?.skip) continue;
+            due = ov?.due || due;
+            out.push({ k, due });
+            if (due > through && ++after >= future && k > add(through, 370))
+              break;
+          }
+          return out
+            .filter((x) => x.due <= through)
+            .concat(
+              out
+                .filter((x) => x.due > through)
+                .sort(
+                  (a, b) =>
+                    a.due.localeCompare(b.due) || a.k.localeCompare(b.k),
+                )
+                .slice(0, future),
+            );
+        }
+        function getOccurrence(t, k) {
+          const through = [
+            k === "once" ? today() : k,
+            effective(t, k) || "",
+            t.overrides?.[k]?.due || "",
+          ]
+            .sort()
+            .pop();
+          return occurrences(t, through, 0).find((o) => o.k === k);
         }
         function dates(t, through = today()) {
-          if (!t.repeat || t.repeat === "none") return [t.due || "once"];
-          if (!valid(t.due)) return [];
-          const out = [];
-          let k = t.due;
-          const end =
-            t.until && t.until < "2099-12-31" ? t.until : "2099-12-31";
-          while (k <= end) {
-            if (match(t, k)) {
-              out.push(k);
-              if (k > through) break;
-            }
-            k = add(k, 1);
-          }
-          return out;
+          return occurrences(t, through).map((x) => x.k);
+        }
+        function nextDates(t, from = today(), n = 5) {
+          return occurrences(t, add(from, -1), n)
+            .filter((x) => x.due >= from)
+            .slice(0, n);
         }
         const occurrenceKey = (id, k) => id + "@" + k;
         function childDue(t, parent, k) {
@@ -1278,21 +1547,24 @@
             for (const c of children)
               if (c.due && root.due && c.due < root.due)
                 horizon = add(now, diff(root.due, c.due));
-            for (const k of dates(root, horizon)) {
+            for (const occurrence of occurrences(root, horizon)) {
+              const { k } = occurrence;
               const make = (t, due) => ({
                 id: t.id,
                 k,
                 key: occurrenceKey(t.id, k),
-                task: t,
-                due,
+                task: { ...t, ...t.overrides?.[k] },
+                due: t.overrides?.[k]?.due || due,
                 completed: p.completed[occurrenceKey(t.id, k)] || null,
               });
-              const parent = make(root, k === "once" ? "" : k),
+              const parent = make(root, occurrence.due),
                 subs = children
                   .filter(
-                    (t) => root.repeat === "none" || !t.from || k >= t.from,
+                    (t) =>
+                      !t.overrides?.[k]?.skip &&
+                      (root.repeat === "none" || !t.from || k >= t.from),
                   )
-                  .map((t) => make(t, childDue(t, root, k)));
+                  .map((t) => make(t, childDue(t, root, occurrence.due || k)));
               const open = [parent, ...subs].filter((x) => !x.completed);
               result.push({
                 parent,
@@ -1314,7 +1586,7 @@
           const root = t.parentId
             ? p.tasks.find((x) => x.id === t.parentId)
             : t;
-          if (!root || !dates(root, k === "once" ? date : k).includes(k))
+          if (!root || !getOccurrence(root, k))
             throw Error("반복 설정이 변경됐습니다. 목록을 다시 확인해 주세요.");
           const own = occurrenceKey(id, k);
           if (
@@ -1333,6 +1605,7 @@
                   ...p.tasks.filter(
                     (x) =>
                       x.parentId === id &&
+                      !x.overrides?.[k]?.skip &&
                       (root.repeat === "none" || !x.from || k >= x.from),
                   ),
                 ];
@@ -1342,18 +1615,19 @@
             else
               p.completed[ik] = {
                 day: date,
-                title: item.title,
-                due: item.parentId
-                  ? childDue(item, root, k)
-                  : k === "once"
-                    ? ""
-                    : k,
+                title: item.overrides?.[k]?.title || item.title,
+                due:
+                  item.overrides?.[k]?.due ||
+                  (item.parentId
+                    ? childDue(item, root, effective(root, k) || k)
+                    : effective(root, k) || (k === "once" ? "" : k)),
               };
           }
           if (t.parentId) {
             const siblings = p.tasks.filter(
               (x) =>
                 x.parentId === root.id &&
+                !x.overrides?.[k]?.skip &&
                 (root.repeat === "none" || !x.from || k >= x.from),
             );
             const rk = occurrenceKey(root.id, k);
@@ -1443,25 +1717,44 @@
           }
           return p;
         }
+
         function eventsOn(p, k) {
-          return p.events
-            .filter((e) => {
-              if (e.repeat && e.repeat !== "none") {
-                const duration = diff(e.endDate, e.startDate);
-                for (let i = 0; i <= duration; i++)
-                  if (match({ ...e, due: e.startDate }, add(k, -i)))
-                    return true;
-                return false;
-              }
-              return e.startDate <= k && e.endDate >= k;
-            })
-            .sort(
-              (a, b) =>
-                Number(b.allDay) - Number(a.allDay) ||
-                (a.startTime || "").localeCompare(b.startTime || ""),
-            );
+          const result = [];
+          for (const e of p.events) {
+            if (!e.repeat || e.repeat === "none") {
+              if (e.startDate <= k && e.endDate >= k)
+                result.push({ ...e, occ: e.startDate });
+              continue;
+            }
+            const duration = diff(e.endDate, e.startDate);
+            for (const o of occurrences({ ...e, due: e.startDate }, k, 0)) {
+              const ov = e.overrides?.[o.k] || {},
+                start = ov.startDate || o.due,
+                end = ov.endDate || add(start, duration);
+              if (start <= k && end >= k)
+                result.push({
+                  ...e,
+                  ...ov,
+                  startDate: start,
+                  endDate: end,
+                  occ: o.k,
+                });
+            }
+          }
+          return result.sort(
+            (a, b) =>
+              Number(b.allDay) - Number(a.allDay) ||
+              (a.startTime || "").localeCompare(b.startTime || ""),
+          );
         }
         return {
+          getOccurrence,
+          setHolidays,
+          business,
+          policy,
+          effective,
+          occurrences,
+          nextDates,
           copy,
           today,
           stamp,
@@ -1695,6 +1988,7 @@
         "2035-12-25": "성탄절",
       };
 
+      Core.setHolidays(HOLIDAYS);
       const $ = (id) => document.getElementById(id),
         esc = (v) =>
           String(v ?? "").replace(
@@ -1733,7 +2027,8 @@
         historyMode = false,
         limit = 50,
         collapsed = false;
-      let editId = null,
+      let editOccurrence = null,
+        editId = null,
         editBase = null,
         editKind = "task",
         dirty = false,
@@ -1897,7 +2192,7 @@
           events
             .map(
               (e) =>
-                `<button class="event" data-event="${esc(e.id)}"><span><strong>${esc(e.title)}</strong><small>${e.allDay ? "종일" : esc(e.startTime + "–" + e.endTime)}${e.startDate !== e.endDate ? " · " + esc(e.startDate + " ~ " + e.endDate) : ""}${e.repeat && e.repeat !== "none" ? " · 반복" : ""}</small></span></button>`,
+                `<button class="event" data-event="${esc(e.id)}" data-occ="${esc(e.occ)}"><span><strong>${esc(e.title)}</strong><small>${e.allDay ? "종일" : esc(e.startTime + "–" + e.endTime)}${e.startDate !== e.endDate ? " · " + esc(e.startDate + " ~ " + e.endDate) : ""}${e.repeat && e.repeat !== "none" ? " · 반복" : ""}</small></span></button>`,
             )
             .join("") ||
           '<p class="muted" style="padding:12px 2px">등록된 일정이 없습니다.</p>';
@@ -1929,8 +2224,7 @@
                   root = t?.parentId
                     ? planner.tasks.find((x) => x.id === t.parentId)
                     : t;
-                const current =
-                  root && Core.dates(root, k === "once" ? now : k).includes(k);
+                const current = root && Core.getOccurrence(root, k);
                 return current
                   ? row({
                       id,
@@ -1955,7 +2249,7 @@
             (g) =>
               !g.parent.task.repeat ||
               g.parent.task.repeat === "none" ||
-              g.parent.k <= now,
+              g.parent.due <= now,
           )
           .filter(
             (g) =>
@@ -2022,9 +2316,9 @@
           : task
             ? "할 일 추가"
             : "일정 추가";
-        const parent = planner?.tasks.find(
-          (t) => t.id === $("parentInput").value,
-        );
+        const parent = task
+          ? planner?.tasks.find((t) => t.id === $("parentInput").value)
+          : null;
         $("repeatInput").disabled = !!parent;
         $("parentNote").hidden = !parent;
         if (parent) {
@@ -2037,7 +2331,339 @@
         $("weekdays").hidden = unit !== "weekly";
         $("startTimeInput").hidden = $("endTimeInput").hidden =
           $("allDayInput").checked;
+        const recurring =
+          !!editOccurrence &&
+          editBase &&
+          (editBase.repeat !== "none" ||
+            (editBase.parentId &&
+              planner.tasks.find((t) => t.id === editBase.parentId)?.repeat !==
+                "none"));
+        $("scopeRow").hidden = !recurring;
+        $("scopeInput").querySelector('[value="future"]').disabled =
+          !!editBase?.parentId;
+        const one = recurring && $("scopeInput").value === "one";
+        $("repeatPanel").hidden = one || !!parent;
+        $("childSection").hidden = !task || !!parent || one;
+        $("parentInput").disabled =
+          recurring ||
+          !!(editId && planner.tasks.some((x) => x.parentId === editId));
+        $("advancedRules").hidden = rep !== "custom";
+        $("monthsPick").hidden = $("monthsMode").value !== "pick";
+        $("monthlyRules").hidden = !["monthly", "yearly"].includes(unit);
+        $("nthRow").hidden = $("monthMode").value !== "nth";
+        $("monthDaysRow").hidden = $("missingRow").hidden =
+          $("monthMode").value !== "dates";
+        $("collisionRow").hidden = !["next", "previous"].includes(
+          $("holidayInput").value,
+        );
+        $("untilRow").hidden = $("endMode").value !== "date";
+        $("countRow").hidden = $("endMode").value !== "count";
+        updatePreview();
       }
+      function loadRules(t) {
+        const r = t?.rule || {},
+          months = r.months || [];
+        $("monthsMode").value = !months.length
+          ? "all"
+          : same(months, [1, 3, 5, 7, 9, 11])
+            ? "odd"
+            : same(months, [2, 4, 6, 8, 10, 12])
+              ? "even"
+              : "pick";
+        $("monthsPick").innerHTML = Array.from(
+          { length: 12 },
+          (_, i) =>
+            '<label><input type="checkbox" value="' +
+            (i + 1) +
+            '" ' +
+            (months.includes(i + 1) ? "checked" : "") +
+            ">" +
+            (i + 1) +
+            "월</label>",
+        ).join("");
+        $("monthMode").value = r.mode || "dates";
+        $("monthDaysInput").value = (r.monthDays || []).join(", ");
+        $("nthInput").value = r.nth || 1;
+        $("nthWeekday").value = r.weekday ?? 1;
+        $("missingInput").value = r.missing || "last";
+        $("holidayInput").value = t ? Core.policy(t) : "keep";
+        $("collisionInput").value = r.collision || "merge";
+        $("endMode").value = r.count ? "count" : t?.until ? "date" : "never";
+        $("countInput").value = r.count || 10;
+        $("excludedInput").value = (r.excluded || []).join(", ");
+      }
+      function readRepeat(due) {
+        const one = !$("scopeRow").hidden && $("scopeInput").value === "one";
+        if (one)
+          return {
+            repeat: editBase.repeat,
+            interval: editBase.interval,
+            days: editBase.days || [],
+            until: editBase.until || "",
+            rule: editBase.rule || null,
+          };
+        const option = $("repeatInput").value,
+          repeat =
+            option === "weekdays"
+              ? "weekly"
+              : option === "custom"
+                ? $("unitInput").value
+                : option;
+        const interval =
+            option === "custom" ? Number($("intervalInput").value) : 1,
+          days =
+            option === "weekdays"
+              ? [1, 2, 3, 4, 5]
+              : [...$("weekdays").querySelectorAll("input:checked")].map((x) =>
+                  Number(x.value),
+                );
+        if (repeat === "none")
+          return { repeat, interval: 1, days: [], until: "", rule: null };
+        if (!Core.valid(due)) throw Error("반복 시작 날짜를 선택해 주세요.");
+        if (!Number.isInteger(interval) || interval < 1 || interval > 100)
+          throw Error("반복 간격은 1~100으로 입력해 주세요.");
+        if (repeat === "weekly" && !days.length)
+          throw Error("반복 요일을 선택해 주세요.");
+        if (option !== "custom")
+          return {
+            repeat,
+            interval,
+            days,
+            until: "",
+            rule: { holiday: option === "weekdays" ? "skip" : "keep" },
+          };
+        const mode = $("monthsMode").value,
+          months =
+            mode === "all"
+              ? []
+              : mode === "odd"
+                ? [1, 3, 5, 7, 9, 11]
+                : mode === "even"
+                  ? [2, 4, 6, 8, 10, 12]
+                  : [...$("monthsPick").querySelectorAll("input:checked")].map(
+                      (x) => Number(x.value),
+                    );
+        if (mode === "pick" && !months.length)
+          throw Error("반복할 달을 하나 이상 선택해 주세요.");
+        const monthly = ["monthly", "yearly"].includes(repeat),
+          monthMode = monthly ? $("monthMode").value : "dates";
+        const monthDays =
+          monthly && monthMode === "dates" && $("monthDaysInput").value.trim()
+            ? [
+                ...new Set(
+                  $("monthDaysInput")
+                    .value.split(/[,\s]+/)
+                    .filter(Boolean)
+                    .map(Number),
+                ),
+              ].sort((a, b) => a - b)
+            : [];
+        if (monthDays.some((n) => !Number.isInteger(n) || n < 1 || n > 31))
+          throw Error("월별 날짜는 1~31을 쉼표로 구분해 주세요.");
+        const excluded = [
+          ...new Set(
+            $("excludedInput")
+              .value.split(/[,\s]+/)
+              .filter(Boolean),
+          ),
+        ].sort();
+        if (excluded.some((k) => !Core.valid(k)))
+          throw Error("제외 날짜를 YYYY-MM-DD 형식으로 입력해 주세요.");
+        const end = $("endMode").value,
+          until = end === "date" ? $("untilInput").value : "",
+          count = end === "count" ? Number($("countInput").value) : 0;
+        if (end === "date" && (!Core.valid(until) || until < due))
+          throw Error("종료일을 시작일 이후로 선택해 주세요.");
+        if (
+          end === "count" &&
+          (!Number.isInteger(count) || count < 1 || count > 10000)
+        )
+          throw Error("반복 횟수는 1~10,000으로 입력해 주세요.");
+        return {
+          repeat,
+          interval,
+          days,
+          until,
+          rule: {
+            months,
+            mode: monthMode,
+            monthDays,
+            nth: Number($("nthInput").value),
+            weekday: Number($("nthWeekday").value),
+            missing: $("missingInput").value,
+            holiday: $("holidayInput").value,
+            collision: $("collisionInput").value,
+            count,
+            excluded,
+          },
+        };
+      }
+      function updatePreview() {
+        if (!$("repeatPreview") || $("repeatPanel").hidden) return;
+        try {
+          const due =
+              editKind === "event"
+                ? $("startDateInput").value
+                : $("dueInput").value,
+            r = readRepeat(due);
+          if (r.repeat === "none") {
+            $("repeatPreview").textContent = "";
+            return;
+          }
+          const dates = Core.nextDates({ due, ...r }, Core.today(), 5);
+          const months = r.rule?.months?.length
+            ? " · " + r.rule.months.join(", ") + "월"
+            : "";
+          $("repeatPreview").textContent =
+            (r.interval || 1) +
+            { daily: "일", weekly: "주", monthly: "개월", yearly: "년" }[
+              r.repeat
+            ] +
+            "마다" +
+            months +
+            " · " +
+            {
+              keep: "휴일에도 진행",
+              skip: "주말·공휴일 제외",
+              previous: "휴일이면 이전 평일",
+              next: "휴일이면 다음 평일",
+            }[r.rule?.holiday || "keep"] +
+            "\n다음 실행일: " +
+            (dates.length
+              ? dates.map((x) => x.due).join(" · ")
+              : "조건에 맞는 다음 날짜가 없습니다.");
+          if ($("repeatInput").value === "weekdays")
+            $("repeatPreview").textContent =
+              "월–금 · 공휴일 제외\n다음 실행일: " +
+              dates.map((x) => x.due).join(" · ");
+        } catch (e) {
+          $("repeatPreview").textContent = e.message;
+        }
+      }
+      function applyScope() {
+        if (!editBase || !editOccurrence) return;
+        const scope = $("scopeInput").value,
+          t = editBase,
+          root = t.parentId
+            ? planner.tasks.find((x) => x.id === t.parentId)
+            : t;
+        const actual =
+          Core.getOccurrence(root, editOccurrence)?.due || editOccurrence;
+        const ov = t.overrides?.[editOccurrence] || {};
+        if (scope === "one") {
+          $("titleInput").value = ov.title ?? t.title;
+          $("memoInput").value = ov.memo ?? t.memo;
+          $("dueInput").value =
+            ov.due || (t.parentId ? Core.childDue(t, root, actual) : actual);
+          $("startDateInput").value = ov.startDate || actual;
+          $("endDateInput").value =
+            ov.endDate ||
+            (t.endDate
+              ? Core.add(actual, Core.diff(t.endDate, t.startDate))
+              : actual);
+          $("allDayInput").checked = ov.allDay ?? !!t.allDay;
+          $("startTimeInput").value = ov.startTime || t.startTime || "09:00";
+          $("endTimeInput").value = ov.endTime || t.endTime || "10:00";
+        } else {
+          $("titleInput").value = t.title;
+          $("memoInput").value = t.memo;
+          $("dueInput").value = scope === "future" ? editOccurrence : t.due;
+          $("startDateInput").value =
+            scope === "future" ? editOccurrence : t.startDate || selected;
+          $("endDateInput").value =
+            scope === "future" && t.endDate
+              ? Core.add(editOccurrence, Core.diff(t.endDate, t.startDate))
+              : t.endDate || selected;
+        }
+        $("scopeNote").textContent =
+          scope === "one"
+            ? "선택한 회차의 제목·날짜·메모만 변경합니다."
+            : scope === "future"
+              ? "선택한 원래 회차 날짜부터 새 규칙을 적용합니다. 지난 회차는 유지합니다."
+              : "반복 규칙 전체를 변경합니다. 완료 기록은 보관됩니다.";
+      }
+      function applyScopedEdit(
+        p,
+        kind,
+        index,
+        item,
+        base,
+        k,
+        scope,
+        newChildren,
+      ) {
+        const list = kind === "task" ? p.tasks : p.events,
+          current = list[index];
+        if (scope === "one") {
+          const patch =
+            kind === "task"
+              ? { title: item.title, memo: item.memo, due: item.due }
+              : {
+                  title: item.title,
+                  memo: item.memo,
+                  due: item.startDate,
+                  startDate: item.startDate,
+                  endDate: item.endDate,
+                  startTime: item.startTime,
+                  endTime: item.endTime,
+                  allDay: item.allDay,
+                };
+          if (!Core.valid(patch.due))
+            throw Error("이번 회차의 날짜를 선택해 주세요.");
+          current.overrides = { ...current.overrides, [k]: patch };
+          return;
+        }
+        if (item.due < k)
+          throw Error(
+            "새 반복의 시작일은 선택한 회차 날짜 이후로 설정해 주세요.",
+          );
+        const newId = uid();
+        current.cutBefore = k;
+        const next = {
+          ...item,
+          id: newId,
+          overrides: Object.fromEntries(
+            Object.entries(base.overrides || {}).filter(([d]) => d >= k),
+          ),
+        };
+        delete next.cutBefore;
+        list.push(next);
+        if (kind === "task") {
+          const kids = p.tasks.filter((t) => t.parentId === base.id);
+          for (const child of kids) {
+            const c = {
+              ...clone(child),
+              id: uid(),
+              parentId: newId,
+              due: child.due
+                ? Core.add(item.due, Core.diff(child.due, base.due))
+                : "",
+              from: item.due,
+            };
+            p.tasks.push(c);
+            for (const [key, v] of Object.entries(p.completed))
+              if (
+                key.startsWith(child.id + "@") &&
+                key.split("@").pop() >= k &&
+                Core.getOccurrence(next, key.split("@").pop())
+              ) {
+                p.completed[c.id + "@" + key.split("@").pop()] = clone(v);
+                delete p.completed[key];
+              }
+          }
+          for (const c of newChildren) p.tasks.push({ ...c, parentId: newId });
+          for (const [key, v] of Object.entries(p.completed))
+            if (
+              key.startsWith(base.id + "@") &&
+              key.split("@").pop() >= k &&
+              Core.getOccurrence(next, key.split("@").pop())
+            ) {
+              p.completed[newId + "@" + key.split("@").pop()] = clone(v);
+              delete p.completed[key];
+            }
+        }
+      }
+
       function addChildInput(value = "") {
         const wrap = document.createElement("div");
         wrap.className = "childdraft";
@@ -2059,7 +2685,7 @@
         $("childDrafts").append(wrap);
         input.focus();
       }
-      function openEditor(kind = "task", id = null, parentId = "") {
+      function openEditor(kind = "task", id = null, parentId = "", occ = null) {
         if (!ready || busy) return;
         const t = id
           ? (kind === "task" ? planner.tasks : planner.events).find(
@@ -2071,6 +2697,7 @@
           return;
         }
         oldFocus = document.activeElement;
+        editOccurrence = occ;
         editId = id;
         editBase = t ? clone(t) : null;
         editKind = kind;
@@ -2082,7 +2709,7 @@
         $("titleInput").value = t?.title || (!id ? $("quickTitle").value : "");
         $("dueInput").value = t?.due || (!id ? $("quickDue").value : "");
         $("repeatInput").value =
-          t && t.interval > 1
+          t && (t.rule || t.interval > 1)
             ? "custom"
             : t?.repeat === "weekly" &&
                 [...new Set(t.days || [])].sort().join(",") === "1,2,3,4,5"
@@ -2116,15 +2743,11 @@
         $("memoDetails").open = !!t?.memo;
         $("deleteButton").hidden = !id;
         $("editorHeading").textContent = id ? "항목 수정" : "새 항목";
-        $("legacyEventNote").hidden = !(
-          kind === "event" &&
-          t?.repeat &&
-          t.repeat !== "none"
-        );
-        $("editNotice").textContent =
-          id && t.repeat !== "none"
-            ? "반복 항목의 제목·기한·반복 설정 변경은 전체 회차에 적용됩니다. 완료 기록은 보관됩니다."
-            : "";
+        $("legacyEventNote").hidden = true;
+        $("editNotice").textContent = "";
+        loadRules(t);
+        $("scopeInput").value = "one";
+        applyScope();
         updateFields();
         $("editor").showModal();
         $("titleInput").focus();
@@ -2162,46 +2785,22 @@
             endTime,
             allDay,
             due: startDate,
-            repeat: editBase?.repeat || "none",
-            interval: editBase?.interval || 1,
-            days: editBase?.days || [],
-            until: editBase?.until || "",
+            ...readRepeat(startDate),
           };
         }
         const parentId = $("parentInput").value,
-          due = $("dueInput").value,
-          repeat = parentId
-            ? "none"
-            : $("repeatInput").value === "weekdays"
-              ? "weekly"
-              : $("repeatInput").value === "custom"
-                ? $("unitInput").value
-                : $("repeatInput").value,
-          interval =
-            $("repeatInput").value === "custom"
-              ? Number($("intervalInput").value)
-              : 1,
-          days =
-            $("repeatInput").value === "weekdays"
-              ? [1, 2, 3, 4, 5]
-              : [...$("weekdays").querySelectorAll("input:checked")].map((x) =>
-                  Number(x.value),
-                ),
-          until = repeat === "none" ? "" : $("untilInput").value;
+          due = $("dueInput").value;
         if (due && !Core.valid(due)) throw Error("기한 날짜를 확인해 주세요.");
-        if (repeat !== "none" && !due)
-          throw Error("반복할 첫 번째 기한을 선택해 주세요.");
-        if (
-          repeat !== "none" &&
-          (!Number.isInteger(interval) || interval < 1 || interval > 100)
-        )
-          throw Error("반복 간격은 1~100의 정수로 입력해 주세요.");
-        if (repeat === "weekly" && !days.length)
-          throw Error("반복 요일을 선택해 주세요.");
-        if (until && (!Core.valid(until) || until < due))
-          throw Error("반복 종료일은 첫 기한 이후로 설정해 주세요.");
-        return { ...base, due, repeat, interval, days, until, parentId };
+        return {
+          ...base,
+          due,
+          ...(parentId
+            ? { repeat: "none", interval: 1, days: [], until: "", rule: null }
+            : readRepeat(due)),
+          parentId,
+        };
       }
+
       async function saveEditor(e) {
         e.preventDefault();
         if (busy) return;
@@ -2227,6 +2826,7 @@
             throw Error("하위 할 일은 두 단계까지만 설정할 수 있습니다.");
           if (
             base &&
+            $("scopeRow").hidden &&
             kind === "task" &&
             (base.due !== item.due ||
               base.repeat !== item.repeat ||
@@ -2246,6 +2846,23 @@
               throw Error(
                 "다른 기기에서 항목이 변경됐습니다. 닫고 다시 열어 주세요.",
               );
+            if (
+              base &&
+              !$("scopeRow").hidden &&
+              $("scopeInput").value !== "all"
+            ) {
+              applyScopedEdit(
+                p,
+                kind,
+                index,
+                item,
+                base,
+                editOccurrence,
+                $("scopeInput").value,
+                newChildren,
+              );
+              return;
+            }
             if (kind === "task") {
               if (item.parentId) {
                 const parent = p.tasks.find((t) => t.id === item.parentId);
@@ -2328,21 +2945,25 @@
           $("editError").textContent = err.message;
         }
       }
+
       async function removeItem() {
         if (busy || !editBase) return;
-        const childCount = planner.tasks.filter(
-          (t) => t.parentId === editId,
-        ).length;
+        const scope = $("scopeRow").hidden ? "all" : $("scopeInput").value;
         if (
           !confirm(
-            `${editBase.title}${childCount ? " 및 하위 할 일 " + childCount + "개" : ""}를 삭제할까요? 반복 항목은 모든 회차와 완료 기록이 삭제됩니다.`,
+            scope === "one"
+              ? "이번 회차를 삭제할까요?"
+              : scope === "future"
+                ? "이번 회차부터 이후 반복을 중단할까요? 지난 기록은 유지됩니다."
+                : "전체 항목과 하위 할 일을 삭제할까요? 완료 기록은 보관됩니다.",
           )
         )
           return;
         try {
           const kind = editKind,
             id = editId,
-            base = clone(editBase);
+            base = clone(editBase),
+            k = editOccurrence;
           await transact((p) => {
             const list = kind === "task" ? p.tasks : p.events,
               current = list.find((x) => x.id === id);
@@ -2350,16 +2971,24 @@
               throw Error(
                 "다른 기기에서 항목이 변경됐습니다. 다시 열어 주세요.",
               );
+            if (scope === "one") {
+              current.overrides = {
+                ...current.overrides,
+                [k]: { ...current.overrides?.[k], skip: true },
+              };
+              return;
+            }
+            if (scope === "future") {
+              current.cutBefore = k;
+              return;
+            }
             const ids = new Set([
               id,
               ...p.tasks.filter((t) => t.parentId === id).map((t) => t.id),
             ]);
-            if (kind === "task") {
+            if (kind === "task")
               p.tasks = p.tasks.filter((t) => !ids.has(t.id));
-              for (const k of Object.keys(p.completed))
-                if (ids.has(k.slice(0, k.lastIndexOf("@"))))
-                  delete p.completed[k];
-            } else p.events = p.events.filter((t) => t.id !== id);
+            else p.events = p.events.filter((t) => t.id !== id);
           });
           dirty = false;
           $("editor").close();
@@ -2432,7 +3061,36 @@
             }[e.code] || "로그인 요청에 실패했습니다. " + e.message;
         }
       }
+      function showSeries() {
+        const items = [
+          ...planner.tasks
+            .filter((t) => !t.parentId)
+            .map((t) => ({ ...t, kind: "task" })),
+          ...planner.events.map((t) => ({ ...t, kind: "event" })),
+        ].filter((t) => t.repeat && t.repeat !== "none" && !t.cutBefore);
+        $("seriesList").innerHTML =
+          items
+            .map(
+              (t) =>
+                '<button class="event" data-series="' +
+                esc(t.id) +
+                '" data-series-kind="' +
+                t.kind +
+                '"><span><strong>' +
+                esc(t.title) +
+                "</strong><small>" +
+                (t.kind === "task" ? "할 일" : "일정") +
+                " · 다음: " +
+                (Core.nextDates(t, Core.today(), 1)[0]?.due || "예정 없음") +
+                "</small></span></button>",
+            )
+            .join("") || '<p class="note">반복 항목이 없습니다.</p>';
+        $("seriesDialog").showModal();
+      }
       function bind() {
+        $("seriesButton").onclick = () => {
+          if (ready) showSeries();
+        };
         document.addEventListener("click", async (e) => {
           const b = e.target.closest("button");
           if (!b || b.disabled) return;
@@ -2454,8 +3112,12 @@
             dirty = true;
             updateFields();
           }
-          if (d.task) openEditor("task", d.task);
-          if (d.event) openEditor("event", d.event);
+          if (d.series) {
+            $("seriesDialog").close();
+            openEditor(d.seriesKind, d.series);
+          }
+          if (d.task) openEditor("task", d.task, "", d.occ);
+          if (d.event) openEditor("event", d.event, "", d.occ);
           if (d.toggle) await toggleTask(d.toggle, d.occ);
           if (d.fold) {
             folded.has(d.fold) ? folded.delete(d.fold) : folded.add(d.fold);
@@ -2486,9 +3148,13 @@
         };
         $("editForm").onsubmit = saveEditor;
         $("deleteButton").onclick = removeItem;
-        $("editForm").addEventListener("input", () => (dirty = true));
-        $("editForm").addEventListener("change", () => {
+        $("editForm").addEventListener("input", () => {
           dirty = true;
+          updatePreview();
+        });
+        $("editForm").addEventListener("change", (e) => {
+          dirty = true;
+          if (e.target.id === "scopeInput") applyScope();
           updateFields();
         });
         $("historyButton").onclick = () => {
